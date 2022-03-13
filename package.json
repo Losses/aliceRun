@@ -1,0 +1,28 @@
+{
+  "name": "three-typescript-template",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "chart.js": "^3.7.1",
+    "dct": "^0.1.0",
+    "dct_js_pure": "^1.0.13",
+    "fft.js": "^4.0.4",
+    "lodash": "4.17.20",
+    "random-seed": "^0.3.0",
+    "three": "0.138.3",
+    "tslib": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "4.14.161",
+    "@types/random-seed": "^0.3.3",
+    "@types/three": "0.138.0",
+    "@types/w3c-web-hid": "^1.0.2",
+    "parcel": "2.3.2",
+    "typescript": "^4.6.2"
+  },
+  "keywords": []
+}
