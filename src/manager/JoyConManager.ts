@@ -1,4 +1,3 @@
-import FFT from 'fft.js';
 import { WindowedArray } from '../utils/WindowedArray';
 import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCon/nintendoSwitch/connect';
 import type { JoyConLeft, JoyConRight, IPacket } from '../utils/joyCon/nintendoSwitch/JoyCon';
@@ -24,21 +23,10 @@ const handleHidInput = ({ detail: { actualAccelerometer, actualOrientation, } }:
     orientationY.push(Number.parseFloat(actualOrientation.beta));
 
     if (lastCalculateDate + (1000 / 60) * 5 < Date.now()) {
-        const fft = new FFT(FFT_SIZE);
-        const out: number[] = fft.createComplexArray();
-        fft.realTransform(out, orientationY.array);
-        // console.log(out.reduce((x, y) => x + y, 0));
-        const maxVal = Math.max(...out);
-        const maxIndex = out.findIndex((v) => v === maxVal);
-
+        // Do something here
         const $freq = document.querySelector('.joycon_freq')!;
-        $freq.innerHTML = `Freq: ${maxIndex}, Mang: ${maxVal}`;
+        // $freq.innerHTML = `Freq: ${maxIndex}, Mang: ${maxVal}`;
 
-        if (maxVal > 400) {
-            $freq.classList.add('valid');
-        } else {
-            $freq.classList.remove('valid');
-        }
         lastCalculateDate = Date.now();
     }
 };
