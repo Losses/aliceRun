@@ -1,34 +1,41 @@
+import { StepCounter } from '../utils/StepCounter';
 import { WindowedArray } from '../utils/WindowedArray';
-import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCon/nintendoSwitch/connect';
 import type { JoyConLeft, JoyConRight, IPacket } from '../utils/joyCon/nintendoSwitch/JoyCon';
+import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCon/nintendoSwitch/connect';
 
 let connected = false;
 
-const WINDOW_SIZE = 2 * 60;
+const WINDOW_SIZE = 2 * 60; // 2 seconds at 60 Hz
 let lastCalculateDate = Date.now();
 
-const FFT_SIZE = Math.round(
-    Math.pow(2, Math.ceil(Math.log2(WINDOW_SIZE)))
-);
+const accelerometerY = new WindowedArray(WINDOW_SIZE);
+const orientationY = new WindowedArray(WINDOW_SIZE);
 
-export const accelerometerY = new WindowedArray(FFT_SIZE);
-export const orientationY = new WindowedArray(FFT_SIZE);
+const stepCounter = new StepCounter(); // Create an instance of StepCounter
 
-const handleHidInput = ({ detail: { actualAccelerometer, actualOrientation, } }: { detail: IPacket }) => {
-    if (!actualAccelerometer || !actualOrientation) {
-        return;
-    }
+const handleHidInput = (event: Event) => {
+  const customEvent = event as CustomEvent<IPacket>;
+  const { detail: { actualAccelerometer, actualOrientation } } = customEvent;
 
-    accelerometerY.push(actualAccelerometer.y);
-    orientationY.push(Number.parseFloat(actualOrientation.beta));
+  if (!actualAccelerometer || !actualOrientation) {
+      return;
+  }
 
-    if (lastCalculateDate + (1000 / 60) * 5 < Date.now()) {
-        // Do something here
-        const $freq = document.querySelector('.joycon_freq')!;
-        // $freq.innerHTML = `Freq: ${maxIndex}, Mang: ${maxVal}`;
+  accelerometerY.push(actualAccelerometer.y);
+  orientationY.push(Number.parseFloat(actualOrientation.beta));
 
-        lastCalculateDate = Date.now();
-    }
+  // Process the packet with our step counter
+  stepCounter.processPacket(customEvent.detail);
+
+  if (lastCalculateDate + (1000 / 60) * 5 < Date.now()) {
+      // Update the step count display every 5 frames (assuming 60Hz, this is roughly every 83ms)
+      const $freq = document.querySelector('.joycon_freq');
+      if ($freq) {
+          $freq.textContent = `Steps: ${stepCounter.getStepCount()}`;
+      }
+
+      lastCalculateDate = Date.now();
+  }
 };
 
 export const JoyConManager = () => {
