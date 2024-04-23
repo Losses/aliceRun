@@ -4,7 +4,7 @@ body {
   padding: 0;
 }
 
-canvas {
+#three_canvas {
   width: 100vw !important;
   height: 100vh !important;
 }

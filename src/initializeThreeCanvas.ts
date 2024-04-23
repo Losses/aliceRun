@@ -1,11 +1,13 @@
 import * as THREE from "three";
 
+import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
+
 import { ResourceTracker } from "./ResourceTracker";
 
-import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
-import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass";
+import './effects/StatsEffect';
 
 export const action = {
   moveForward: false,
@@ -62,9 +64,11 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
 
   $container.appendChild(renderer.domElement);
 
-  document.querySelector('canvas')?.addEventListener('click', function () {
-    controls.lock();
-  });
+  renderer.domElement.id = 'three_canvas'
+
+  // renderer.domElement.addEventListener('click', function () {
+  //   controls.lock();
+  // });
 
   const onKeyDown = function (event: KeyboardEvent) {
 

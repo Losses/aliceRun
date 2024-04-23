@@ -1,6 +1,6 @@
 export class LowPassFilter {
     private readonly alpha: number;
-    private filteredValue: number = 0;
+    public filteredValue: number = 0;
   
     constructor(alpha: number = 0.1) {
       this.alpha = alpha;

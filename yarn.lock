@@ -1180,6 +1180,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/stats.js@npm:^0.17.3":
+  version: 0.17.3
+  resolution: "@types/stats.js@npm:0.17.3"
+  checksum: 4f84a012f630532877f62959b6335d3fa081ccaac15ce3f1f916741db265bda22b9c927d7efc9cc3389ffd60919a370673cb0b4e7221d580c571031e94b689fd
+  languageName: node
+  linkType: hard
+
 "@types/three@npm:0.138.0":
   version: 0.138.0
   resolution: "@types/three@npm:0.138.0"
@@ -2869,6 +2876,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stats.js@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "stats.js@npm:0.17.0"
+  checksum: 62d55d9e28e701f5638eac312ab45f66da8cc14b43d4eba4d3ab5a26f444a91d3e0dd1f52e8fc182b03cae955dae4af471d54f1975525cc1e47dfa89a54a47c6
+  languageName: node
+  linkType: hard
+
 "string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
@@ -2960,12 +2974,14 @@ __metadata:
   dependencies:
     "@types/lodash": 4.14.161
     "@types/random-seed": ^0.3.3
+    "@types/stats.js": ^0.17.3
     "@types/three": 0.138.0
     "@types/w3c-web-hid": ^1.0.2
     chart.js: ^3.7.1
     lodash: 4.17.20
     parcel: 2.12.0
     random-seed: ^0.3.0
+    stats.js: ^0.17.0
     three: 0.138.3
     tslib: ^2.3.1
     typescript: 5.4.5

@@ -10,12 +10,14 @@
     "chart.js": "^3.7.1",
     "lodash": "4.17.20",
     "random-seed": "^0.3.0",
+    "stats.js": "^0.17.0",
     "three": "0.138.3",
     "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@types/lodash": "4.14.161",
     "@types/random-seed": "^0.3.3",
+    "@types/stats.js": "^0.17.3",
     "@types/three": "0.138.0",
     "@types/w3c-web-hid": "^1.0.2",
     "parcel": "2.12.0",

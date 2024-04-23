@@ -1,13 +1,8 @@
 import * as THREE from 'three';
-
-import { initializeThreeCanvas, action } from "./initializeThreeCanvas";
-import { prepareVisualObjects } from "./prepareVisualObjects";
-import {
-  JoyConManager,
-  accelerometerY, orientationY
-} from './manager/JoyConManager';
-
+import { JoyConManager } from './manager/JoyConManager';
 import { GroundManager } from './manager/GroundManager';
+import { prepareVisualObjects } from "./prepareVisualObjects";
+import { initializeThreeCanvas, action } from "./initializeThreeCanvas";
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
