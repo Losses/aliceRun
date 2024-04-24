@@ -28,7 +28,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
     1,
     10000
   );
-  camera.position.set(5, 5, 40);
+  camera.position.set(0, 0, 40);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
