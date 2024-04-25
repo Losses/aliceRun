@@ -10,11 +10,13 @@ const config = initializeThreeCanvas(
 );
 
 prepareVisualObjects(config.scene, config.tracker);
-const groundManager = GroundManager(config.camera, config.scene, config.tracker);
+const { step } = GroundManager(config.camera, config.scene, config.tracker);
+
+// @ts-ignore
+window.step = step;
 
 window.requestAnimationFrame(() => {
   timeManager.addFn(() => config.composer.render(), FrameRateLevel.D0);
-  timeManager.addFn(() => console.log(1), FrameRateLevel.D0);
   timeManager.play();
 });
 
