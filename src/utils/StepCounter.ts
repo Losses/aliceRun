@@ -1,8 +1,10 @@
 import Stats from 'stats.js';
+import { createEventName, Event } from '@web-media/event-target';
 
 import { accX, accY, accZ, magnitude, filteredAccX, filteredAccY, filteredAccZ } from "../effects/StatsEffect";
 import { LowPassFilter } from "./LowPassFilter";
 import { IAcceleroMeter, IPacket } from "./joyCon/nintendoSwitch/JoyCon";
+import { eventTarget } from '../manager/EventManager';
 
 enum StepState {
   WAITING_FOR_PEAK,
@@ -27,6 +29,13 @@ class NumberRecord {
     this.panel.update(x, this.maxValue);
   }
 }
+
+interface IStepEventDetail {
+  magnitude: number;
+  total: number;
+}
+
+export const STEP_EVENT = createEventName<IStepEventDetail>();
 
 export class StepCounter {
   private static readonly STEP_THRESHOLD: number = 1.2;
@@ -75,7 +84,8 @@ export class StepCounter {
           if (now - this.lastStepTimestamp > StepCounter.MIN_TIME_BETWEEN_STEPS_MS) {
             this.stepCount++;
             this.lastStepTimestamp = now;
-            console.log(`Step detected. Total steps: ${this.stepCount}`);
+
+            eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.magnitude.value, total: this.stepCount}));
           }
           this.state = StepState.WAITING_FOR_TROUGH;
         }
@@ -86,6 +96,11 @@ export class StepCounter {
         }
         break;
     }
+  }
+
+  mockStep() {
+    this.stepCount++;
+    eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.magnitude.value, total: this.stepCount}));
   }
 
   private calculateMagnitude(x: number, y: number, z: number): number {

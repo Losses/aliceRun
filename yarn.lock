@@ -1201,6 +1201,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web-media/event-target@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@web-media/event-target@npm:0.0.2"
+  checksum: 10/0717c4fdb51f30afc64bea5da67aee65536c048256770d560ae8ba777fbdee0e4110da9342615a6d268e6ec3a5afbc7f4abeaafbc06b15ff15d6e314443004a0
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:1":
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
@@ -2977,6 +2984,7 @@ __metadata:
     "@types/stats.js": "npm:^0.17.3"
     "@types/three": "npm:0.138.0"
     "@types/w3c-web-hid": "npm:^1.0.2"
+    "@web-media/event-target": "npm:^0.0.2"
     chart.js: "npm:^3.7.1"
     lodash: "npm:4.17.20"
     parcel: "npm:2.12.0"

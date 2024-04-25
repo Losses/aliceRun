@@ -6,7 +6,6 @@ import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCo
 let connected = false;
 
 const WINDOW_SIZE = 2 * 60; // 2 seconds at 60 Hz
-let lastCalculateDate = Date.now();
 
 const accelerometerY = new WindowedArray(WINDOW_SIZE);
 const orientationY = new WindowedArray(WINDOW_SIZE);
@@ -26,16 +25,6 @@ const handleHidInput = (event: Event) => {
 
   // Process the packet with our step counter
   stepCounter.processPacket(customEvent.detail);
-
-  if (lastCalculateDate + (1000 / 60) * 5 < Date.now()) {
-      // Update the step count display every 5 frames (assuming 60Hz, this is roughly every 83ms)
-      const $freq = document.querySelector('.joycon_freq');
-      if ($freq) {
-          $freq.textContent = `Steps: ${stepCounter.getStepCount()}`;
-      }
-
-      lastCalculateDate = Date.now();
-  }
 };
 
 export const JoyConManager = () => {
