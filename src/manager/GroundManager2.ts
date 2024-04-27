@@ -5,6 +5,7 @@ import { ResourceTracker } from '../ResourceTracker';
 import { useLerp } from '../utils/lerp';
 import { eventTarget } from './EventManager';
 import { STEP_EVENT } from '../utils/StepCounter';
+import { CylinderGeometry2 } from '../components/CylinderGeometry2';
 
 const STEP_FACTOR = 0.01;
 
@@ -12,8 +13,8 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     const { ground } = Ground(tracker);
     scene.add(ground);
 
-    camera.position.set(-1200, 0, 0);
-    camera.lookAt(60, 0, 0);
+    // camera.position.set(-1200, 0, 0);
+    // camera.lookAt(60, 0, 0);
 
     const axesHelper = new THREE.AxesHelper( 5 );
     scene.add( axesHelper );
@@ -38,7 +39,7 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     updateRandomItemPosition();
 
     const [updateValue] = useLerp(() => rotate, (x) => {
-        ground.rotation.x = x;
+        (ground.geometry as CylinderGeometry2).updateTheta(x);
         rotate = x;
         updateRandomItemPosition();
     });

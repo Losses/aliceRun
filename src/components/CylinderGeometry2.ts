@@ -9,7 +9,7 @@ import {
 class CylinderThetaUpdateManager {
 	private sinCache = new Map<number, number>();
 	private cosCache = new Map<number, number>();
-	constructor(private readonly points: CylinderPoint[]) {};
+	constructor(private readonly points: CylinderPoint[]) { };
 
 	private setCache(map: Map<number, number>, theta: number, cachedValue: number) {
 		map.set(theta, cachedValue);
@@ -18,9 +18,6 @@ class CylinderThetaUpdateManager {
 	}
 
 	updateTheta = (deltaTheta: number) => {
-		this.sinCache.clear();
-		this.cosCache.clear();
-
 		for (let i = 0; i < this.points.length; i += 1) {
 			const point = this.points[i];
 			const theta = point.baseTheta + deltaTheta;
@@ -44,15 +41,15 @@ class CylinderPoint {
 
 	}
 
-	updateTheta = (thetaOrSinTheta: number, cosTheta?: number) => {
+	updateTheta = (deltaThetaOrSinTheta: number, cosTheta?: number) => {
 		if (cosTheta === undefined) {
-			const sinTheta = Math.sin(thetaOrSinTheta);
-			const cosTheta = Math.cos(thetaOrSinTheta);
-	
+			const sinTheta = Math.sin(this.baseTheta + deltaThetaOrSinTheta);
+			const cosTheta = Math.cos(this.baseTheta + deltaThetaOrSinTheta);
+
 			this.x = this.radius * sinTheta;
 			this.z = this.radius * cosTheta * this.ratio;
 		} else {
-			this.x = this.radius * thetaOrSinTheta;
+			this.x = this.radius * deltaThetaOrSinTheta;
 			this.z = this.radius * cosTheta * this.ratio;
 		}
 	}
@@ -73,17 +70,21 @@ class CylinderPoint {
 }
 
 export type CylinderGeometryParameters = CyG0['parameters'] & {
-    ratio: number;
+	ratio: number;
 }
 
-class CylinderGeometry extends BufferGeometry {
+export class CylinderGeometry2 extends BufferGeometry {
 	type = 'CylinderGeometry';
 
 	parameters: CylinderGeometryParameters;
 
 	readonly points: CylinderPoint[];
 	private readonly pointsManager: CylinderThetaUpdateManager;
-	readonly updateTheta: (deltaTheta: number) => void;
+	readonly updateTheta = (deltaTheta: number) => {
+		this.pointsManager.updateTheta(deltaTheta);
+		console.log(this.getAttribute('position').needsUpdate);
+		this.getAttribute('position').needsUpdate = true;
+	};
 
 	constructor({
 		radiusTop = 1,
@@ -95,8 +96,7 @@ class CylinderGeometry extends BufferGeometry {
 		thetaStart = 0,
 		thetaLength = Math.PI * 2,
 		ratio = 1,
-	}: CylinderGeometryParameters) {
-
+	}: Partial<CylinderGeometryParameters>) {
 		super();
 
 		this.parameters = {
@@ -136,7 +136,6 @@ class CylinderGeometry extends BufferGeometry {
 
 		this.points = points;
 		this.pointsManager = new CylinderThetaUpdateManager(points);
-		this.updateTheta = this.pointsManager.updateTheta;
 
 		generateTorso();
 
@@ -182,7 +181,7 @@ class CylinderGeometry extends BufferGeometry {
 
 					const theta = u * thetaLength + thetaStart;
 
-					const point = new CylinderPoint(vertices, x * 3, radius, ratio, v * height + halfHeight, theta);
+					const point = new CylinderPoint(vertices, (y * radialSegments + x) * 3, radius, ratio, v * height + halfHeight, theta);
 					const sinTheta = Math.sin(theta);
 					const cosTheta = Math.cos(theta);
 
@@ -357,10 +356,9 @@ class CylinderGeometry extends BufferGeometry {
 			groupStart += groupCount;
 
 		}
-
 	}
 
-	copy(source: CylinderGeometry) {
+	copy(source: CylinderGeometry2) {
 
 		super.copy(source);
 
@@ -371,7 +369,7 @@ class CylinderGeometry extends BufferGeometry {
 	}
 
 	static fromJSON(data: any) {
-		return new CylinderGeometry({
+		return new CylinderGeometry2({
 			radiusTop: data.radiusTop,
 			radiusBottom: data.radiusBottom,
 			height: data.height,
@@ -385,6 +383,3 @@ class CylinderGeometry extends BufferGeometry {
 	}
 
 }
-
-
-export { CylinderGeometry };

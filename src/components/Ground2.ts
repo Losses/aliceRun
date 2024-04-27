@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { ResourceTracker } from '../ResourceTracker';
+import { CylinderGeometry2 } from './CylinderGeometry2';
 
 const RADIUS = 120;
 const HEIGHT = 80;
@@ -19,7 +20,7 @@ interface IGroundItemDefinition {
 }
 
 export const getRandomItems = (count = 50) => {
-  const geometry = new THREE.BoxGeometry( 2, 2, 2 ); 
+  const geometry = new THREE.BoxGeometry(2, 2, 2);
   const material = new THREE.MeshNormalMaterial();
 
   const items: IGroundItemDefinition[] = new Array(count).fill(undefined);
@@ -37,22 +38,27 @@ export const getRandomItems = (count = 50) => {
 }
 
 export const Ground = (tracker: ResourceTracker) => {
-  const geometry = new THREE.CylinderGeometry(RADIUS, RADIUS, HEIGHT, 60, 40, true);
+  const geometry = new CylinderGeometry2({
+    radiusTop: RADIUS,
+    radiusBottom: RADIUS,
+    height: HEIGHT,
+    radialSegments: 60,
+    heightSegments: 40,
+    openEnded: true,
+    ratio: SCALE_Z,
+  });
   const material = new THREE.MeshNormalMaterial({ wireframe: true });
   const ground = new THREE.Mesh(geometry, material);
 
   //@ts-ignore
   window.g = ground;
-  const group = new THREE.Group();
-  group.add(ground);
 
   ground.position.setY(-RADIUS * GROUND_Y_OFFSET);
 
   ground.rotateZ(Math.PI / 2);
-  group.scale.setZ(SCALE_Z);
 
   tracker.track(geometry);
   tracker.track(material);
 
-  return { ground, group };
+  return { ground };
 }
