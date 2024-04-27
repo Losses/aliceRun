@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { Ground } from '../components/Ground2';
+import { Ground, getRandomItems, groundCoord } from '../components/Ground2';
 import { ResourceTracker } from '../ResourceTracker';
 import { useLerp } from '../utils/lerp';
 import { eventTarget } from './EventManager';
@@ -12,10 +12,30 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     const { ground } = Ground(tracker);
     scene.add(ground);
 
+
+    const randomItems = getRandomItems();
+
+    randomItems.forEach((x) => ground.add(x.mesh));
+
     let rotate = STEP_FACTOR * Math.PI;
+
+    const updateRandomItemPosition = () => {
+        for (let i = 0; i < randomItems.length; i += 1) {
+            const { mesh, r: meshR, x: meshX } = randomItems[i];
+
+            const { x, y, z } = groundCoord(meshR + rotate, meshX);
+            mesh.position.setX(x);
+            mesh.position.setY(y);
+            mesh.position.setZ(z);
+        }
+    }
+
+    updateRandomItemPosition();
+
     const [updateValue] = useLerp(() => rotate, (x) => {
         ground.rotation.x = x;
         rotate = x;
+        updateRandomItemPosition();
     });
 
     const step = () => {
