@@ -12,10 +12,15 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     const { ground } = Ground(tracker);
     scene.add(ground);
 
+    camera.position.set(-1200, 0, 0);
+    camera.lookAt(60, 0, 0);
+
+    const axesHelper = new THREE.AxesHelper( 5 );
+    scene.add( axesHelper );
 
     const randomItems = getRandomItems();
 
-    randomItems.forEach((x) => ground.add(x.mesh));
+    randomItems.forEach((x) => scene.add(x.mesh));
 
     let rotate = STEP_FACTOR * Math.PI;
 

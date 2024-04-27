@@ -27,6 +27,9 @@ const handleHidInput = (event: Event) => {
   stepCounter.processPacket(customEvent.detail);
 };
 
+//@ts-ignore
+window.step = stepCounter.mockStep;
+
 export const JoyConManager = () => {
     document
         .querySelector('.connect_bt')

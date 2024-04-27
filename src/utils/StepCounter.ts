@@ -39,7 +39,7 @@ export const STEP_EVENT = createEventName<IStepEventDetail>();
 
 export class StepCounter {
   private static readonly STEP_THRESHOLD: number = 1.2;
-  private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 500;
+  private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 300;
   private static readonly FILTER_ALPHA: number = 0.1;
 
   private lastStepTimestamp: number = 0;
@@ -57,6 +57,7 @@ export class StepCounter {
   private accZ = new NumberRecord(accZ, (x) => { this.filteredAccZ.value = this.lowPassFilterZ.filter(x); });
   
   private magnitude = new NumberRecord(magnitude);
+  private maxMagnitude = 0;
 
   public processPacket(packet: IPacket): void {
     if (!packet.accelerometers) {
@@ -78,6 +79,8 @@ export class StepCounter {
       this.filteredAccZ.value,
     );
 
+    this.maxMagnitude = Math.max(this.magnitude.value, this.maxMagnitude);
+
     switch (this.state) {
       case StepState.WAITING_FOR_PEAK:
         if (this.magnitude.value > StepCounter.STEP_THRESHOLD) {
@@ -85,7 +88,8 @@ export class StepCounter {
             this.stepCount++;
             this.lastStepTimestamp = now;
 
-            eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.magnitude.value, total: this.stepCount}));
+            eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.maxMagnitude, total: this.stepCount}));
+            this.maxMagnitude = 0;
           }
           this.state = StepState.WAITING_FOR_TROUGH;
         }
@@ -100,7 +104,7 @@ export class StepCounter {
 
   mockStep() {
     this.stepCount++;
-    eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.magnitude.value, total: this.stepCount}));
+    eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: 2, total: this.stepCount}));
   }
 
   private calculateMagnitude(x: number, y: number, z: number): number {
