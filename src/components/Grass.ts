@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { ResourceTracker } from '../ResourceTracker';
+import { timeManager } from '../manager/TimeManager';
 
 const midRand = () => Math.random() - 0.5;
 
@@ -15,8 +16,6 @@ function createRectanglePositions(width: number, height: number, widthSegments: 
             positions.push(x, y, 0);
         }
     }
-
-    console.log(positions);
 
     return positions;
 }
@@ -56,8 +55,6 @@ export const Grass = (tracker: ResourceTracker) => {
     const offsets = [];
     const colors = [];
     const rotations = [];
-    const heights = [];
-    const leans = [];
 
     const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
     const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
@@ -75,8 +72,6 @@ export const Grass = (tracker: ResourceTracker) => {
             );
             colors.push(Math.random(), Math.random(), Math.random(), 1);
             rotations.push(Math.random() * Math.PI * 2);
-            heights.push(GRASS_SEGMENTS * midRand() * GRASS_HEIGHT_FACT0R + GRASS_SEGMENTS);
-            leans.push(Math.random());
         }
     }
 
@@ -88,14 +83,13 @@ export const Grass = (tracker: ResourceTracker) => {
     geometry.setAttribute('offset', new THREE.InstancedBufferAttribute(new Float32Array(offsets), 3));
     geometry.setAttribute('rotation', new THREE.InstancedBufferAttribute(new Float32Array(rotations), 1));
     geometry.setAttribute('color', new THREE.InstancedBufferAttribute(new Float32Array(colors), 4));
-    geometry.setAttribute('lean', new THREE.InstancedBufferAttribute(new Float32Array(leans), 1));
-    geometry.setAttribute('height', new THREE.InstancedBufferAttribute(new Float32Array(heights), 1));
 
     // material
     const material = new THREE.RawShaderMaterial({
         uniforms: {
             'time': { value: 1.0 },
-            'sineTime': { value: 1.0 }
+            'heightFactor': {value: GRASS_HEIGHT_FACT0R},
+            'segments': {value: GRASS_SEGMENTS}
         },
         vertexShader: require('./shaders/grassVertex.glsl'),
         fragmentShader: require('./shaders/grassFragment.glsl'),
@@ -105,6 +99,10 @@ export const Grass = (tracker: ResourceTracker) => {
     });
 
     const grass = new THREE.Mesh(geometry, material);
+
+    timeManager.addFn((time) => {
+        material.uniforms['time'].value = time * 0.001;
+    });
 
     tracker.track(geometry);
     tracker.track(material);

@@ -2,15 +2,16 @@ precision highp float;
 
 uniform float sineTime;
 
+uniform float time;
+uniform float segments;
+uniform float heightFactor;
+uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
 in vec3 position;
 in vec3 offset;
 in vec4 color;
-in float rotation;
-in float lean;
-in float height;
 
 out vec3 vPosition;
 out vec4 vColor;
@@ -24,6 +25,30 @@ mat3 rotateX(float theta) {
         vec3(0, s, c)
     );
 }
+
+mat3 rotateY(float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    return mat3(
+        vec3(c, 0, s),
+        vec3(0, 1, 0),
+        vec3(-s, 0, c)
+    );
+}
+
+mat3 rotateAxis(vec3 axis, float angle) {
+  axis = normalize(axis);
+  float s = sin(angle);
+  float c = cos(angle);
+  float oc = 1.0 - c;
+
+  return mat3(
+    oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,
+    oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,
+    oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c
+  );
+}
+
 
 uint murmurHash12(uvec2 src) {
   const uint M = 0x5bd1e995u;
@@ -52,15 +77,55 @@ float noise12(vec2 p) {
   return val * 2.0 - 1.0;
 }
 
+uvec4 murmurHash42(uvec2 src) {
+    const uint M = 0x5bd1e995u;
+    uvec4 h = uvec4(1190494759u, 2147483647u, 3559788179u, 179424673u);
+    src *= M; src ^= src>>24u; src *= M;
+    h *= M; h ^= src.x; h *= M; h ^= src.y;
+    h ^= h>>13u; h *= M; h ^= h>>15u;
+    return h;
+}
+
+vec4 hash42(vec2 src) {
+  uvec4 h = murmurHash42(floatBitsToUint(src));
+  return uintBitsToFloat(h & 0x007fffffu | 0x3f800000u) - 1.0;
+}
+
+float inverseLerp(float minValue, float maxValue, float v) {
+  return (v - minValue) / (maxValue - minValue);
+}
+
+float remap(float v, float inMin, float inMax, float outMin, float outMax) {
+  float t = inverseLerp(inMin, inMax, v);
+  return mix(outMin, outMax, t);
+}
+
+float easeIn(float x, float t) {
+	return pow(x, t);
+}
+
 void main(){
     vec3 vPosition = position;
 
-    float curveAmount = lean * position.y;
-    mat3 grassMat = rotateX(curveAmount);
+    vec3 grassWorldPos = (modelMatrix * vec4(offset, 1.0)).xyz;
 
-    vPosition.y *= height;
+    vec4 hashVal1 = hash42(vec2(grassWorldPos.x, grassWorldPos.z));
+    float randomAngle = hashVal1.x * 2.0 * 3.14159;
+
+    float windDir = noise12(grassWorldPos.xz * 0.05 + 0.05 * time);
+    float windNoiseSample = noise12(grassWorldPos.xz * 0.25 + time * 1.0);
+    float windLeanAngle = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
+    windLeanAngle = easeIn(windLeanAngle, 2.0) * 1.25;
+    vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
+
+    windLeanAngle *= position.y;
+
+    mat3 grassMat = rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
+
+    vPosition.y *= segments * hashVal1.y * heightFactor + segments;
     vPosition = grassMat * vPosition;
 
+    float rotation = hashVal1.z * 2.0 * 3.14159;
     float cosAngle = cos(rotation);
     float sinAngle = sin(rotation);
     vPosition.x = cosAngle * vPosition.x - sinAngle * vPosition.z;
