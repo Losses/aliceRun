@@ -47,7 +47,8 @@ export const Ground = (tracker: ResourceTracker) => {
     openEnded: true,
     ratio: SCALE_Z,
   });
-  const material = new THREE.MeshNormalMaterial({ wireframe: true });
+  // const material = new THREE.MeshNormalMaterial({ wireframe: true });
+  const material = new THREE.MeshMatcapMaterial( { color: 0x049EF4, flatShading: true } );
   const ground = new THREE.Mesh(geometry, material);
 
   //@ts-ignore

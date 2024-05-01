@@ -101,7 +101,6 @@ export class CylinderGeometry2 extends BufferGeometry {
 	readonly updateTheta = (deltaTheta: number) => {
 		if (!this.attributes.position) return;
 		this.pointsManager.updateTheta(deltaTheta);
-		this.attributes.position.needsUpdate = true;
 	};
 
 	constructor({
