@@ -5,15 +5,15 @@ uniform float sineTime;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
-attribute vec3 position;
-attribute vec3 offset;
-attribute vec4 color;
-attribute float rotation;
-attribute float lean;
-attribute float height;
+in vec3 position;
+in vec3 offset;
+in vec4 color;
+in float rotation;
+in float lean;
+in float height;
 
-varying vec3 vPosition;
-varying vec4 vColor;
+out vec3 vPosition;
+out vec4 vColor;
 
 mat3 rotateX(float theta) {
     float c = cos(theta);
@@ -23,6 +23,33 @@ mat3 rotateX(float theta) {
         vec3(0, c, -s),
         vec3(0, s, c)
     );
+}
+
+uint murmurHash12(uvec2 src) {
+  const uint M = 0x5bd1e995u;
+  uint h = 1190494759u;
+  src *= M; src ^= src>>24u; src *= M;
+  h *= M; h ^= src.x; h *= M; h ^= src.y;
+  h ^= h>>13u; h *= M; h ^= h>>15u;
+  return h;
+}
+
+float hash12(vec2 src) {
+  uint h = murmurHash12(floatBitsToUint(src));
+  return uintBitsToFloat(h & 0x007fffffu | 0x3f800000u) - 1.0;
+}
+
+float noise12(vec2 p) {
+  vec2 i = floor(p);
+
+  vec2 f = fract(p);
+  vec2 u = smoothstep(vec2(0.0), vec2(1.0), f);
+
+	float val = mix( mix( hash12( i + vec2(0.0, 0.0) ), 
+                        hash12( i + vec2(1.0, 0.0) ), u.x),
+                   mix( hash12( i + vec2(0.0, 1.0) ), 
+                        hash12( i + vec2(1.0, 1.0) ), u.x), u.y);
+  return val * 2.0 - 1.0;
 }
 
 void main(){

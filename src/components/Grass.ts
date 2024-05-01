@@ -93,7 +93,6 @@ export const Grass = (tracker: ResourceTracker) => {
 
     // material
     const material = new THREE.RawShaderMaterial({
-
         uniforms: {
             'time': { value: 1.0 },
             'sineTime': { value: 1.0 }
@@ -101,7 +100,8 @@ export const Grass = (tracker: ResourceTracker) => {
         vertexShader: require('./shaders/grassVertex.glsl'),
         fragmentShader: require('./shaders/grassFragment.glsl'),
         side: THREE.DoubleSide,
-        transparent: true
+        transparent: true,
+        glslVersion: THREE.GLSL3,
     });
 
     const grass = new THREE.Mesh(geometry, material);
