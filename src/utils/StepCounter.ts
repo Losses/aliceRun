@@ -102,7 +102,7 @@ export class StepCounter {
     }
   }
 
-  mockStep() {
+  mockStep = () => {
     this.stepCount++;
     eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: 2, total: this.stepCount}));
   }
