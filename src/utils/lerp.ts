@@ -22,7 +22,7 @@ export const useRaf = (fn: TickCallback, frameRateLevel?: FrameRateLevel) => {
   export const useLerp = (
     getCurrentValFn: () => number,
     updateFn: (x: number) => void,
-    damping: number = 0.15,
+    damping: number = 0.05,
     threshold: number = 1e-5,
     frameRateLevel: FrameRateLevel = FrameRateLevel.D1
   ) => {
