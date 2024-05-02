@@ -4,11 +4,12 @@ uniform float sineTime;
 
 uniform float time;
 uniform float grassSegments;
+uniform uint grassVectors;
 uniform float heightFactor;
 uniform float grassHeightFactor;
 uniform float grassDistanceFactor;
-uniform uint gridSegmentX;
-uniform uint gridSegmentY;
+uniform uint gridSegmentsX;
+uniform uint gridSegmentsY;
 uniform float gridSegmentWidth;
 uniform float gridSegmentHeight;
 uniform mat4 modelMatrix;
@@ -16,8 +17,8 @@ uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
 in vec3 position;
-in vec3 offset;
 in vec4 color;
+in uint instanceIndex;
 
 out vec3 vPosition;
 out vec4 vColor;
@@ -110,8 +111,16 @@ float easeIn(float x, float t) {
 	return pow(x, t);
 }
 
-void main(){
+void main() {
     vec3 vPosition = position;
+
+    uint xID = instanceIndex % gridSegmentsX;
+    uint yID = instanceIndex / gridSegmentsX;
+
+    float x = float(float(xID) - float(gridSegmentsX) / 2.0) * gridSegmentWidth;
+    float y = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
+
+    vec3 offset = vec3(x, 0, y);
 
     vec3 grassWorldPos = (modelMatrix * vec4(offset, 1.0)).xyz;
 
@@ -136,5 +145,5 @@ void main(){
     vPosition = vPosition + offset;
     vColor = color;
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( vPosition, 1.0 );
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 }

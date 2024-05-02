@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import { ResourceTracker } from '../ResourceTracker';
 import { timeManager } from '../manager/TimeManager';
 
-const midRand = () => Math.random() - 0.5;
-
 function createRectanglePositions(width: number, height: number, widthSegments: number, heightSegments: number) {
     const positions = [];
     const segmentWidth = width / widthSegments;
@@ -43,31 +41,23 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
 const GRASS_SEGMENTS = 9;
 const GRASS_HEIGHT_FACT0R = 0.8;
 const DISTANCE_FACTOR = 5;
-const GRID_SEGMENTS_X = 80;
-const GRID_SEGMENTS_Y = 80;
+const GRID_SEGMENTS_X = 64;
+const GRID_SEGMENTS_Y = 64;
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = 80;
 
 export const Grass = (tracker: ResourceTracker) => {
     const positions = createRectanglePositions(1, 1, 1, GRASS_SEGMENTS);
     const indices = createRectangleIndices(1, GRASS_SEGMENTS);
-    const offsets = [];
     const colors = [];
 
     const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
     const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
 
+    const instanceIndex = new Array(GRID_SEGMENTS_X * GRID_SEGMENTS_Y).fill(0).map((_, index) => index);
+
     for (let xId = 0; xId < GRID_SEGMENTS_X; xId++) {
-        const x = (xId - GRID_SEGMENTS_X / 2) * gridSegmentWidth;
-
         for (let yId = 0; yId < GRID_SEGMENTS_Y; yId++) {
-            const y = (yId - GRID_SEGMENTS_Y / 2) * gridSegmentHeight;
-
-            offsets.push(
-                x, // + midRand() * gridSegmentWidth * DISTANCE_FACTOR,
-                0,
-                y, // + midRand() * gridSegmentHeight * DISTANCE_FACTOR
-            );
             colors.push(Math.random(), Math.random(), Math.random(), 1);
         }
     }
@@ -77,7 +67,7 @@ export const Grass = (tracker: ResourceTracker) => {
 
     geometry.setIndex(indices);
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geometry.setAttribute('offset', new THREE.InstancedBufferAttribute(new Float32Array(offsets), 3));
+    geometry.setAttribute('instanceIndex', new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndex), 1));
     geometry.setAttribute('color', new THREE.InstancedBufferAttribute(new Float32Array(colors), 4));
 
     // material
@@ -88,8 +78,9 @@ export const Grass = (tracker: ResourceTracker) => {
             'grassSegments': {value: GRASS_SEGMENTS},
             'grassHeightFactor': {value: GRASS_HEIGHT_FACT0R},
             'grassDistanceFactor': {value: DISTANCE_FACTOR},
-            'gridSegmentX': {value: GRID_SEGMENTS_X},
-            'gridSegmentY': {value: GRID_SEGMENTS_Y},
+            'grassVectors': {value: indices.length},
+            'gridSegmentsX': {value: GRID_SEGMENTS_X},
+            'gridSegmentsY': {value: GRID_SEGMENTS_Y},
             'gridSegmentWidth': {value: gridSegmentWidth},
             'gridSegmentHeight': {value: gridSegmentHeight},
         },

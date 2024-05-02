@@ -13,9 +13,6 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     const { ground } = Ground(tracker);
     scene.add(ground);
 
-    // camera.position.set(-1200, 0, 0);
-    // camera.lookAt(60, 0, 0);
-
     const light = new THREE.AmbientLight(0x404040); // soft white light
     scene.add( light );
 
