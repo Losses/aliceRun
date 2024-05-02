@@ -39,6 +39,8 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
 }
 
 const WIND_SPEED_FACTOR = 0.5;
+const GRASS_BASE_COLOR = 0x0c3302;
+const GRASS_TIP_COLOR = 0x7f7f19;
 const GRASS_SEGMENTS = 5;
 const GRASS_WIDTH = 0.8;
 const GRASS_HEIGHT = 3;
@@ -70,6 +72,8 @@ export const Grass = (tracker: ResourceTracker) => {
         uniforms: {
             'time': { value: 0.0 },
             'windSpeedFactor': {value: WIND_SPEED_FACTOR},
+            'grassBaseColor': {value: new THREE.Color(GRASS_BASE_COLOR)},
+            'grassTipColor': {value: new THREE.Color(GRASS_TIP_COLOR)},
             'grassSegments': {value: GRASS_SEGMENTS},
             'grassHeight': {value: GRASS_HEIGHT},
             'grassHeightFactor': {value: GRASS_HEIGHT_FACT0R},

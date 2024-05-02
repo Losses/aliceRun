@@ -4,6 +4,8 @@ uniform float sineTime;
 
 uniform float time;
 uniform float windSpeedFactor;
+uniform vec3 grassBaseColor;
+uniform vec3 grassTipColor;
 uniform float grassSegments;
 uniform uint grassVectors;
 uniform float grassHeight;
@@ -115,6 +117,8 @@ void main() {
     // Shape and position
     vec3 vPosition = position;
 
+    float heightPercent = vPosition.y;
+
     uint xID = instanceIndex % gridSegmentsX;
     uint yID = instanceIndex / gridSegmentsX;
 
@@ -137,15 +141,17 @@ void main() {
     windLeanAngle = easeIn(windLeanAngle, 2.0) * 1.25;
     vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
 
-    windLeanAngle *= position.y;
+    windLeanAngle *= heightPercent;
 
     mat3 grassMat = rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
 
     vPosition = grassMat * vPosition;
 
     vPosition = vPosition + offset;
-    vColor = vec4(windDir, windDir, windDir, 1);
-
+    
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 
+    // color
+    vColor = vec4(mix(grassBaseColor, grassTipColor, easeIn(heightPercent, 4.)), 1);
+    // vColor = vec4(windDir, windDir, windDir, 1);
 }
