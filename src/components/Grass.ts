@@ -53,7 +53,6 @@ export const Grass = (tracker: ResourceTracker) => {
     const indices = createRectangleIndices(1, GRASS_SEGMENTS);
     const offsets = [];
     const colors = [];
-    const rotations = [];
 
     const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
     const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
@@ -70,7 +69,6 @@ export const Grass = (tracker: ResourceTracker) => {
                 y, // + midRand() * gridSegmentHeight * DISTANCE_FACTOR
             );
             colors.push(Math.random(), Math.random(), Math.random(), 1);
-            rotations.push(Math.random() * Math.PI * 2);
         }
     }
 
@@ -80,7 +78,6 @@ export const Grass = (tracker: ResourceTracker) => {
     geometry.setIndex(indices);
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('offset', new THREE.InstancedBufferAttribute(new Float32Array(offsets), 3));
-    geometry.setAttribute('rotation', new THREE.InstancedBufferAttribute(new Float32Array(rotations), 1));
     geometry.setAttribute('color', new THREE.InstancedBufferAttribute(new Float32Array(colors), 4));
 
     // material
