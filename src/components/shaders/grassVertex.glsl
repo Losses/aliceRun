@@ -4,6 +4,10 @@ uniform float sineTime;
 
 uniform float time;
 uniform float windSpeedFactor;
+uniform float groundRadius;
+uniform float groundRatio;
+uniform float groundBeginTheta;
+uniform float groundDeltaTheta;
 uniform vec3 grassBaseColor;
 uniform vec3 grassTipColor;
 uniform float grassLeanFactor;
@@ -114,6 +118,10 @@ float easeIn(float x, float t) {
 	return pow(x, t);
 }
 
+vec3 groundCoord(float r, float x) {
+  return vec3(x, groundRadius * cos(r), groundRadius * sin(r) * groundRatio);
+}
+
 void main() {
     // Shape and position
     vec3 vPosition = position;
@@ -145,19 +153,17 @@ void main() {
 
     // Basic position calculation
     float x = float(float(xID) - float(gridSegmentsX) / 2.0) * gridSegmentWidth;
-    float y = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
-    vec3 offset = vec3(x, 0, y);
+    float theta = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
+    theta += (hashVal1.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
+    vec3 basicOffset = groundCoord(groundBeginTheta + theta, x);
+    vec3 offset = vec3(x, basicOffset.y, basicOffset.z);
+
+    // Adjust height
+    vPosition.y *= grassHeight;
+    vPosition.y *=  1. + hashVal1.y * grassHeightFactor;
 
     // Adjust position
     vPosition = vPosition + offset;
-    // Adjust height
-    vPosition.y *= grassHeight;
-
-    // Add some random value
-    vPosition.x += (hashVal1.z - 0.5) * 2. * gridSegmentWidth * grassDistanceFactor;
-    vPosition.z += (hashVal1.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
-    vPosition.y *=  1. + hashVal1.y * grassHeightFactor;
-
     
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 

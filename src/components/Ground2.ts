@@ -3,14 +3,15 @@ import * as THREE from 'three';
 import { ResourceTracker } from '../ResourceTracker';
 import { CylinderGeometry2 } from './CylinderGeometry2';
 
-const RADIUS = 120;
+export const RADIUS = 120;
 const HEIGHT = 80;
-const SCALE_Z = 3;
+export const SCALE_Z = 3;
 
-const GROUND_Y_OFFSET = 1.05;
+const GROUND_Y_OFFSET_FACTOR = 1.05;
+export const GROUND_Y_OFFSET = -RADIUS * GROUND_Y_OFFSET_FACTOR;
 
 export const groundCoord = (r: number, x: number) => {
-  return new THREE.Vector3(x, RADIUS * Math.cos(r) - RADIUS * GROUND_Y_OFFSET, RADIUS * Math.sin(r) * SCALE_Z);
+  return new THREE.Vector3(x, RADIUS * Math.cos(r) + GROUND_Y_OFFSET, RADIUS * Math.sin(r) * SCALE_Z);
 }
 
 interface IGroundItemDefinition {
@@ -54,7 +55,7 @@ export const Ground = (tracker: ResourceTracker) => {
   //@ts-ignore
   window.g = ground;
 
-  ground.position.setY(-RADIUS * GROUND_Y_OFFSET);
+  ground.position.setY(GROUND_Y_OFFSET);
 
   ground.rotateZ(Math.PI / 2);
 

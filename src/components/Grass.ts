@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ResourceTracker } from '../ResourceTracker';
 import { timeManager } from '../manager/TimeManager';
+import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
 
 function createRectanglePositions(
     width: number,
@@ -51,15 +52,15 @@ const WIND_SPEED_FACTOR = 0.5;
 const GRASS_BASE_COLOR = 0x0c3302;
 const GRASS_TIP_COLOR = 0x7f7f19;
 const GRASS_LEAN_FACTOR = 1;
-const GRASS_SEGMENTS = 5;
-const GRASS_WIDTH = 0.8;
+const GRASS_SEGMENTS = 4;
+const GRASS_WIDTH = 0.6;
 const GRASS_HEIGHT = 3;
 const GRASS_HEIGHT_FACT0R = 0.6;
 const DISTANCE_FACTOR = 5;
-const GRID_SEGMENTS_X = 64;
-const GRID_SEGMENTS_Y = 128;
-const GRID_WIDTH = 60;
-const GRID_HEIGHT = 160;
+const GRID_SEGMENTS_X = 128 * 2;
+const GRID_SEGMENTS_Y = 64 * 2;
+const GRID_WIDTH = 80;
+const GRID_HEIGHT = Math.PI / 6;
 
 export const Grass = (tracker: ResourceTracker) => {
     const positions = createRectanglePositions(GRASS_WIDTH, 1, 1, GRASS_SEGMENTS);
@@ -81,6 +82,10 @@ export const Grass = (tracker: ResourceTracker) => {
     const material = new THREE.RawShaderMaterial({
         uniforms: {
             'time': { value: 0.0 },
+            'groundRadius': {value: RADIUS},
+            'groundRatio': {value: SCALE_Z},
+            'groundBeginTheta': {value: -Math.PI / 16},
+            'groundDeltaTheta': {value: 0},
             'windSpeedFactor': {value: WIND_SPEED_FACTOR},
             'grassBaseColor': {value: new THREE.Color(GRASS_BASE_COLOR)},
             'grassTipColor': {value: new THREE.Color(GRASS_TIP_COLOR)},
@@ -104,9 +109,10 @@ export const Grass = (tracker: ResourceTracker) => {
 
     const grass = new THREE.Mesh(geometry, material);
 
-    grass.position.setY(-6.3);
+    grass.position.setY(GROUND_Y_OFFSET);
     grass.position.setZ(-GRID_HEIGHT / 2 * 0.8);
 
+    grass.frustumCulled = false;
     timeManager.addFn((time) => {
         material.uniforms['time'].value = time * 0.001;
     });
