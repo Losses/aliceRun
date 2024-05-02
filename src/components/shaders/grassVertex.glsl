@@ -3,6 +3,7 @@ precision highp float;
 uniform float sineTime;
 
 uniform float time;
+uniform float windSpeedFactor;
 uniform float grassSegments;
 uniform uint grassVectors;
 uniform float grassHeight;
@@ -111,6 +112,7 @@ float easeIn(float x, float t) {
 }
 
 void main() {
+    // Shape and position
     vec3 vPosition = position;
 
     uint xID = instanceIndex % gridSegmentsX;
@@ -129,7 +131,7 @@ void main() {
     vPosition.y *= abs((hashVal1.y - 0.5) * 2. * (1. + grassHeight) * grassHeightFactor);
     vPosition.z += (hashVal1.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
 
-    float windDir = noise12(grassWorldPos.xz * 0.05 + 0.05 * time);
+    float windDir = noise12(grassWorldPos.xz * 0.05 + windSpeedFactor * time);
     float windNoiseSample = noise12(grassWorldPos.xz * 0.25 + time * 1.0);
     float windLeanAngle = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
     windLeanAngle = easeIn(windLeanAngle, 2.0) * 1.25;
@@ -142,7 +144,8 @@ void main() {
     vPosition = grassMat * vPosition;
 
     vPosition = vPosition + offset;
-    vColor = vec4(windAxis, 1);
+    vColor = vec4(windDir, windDir, windDir, 1);
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+
 }

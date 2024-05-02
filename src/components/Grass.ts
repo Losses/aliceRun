@@ -38,6 +38,7 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
     return indices;
 }
 
+const WIND_SPEED_FACTOR = 0.5;
 const GRASS_SEGMENTS = 5;
 const GRASS_WIDTH = 0.8;
 const GRASS_HEIGHT = 3;
@@ -67,7 +68,8 @@ export const Grass = (tracker: ResourceTracker) => {
     // material
     const material = new THREE.RawShaderMaterial({
         uniforms: {
-            'time': { value: 1.0 },
+            'time': { value: 0.0 },
+            'windSpeedFactor': {value: WIND_SPEED_FACTOR},
             'grassSegments': {value: GRASS_SEGMENTS},
             'grassHeight': {value: GRASS_HEIGHT},
             'grassHeightFactor': {value: GRASS_HEIGHT_FACT0R},
