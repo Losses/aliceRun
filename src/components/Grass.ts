@@ -103,7 +103,7 @@ export const Grass = (tracker: ResourceTracker) => {
         vertexShader: require('./shaders/grassVertex.glsl'),
         fragmentShader: require('./shaders/grassFragment.glsl'),
         side: THREE.DoubleSide,
-        transparent: true,
+        transparent: false,
         glslVersion: THREE.GLSL3,
     });
 

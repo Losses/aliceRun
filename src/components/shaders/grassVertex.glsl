@@ -155,7 +155,10 @@ void main() {
     float x = float(float(xID) - float(gridSegmentsX) / 2.0) * gridSegmentWidth;
     float theta = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
     theta += (hashVal1.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
-    vec3 basicOffset = groundCoord(groundBeginTheta + theta, x);
+    vec3 basicOffset = groundCoord(
+      groundBeginTheta + mod(groundDeltaTheta + theta, (gridSegmentHeight * float(gridSegmentsY))), 
+      x
+    );
     vec3 offset = vec3(x, basicOffset.y, basicOffset.z);
 
     // Adjust height

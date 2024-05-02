@@ -6,8 +6,7 @@ import { useLerp } from '../utils/lerp';
 import { eventTarget } from './EventManager';
 import { STEP_EVENT } from '../utils/StepCounter';
 import { CylinderGeometry2 } from '../components/CylinderGeometry2';
-
-const STEP_FACTOR = 0.01;
+import { STEP_ANGLE } from '../constants/ground';
 
 export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker) => {
     const { ground } = Ground(tracker);
@@ -23,7 +22,7 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
 
     randomItems.forEach((x) => scene.add(x.mesh));
 
-    let rotate = STEP_FACTOR * Math.PI;
+    let rotate = 0;
 
     const updateRandomItemPosition = () => {
         for (let i = 0; i < randomItems.length; i += 1) {
@@ -45,7 +44,7 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     });
 
     const step = () => {
-        updateValue(rotate + STEP_FACTOR * Math.PI);
+        updateValue(rotate + STEP_ANGLE);
     }
 
     eventTarget.addEventListener(STEP_EVENT, ({ detail }) => {

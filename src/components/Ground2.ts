@@ -21,7 +21,7 @@ interface IGroundItemDefinition {
 }
 
 export const getRandomItems = (count = 50) => {
-  const geometry = new THREE.BoxGeometry(2, 2, 2);
+  const geometry = new THREE.BoxGeometry(2, 12, 2);
   const material = new THREE.MeshNormalMaterial();
 
   const items: IGroundItemDefinition[] = new Array(count).fill(undefined);
@@ -48,12 +48,9 @@ export const Ground = (tracker: ResourceTracker) => {
     openEnded: true,
     ratio: SCALE_Z,
   });
-  // const material = new THREE.MeshNormalMaterial({ wireframe: true });
+
   const material = new THREE.MeshMatcapMaterial( { color: 0x049EF4, flatShading: true } );
   const ground = new THREE.Mesh(geometry, material);
-
-  //@ts-ignore
-  window.g = ground;
 
   ground.position.setY(GROUND_Y_OFFSET);
 
