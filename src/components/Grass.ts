@@ -41,10 +41,11 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
 const WIND_SPEED_FACTOR = 0.5;
 const GRASS_BASE_COLOR = 0x0c3302;
 const GRASS_TIP_COLOR = 0x7f7f19;
+const GRASS_LEAN_FACTOR = 1;
 const GRASS_SEGMENTS = 5;
 const GRASS_WIDTH = 0.8;
-const GRASS_HEIGHT = 3;
-const GRASS_HEIGHT_FACT0R = 2;
+const GRASS_HEIGHT = 8;
+const GRASS_HEIGHT_FACT0R = 0.6;
 const DISTANCE_FACTOR = 5;
 const GRID_SEGMENTS_X = 64;
 const GRID_SEGMENTS_Y = 128;
@@ -74,6 +75,7 @@ export const Grass = (tracker: ResourceTracker) => {
             'windSpeedFactor': {value: WIND_SPEED_FACTOR},
             'grassBaseColor': {value: new THREE.Color(GRASS_BASE_COLOR)},
             'grassTipColor': {value: new THREE.Color(GRASS_TIP_COLOR)},
+            'grassLeanFactor': {value: GRASS_LEAN_FACTOR},
             'grassSegments': {value: GRASS_SEGMENTS},
             'grassHeight': {value: GRASS_HEIGHT},
             'grassHeightFactor': {value: GRASS_HEIGHT_FACT0R},
@@ -92,6 +94,8 @@ export const Grass = (tracker: ResourceTracker) => {
     });
 
     const grass = new THREE.Mesh(geometry, material);
+
+    grass.position.setY(-6.3);
 
     timeManager.addFn((time) => {
         material.uniforms['time'].value = time * 0.001;

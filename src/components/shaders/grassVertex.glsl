@@ -6,6 +6,7 @@ uniform float time;
 uniform float windSpeedFactor;
 uniform vec3 grassBaseColor;
 uniform vec3 grassTipColor;
+uniform float grassLeanFactor;
 uniform float grassSegments;
 uniform uint grassVectors;
 uniform float grassHeight;
@@ -122,36 +123,53 @@ void main() {
     uint xID = instanceIndex % gridSegmentsX;
     uint yID = instanceIndex / gridSegmentsX;
 
-    float x = float(float(xID) - float(gridSegmentsX) / 2.0) * gridSegmentWidth;
-    float y = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
+    // Commonly used random number
+    vec2 grassCoord = vec2(xID, yID);
+    vec4 hashVal1 = hash42(grassCoord);
 
-    vec3 offset = vec3(x, 0, y);
+    // Wind here
+    float windDir = noise12(grassCoord * 0.05 + windSpeedFactor * time);
+    windDir = remap(windDir, -1.0, 1.0, 0.0, 3.14159 * 2.);
 
-    vec3 grassWorldPos = (modelMatrix * vec4(offset, 1.0)).xyz;
-
-    vec4 hashVal1 = hash42(vec2(grassWorldPos.x, grassWorldPos.z));
-    float randomAngle = hashVal1.x * 2.0 * 3.14159;
-    vPosition.x += (hashVal1.z - 0.5) * 2. * gridSegmentWidth * grassDistanceFactor;
-    vPosition.y *= abs((hashVal1.y - 0.5) * 2. * (1. + grassHeight) * grassHeightFactor);
-    vPosition.z += (hashVal1.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
-
-    float windDir = noise12(grassWorldPos.xz * 0.05 + windSpeedFactor * time);
-    float windNoiseSample = noise12(grassWorldPos.xz * 0.25 + time * 1.0);
+    float windNoiseSample = noise12(grassCoord * 0.25 + time);
     float windLeanAngle = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
-    windLeanAngle = easeIn(windLeanAngle, 2.0) * 1.25;
+    windLeanAngle = easeIn(windLeanAngle, 2.0) * grassLeanFactor;
+
     vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
 
     windLeanAngle *= heightPercent;
 
+    float randomAngle = hashVal1.x * 2.0 * 3.14159;
     mat3 grassMat = rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
 
+    // Debug Curve
+    // float randomAngle = (hashVal1.x - 0.5) * 2. * grassLeanFactor;
+    // float curveAmount = randomAngle * heightPercent;
+    // mat3 grassMat = rotateX(curveAmount);
+
+    // Apply what we want
     vPosition = grassMat * vPosition;
 
+    // Basic position calculation
+    float x = float(float(xID) - float(gridSegmentsX) / 2.0) * gridSegmentWidth;
+    float y = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
+    vec3 offset = vec3(x, 0, y);
+
+    // Adjust position
     vPosition = vPosition + offset;
+    // Adjust height
+    vPosition.y *= grassHeight;
+
+    // Add some random value
+    vPosition.x += (hashVal1.z - 0.5) * 2. * gridSegmentWidth * grassDistanceFactor;
+    vPosition.z += (hashVal1.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
+    vPosition.y *=  1. + hashVal1.y * grassHeightFactor;
+
     
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 
     // color
+    // vColor = vec4(0., position.y, position.y, 1);
     vColor = vec4(mix(grassBaseColor, grassTipColor, easeIn(heightPercent, 4.)), 1);
     // vColor = vec4(windDir, windDir, windDir, 1);
 }
