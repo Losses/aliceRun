@@ -105,6 +105,7 @@ export const Grass = (tracker: ResourceTracker) => {
     const grass = new THREE.Mesh(geometry, material);
 
     grass.position.setY(-6.3);
+    grass.position.setZ(-GRID_HEIGHT / 2 * 0.8);
 
     timeManager.addFn((time) => {
         material.uniforms['time'].value = time * 0.001;
