@@ -31,7 +31,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   camera.position.set(0, 0, 40);
 
   const renderer = new THREE.WebGLRenderer();
-  console.log(renderer);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.localClippingEnabled = true;

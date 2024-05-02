@@ -18,7 +18,6 @@ export const GrassManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: 
     const [updateValue] = useLerp(
         () => rotation,
         (x) => {
-            console.log(x);
             rotation = x;
             material.uniforms.groundDeltaTheta.value = x;
             material.uniformsNeedUpdate = true;
