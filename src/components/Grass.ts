@@ -84,7 +84,7 @@ export const Grass = (tracker: ResourceTracker) => {
             'time': { value: 0.0 },
             'groundRadius': {value: RADIUS},
             'groundRatio': {value: SCALE_Z},
-            'groundBeginTheta': {value: -Math.PI / 16},
+            'groundBeginTheta': {value: -Math.PI / 7},
             'groundDeltaTheta': {value: 0},
             'windSpeedFactor': {value: WIND_SPEED_FACTOR},
             'grassBaseColor': {value: new THREE.Color(GRASS_BASE_COLOR)},
