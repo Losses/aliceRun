@@ -42,14 +42,13 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
 
 const GRASS_SEGMENTS = 9;
 const GRASS_HEIGHT_FACT0R = 0.8;
-const DISTANCE_FACTOR = 0.8;
+const DISTANCE_FACTOR = 5;
 const GRID_SEGMENTS_X = 80;
 const GRID_SEGMENTS_Y = 80;
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = 80;
 
 export const Grass = (tracker: ResourceTracker) => {
-    // geometry
     const positions = createRectanglePositions(1, 1, 1, GRASS_SEGMENTS);
     const indices = createRectangleIndices(1, GRASS_SEGMENTS);
     const offsets = [];
@@ -66,9 +65,9 @@ export const Grass = (tracker: ResourceTracker) => {
             const y = (yId - GRID_SEGMENTS_Y / 2) * gridSegmentHeight;
 
             offsets.push(
-                x + midRand() * gridSegmentWidth * DISTANCE_FACTOR,
+                x, // + midRand() * gridSegmentWidth * DISTANCE_FACTOR,
                 0,
-                y + midRand() * gridSegmentHeight * DISTANCE_FACTOR
+                y, // + midRand() * gridSegmentHeight * DISTANCE_FACTOR
             );
             colors.push(Math.random(), Math.random(), Math.random(), 1);
             rotations.push(Math.random() * Math.PI * 2);
@@ -89,7 +88,13 @@ export const Grass = (tracker: ResourceTracker) => {
         uniforms: {
             'time': { value: 1.0 },
             'heightFactor': {value: GRASS_HEIGHT_FACT0R},
-            'segments': {value: GRASS_SEGMENTS}
+            'grassSegments': {value: GRASS_SEGMENTS},
+            'grassHeightFactor': {value: GRASS_HEIGHT_FACT0R},
+            'grassDistanceFactor': {value: DISTANCE_FACTOR},
+            'gridSegmentX': {value: GRID_SEGMENTS_X},
+            'gridSegmentY': {value: GRID_SEGMENTS_Y},
+            'gridSegmentWidth': {value: gridSegmentWidth},
+            'gridSegmentHeight': {value: gridSegmentHeight},
         },
         vertexShader: require('./shaders/grassVertex.glsl'),
         fragmentShader: require('./shaders/grassFragment.glsl'),

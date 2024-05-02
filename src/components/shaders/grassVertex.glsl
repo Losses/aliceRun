@@ -3,8 +3,14 @@ precision highp float;
 uniform float sineTime;
 
 uniform float time;
-uniform float segments;
+uniform float grassSegments;
 uniform float heightFactor;
+uniform float grassHeightFactor;
+uniform float grassDistanceFactor;
+uniform uint gridSegmentX;
+uniform uint gridSegmentY;
+uniform float gridSegmentWidth;
+uniform float gridSegmentHeight;
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
@@ -111,6 +117,8 @@ void main(){
 
     vec4 hashVal1 = hash42(vec2(grassWorldPos.x, grassWorldPos.z));
     float randomAngle = hashVal1.x * 2.0 * 3.14159;
+    vPosition.x += (hashVal1.z - 0.5) * gridSegmentWidth * grassDistanceFactor * 2.;
+    vPosition.z += (hashVal1.w - 0.5) * gridSegmentHeight * grassDistanceFactor * 2.;
 
     float windDir = noise12(grassWorldPos.xz * 0.05 + 0.05 * time);
     float windNoiseSample = noise12(grassWorldPos.xz * 0.25 + time * 1.0);
@@ -122,7 +130,7 @@ void main(){
 
     mat3 grassMat = rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
 
-    vPosition.y *= segments * hashVal1.y * heightFactor + segments;
+    vPosition.y *= grassSegments * hashVal1.y * heightFactor + grassSegments;
     vPosition = grassMat * vPosition;
 
     vPosition = vPosition + offset;
