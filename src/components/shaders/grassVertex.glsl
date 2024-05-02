@@ -125,12 +125,6 @@ void main(){
     vPosition.y *= segments * hashVal1.y * heightFactor + segments;
     vPosition = grassMat * vPosition;
 
-    float rotation = hashVal1.z * 2.0 * 3.14159;
-    float cosAngle = cos(rotation);
-    float sinAngle = sin(rotation);
-    vPosition.x = cosAngle * vPosition.x - sinAngle * vPosition.z;
-    vPosition.z = sinAngle * vPosition.x + cosAngle * vPosition.z;
-
     vPosition = vPosition + offset;
     vColor = color;
 
