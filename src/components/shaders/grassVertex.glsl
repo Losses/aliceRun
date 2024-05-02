@@ -128,24 +128,17 @@ void main() {
     vec4 hashVal1 = hash42(grassCoord);
 
     // Wind here
+    float windNoiseSample = noise12(grassCoord * 0.25 + time);
+
+    float curveAmount = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
+    curveAmount = easeIn(curveAmount, 2.0) * grassLeanFactor;
+    curveAmount *= heightPercent;
+
     float windDir = noise12(grassCoord * 0.05 + windSpeedFactor * time);
     windDir = remap(windDir, -1.0, 1.0, 0.0, 3.14159 * 2.);
-
-    float windNoiseSample = noise12(grassCoord * 0.25 + time);
-    float windLeanAngle = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
-    windLeanAngle = easeIn(windLeanAngle, 2.0) * grassLeanFactor;
-
     vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
-
-    windLeanAngle *= heightPercent;
-
     float randomAngle = hashVal1.x * 2.0 * 3.14159;
-    mat3 grassMat = rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
-
-    // Debug Curve
-    // float randomAngle = (hashVal1.x - 0.5) * 2. * grassLeanFactor;
-    // float curveAmount = randomAngle * heightPercent;
-    // mat3 grassMat = rotateX(curveAmount);
+    mat3 grassMat = rotateAxis(windAxis, curveAmount) * rotateY(randomAngle);
 
     // Apply what we want
     vPosition = grassMat * vPosition;
