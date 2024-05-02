@@ -38,29 +38,24 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
     return indices;
 }
 
-const GRASS_SEGMENTS = 9;
-const GRASS_HEIGHT_FACT0R = 0.8;
+const GRASS_SEGMENTS = 5;
+const GRASS_WIDTH = 0.8;
+const GRASS_HEIGHT = 3;
+const GRASS_HEIGHT_FACT0R = 2;
 const DISTANCE_FACTOR = 5;
 const GRID_SEGMENTS_X = 64;
-const GRID_SEGMENTS_Y = 64;
+const GRID_SEGMENTS_Y = 128;
 const GRID_WIDTH = 80;
-const GRID_HEIGHT = 80;
+const GRID_HEIGHT = 160;
 
 export const Grass = (tracker: ResourceTracker) => {
-    const positions = createRectanglePositions(1, 1, 1, GRASS_SEGMENTS);
+    const positions = createRectanglePositions(GRASS_WIDTH, 1, 1, GRASS_SEGMENTS);
     const indices = createRectangleIndices(1, GRASS_SEGMENTS);
-    const colors = [];
 
     const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
     const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
 
     const instanceIndex = new Array(GRID_SEGMENTS_X * GRID_SEGMENTS_Y).fill(0).map((_, index) => index);
-
-    for (let xId = 0; xId < GRID_SEGMENTS_X; xId++) {
-        for (let yId = 0; yId < GRID_SEGMENTS_Y; yId++) {
-            colors.push(Math.random(), Math.random(), Math.random(), 1);
-        }
-    }
 
     const geometry = new THREE.InstancedBufferGeometry();
     geometry.instanceCount = GRID_SEGMENTS_X * GRID_SEGMENTS_Y;
@@ -68,14 +63,13 @@ export const Grass = (tracker: ResourceTracker) => {
     geometry.setIndex(indices);
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('instanceIndex', new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndex), 1));
-    geometry.setAttribute('color', new THREE.InstancedBufferAttribute(new Float32Array(colors), 4));
 
     // material
     const material = new THREE.RawShaderMaterial({
         uniforms: {
             'time': { value: 1.0 },
-            'heightFactor': {value: GRASS_HEIGHT_FACT0R},
             'grassSegments': {value: GRASS_SEGMENTS},
+            'grassHeight': {value: GRASS_HEIGHT},
             'grassHeightFactor': {value: GRASS_HEIGHT_FACT0R},
             'grassDistanceFactor': {value: DISTANCE_FACTOR},
             'grassVectors': {value: indices.length},
