@@ -13,10 +13,10 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     scene.add(ground);
 
     const light = new THREE.AmbientLight(0x404040); // soft white light
-    scene.add( light );
+    scene.add(light);
 
     const axesHelper = new THREE.AxesHelper(5);
-    scene.add( axesHelper );
+    scene.add(axesHelper);
 
     const randomItems = getRandomItems();
 
