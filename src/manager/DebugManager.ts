@@ -12,6 +12,9 @@ export const DebugManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: 
     const controls = new OrbitControls(camera, document.querySelector("#app") as HTMLDivElement);
     controls.update();
 
+    // const axesHelper = new THREE.AxesHelper(5);
+    // scene.add(axesHelper);
+
     tracker.track(controls);
 
     const stepGuide = document.querySelector('.step_guide')!;
