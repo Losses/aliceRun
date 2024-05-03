@@ -8,7 +8,7 @@ import { STEP_EVENT } from '../utils/StepCounter';
 import { CylinderGeometry2 } from '../components/CylinderGeometry2';
 import { STEP_ANGLE } from '../constants/ground';
 
-export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker) => {
+export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker, renderer: THREE.WebGLRenderer) => {
     const { ground } = Ground(tracker);
     scene.add(ground);
 
@@ -18,7 +18,7 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
     const axesHelper = new THREE.AxesHelper(5);
     scene.add(axesHelper);
 
-    const randomItems = getRandomItems();
+    const randomItems = getRandomItems(renderer);
 
     randomItems.forEach((x) => scene.add(x.mesh));
 
@@ -30,7 +30,7 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
 
             const { x, y, z } = groundCoord(meshR + rotate, meshX);
             mesh.position.setX(x);
-            mesh.position.setY(y);
+            mesh.position.setY(y + 12);
             mesh.position.setZ(z);
         }
     }

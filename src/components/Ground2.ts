@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { ResourceTracker } from '../ResourceTracker';
 import { CylinderGeometry2 } from './CylinderGeometry2';
+import { CompressedTexture } from '../utils/CompressedTexture';
 
 export const RADIUS = 120;
 const HEIGHT = 80;
@@ -20,8 +21,8 @@ interface IGroundItemDefinition {
   mesh: THREE.Mesh;
 }
 
-export const getRandomItems = (count = 50) => {
-  const geometry = new THREE.BoxGeometry(2, 12, 2);
+export const getRandomItems = (renderer: THREE.WebGLRenderer, count = 50) => {
+  const geometry = new THREE.PlaneGeometry(24, 24);
   const material = new THREE.MeshNormalMaterial();
 
   const items: IGroundItemDefinition[] = new Array(count).fill(undefined);
@@ -34,6 +35,11 @@ export const getRandomItems = (count = 50) => {
       mesh: mesh,
     };
   }
+
+
+  CompressedTexture('/textures/g1.ktx2', renderer).then((material) => {
+    items.map((x) => x.mesh.material = material);
+  });
 
   return items;
 }

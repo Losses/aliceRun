@@ -13,7 +13,7 @@ const config = initializeThreeCanvas(
 );
 
 DebugManager(config.camera, config.scene, config.tracker);
-GroundManager(config.camera, config.scene, config.tracker);
+GroundManager(config.camera, config.scene, config.tracker, config.renderer);
 GrassManager(config.camera, config.scene, config.tracker);
 
 window.requestAnimationFrame(() => {

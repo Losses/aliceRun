@@ -1,14 +1,17 @@
 import * as THREE from 'three';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader';
 
-var ktx2Loader = new KTX2Loader();
-ktx2Loader.setTranscoderPath('/basis/');
+export const CompressedTexture = (path: string, renderer: THREE.WebGLRenderer) => new Promise<THREE.MeshBasicMaterial>((resolve, reject) => {
+    const loader = new KTX2Loader();
+    loader.setTranscoderPath('/basis/').detectSupport(renderer);
 
-export const CompressedTexture = (path: string) => new Promise((resolve, reject) => {
-    ktx2Loader.load(
+    loader.load(
         path,
         (texture) => {
-            const material = new THREE.MeshStandardMaterial({ map: texture });
+            const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+            material.side = THREE.DoubleSide;
+            texture.center = new THREE.Vector2(0.5, 0.5);
+            texture.rotation = Math.PI;
             resolve(material);
         },
         () => {},
