@@ -9,6 +9,7 @@ export const CompressedTexture = (path: string, renderer: THREE.WebGLRenderer) =
         path,
         (texture) => {
             resolve(texture);
+            loader.dispose();
         },
         () => {},
         (e) => { reject(e) }
