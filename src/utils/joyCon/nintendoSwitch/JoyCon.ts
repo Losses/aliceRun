@@ -18,9 +18,9 @@ interface IPoint3 {
 }
 
 interface IAngle3 {
-  alpha: string;
-  beta: string;
-  gamma: string;
+  alpha: number;
+  beta: number;
+  gamma: number;
 }
 
 interface IPoint4 {

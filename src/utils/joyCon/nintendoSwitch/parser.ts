@@ -123,16 +123,16 @@ export function toEulerAngles(gyroscope: IPoint3, accelerometer: IPoint3, produc
                 ? (
                     (((-1 * (lastValues[productId].alpha * 180)) / Math.PI) * 430) %
                     90
-                ).toFixed(6)
+                )
                 : (
                     (((lastValues[productId].alpha * 180) / Math.PI) * 430) %
                     360
-                ).toFixed(6),
-        beta: ((-1 * (lastValues[productId].beta * 180)) / Math.PI).toFixed(6),
+                ),
+        beta: ((-1 * (lastValues[productId].beta * 180)) / Math.PI),
         gamma:
             productId === 0x2006
-                ? ((-1 * (lastValues[productId].gamma * 180)) / Math.PI).toFixed(6)
-                : ((lastValues[productId].gamma * 180) / Math.PI).toFixed(6),
+                ? ((-1 * (lastValues[productId].gamma * 180)) / Math.PI)
+                : ((lastValues[productId].gamma * 180) / Math.PI),
     };
 }
 
@@ -150,11 +150,11 @@ export function toEulerAnglesQuaternion(q: IPoint4) {
     return {
         alpha: (
             rad2deg * Math.atan2(2 * (q.x * q.y + q.z * q.w), xx - yy - zz + ww)
-        ).toFixed(6),
-        beta: (rad2deg * -Math.asin(2 * (q.x * q.z - q.y * q.w))).toFixed(6),
+        ),
+        beta: (rad2deg * -Math.asin(2 * (q.x * q.z - q.y * q.w))),
         gamma: (
             rad2deg * Math.atan2(2 * (q.y * q.z + q.x * q.w), -xx - yy + zz + ww)
-        ).toFixed(6),
+        ),
     };
 }
 

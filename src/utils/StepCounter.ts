@@ -64,6 +64,14 @@ export class StepCounter {
   private accY = new NumberRecord();
   private accZ = new NumberRecord();
 
+  private gyoX = new NumberRecord();
+  private gyoY = new NumberRecord();
+  private gyoZ = new NumberRecord();
+
+  private oriX = new NumberRecord();
+  private oriY = new NumberRecord();
+  private oriZ = new NumberRecord();
+
   private oriH = new NumberRecord();
   private oriV = new NumberRecord();
   
@@ -87,6 +95,12 @@ export class StepCounter {
     this.accX.recording = x;
     this.accY.recording = x;
     this.accZ.recording = x;
+    this.gyoX.recording = x;
+    this.gyoY.recording = x;
+    this.gyoZ.recording = x;
+    this.oriX.recording = x;
+    this.oriY.recording = x;
+    this.oriZ.recording = x;
     this.oriH.recording = x;
     this.oriV.recording = x;
     this.magnitude.recording = x;
@@ -115,6 +129,12 @@ export class StepCounter {
     this.accX.clear();
     this.accY.clear();
     this.accZ.clear();
+    this.gyoX.clear();
+    this.gyoY.clear();
+    this.gyoZ.clear();
+    this.oriX.clear();
+    this.oriY.clear();
+    this.oriZ.clear();
     this.oriH.clear();
     this.oriV.clear();
 
@@ -131,19 +151,33 @@ export class StepCounter {
     const packet = this.lastPacket;
     if (!packet || !packet.accelerometers) return;
 
-    const ori = packet.analogStickLeft ?? packet.analogStickRight;
+    const ori0 = packet.analogStickLeft ?? packet.analogStickRight;
+    if (!ori0) return;
 
+    const ori = packet.actualOrientation;
     if (!ori) return;
 
-    const accData = packet.accelerometers[packet.accelerometers.length - 1];
+    const gyo = packet.actualGyroscope;
+    if (!gyo) return;
+
+    const acc = packet.actualAccelerometer;
+    if (!acc) return;
 
     // Applying low-pass filter
-    this.accX.value = accData.x.acc - 1;
-    this.accY.value = accData.y.acc;
-    this.accZ.value = accData.z.acc;
+    this.accX.value = acc.x - 1;
+    this.accY.value = acc.y;
+    this.accZ.value = acc.z;
 
-    this.oriH.value = -ori.horizontal;
-    this.oriV.value = -ori.vertical;
+    this.gyoX.value = gyo.rps.x;
+    this.gyoY.value = gyo.rps.y;
+    this.gyoZ.value = gyo.rps.z;
+
+    this.oriX.value = ori.alpha;
+    this.oriY.value = ori.beta;
+    this.oriZ.value = ori.gamma;
+
+    this.oriH.value = -ori0.horizontal;
+    this.oriV.value = -ori0.vertical;
 
     // Calculating acceleration after filtering
     this.magnitude.value = this.calculateMagnitude(
@@ -195,13 +229,19 @@ export class StepCounter {
   }
 
   public dumpRecord = () => {
-    let result = 'X, Y, Z, H, V, Add, fAdd, guide, time\n';
+    let result = 'aX, aY, aZ, oX, oY, oZ, oH, oV, gX, gY, gZ, Add, fAdd, guide, time\n';
     for (let i = 0; i < this.accX.history.length; i += 1) {
       result += this.accX.history[i] + ',';
       result += this.accY.history[i] + ',';
       result += this.accZ.history[i] + ',';
+      result += this.oriX.history[i] + ',';
+      result += this.oriY.history[i] + ',';
+      result += this.oriZ.history[i] + ',';
       result += this.oriH.history[i] + ',';
       result += this.oriV.history[i] + ',';
+      result += this.gyoX.history[i] + ',';
+      result += this.gyoY.history[i] + ',';
+      result += this.gyoZ.history[i] + ',';
       result += this.magnitude.history[i] + ',';
       result += this.filteredMagnitude.history[i] + ',';
       result += this.guide.history[i] + ',';
