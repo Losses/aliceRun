@@ -49,8 +49,8 @@ export interface IPacket {
   timer?: IParseResult;
   batteryLevel?: IParseResult & IBatteryLevel;
   connectionInfo?: IParseResult;
-  analogStickLeft?: IParseResult & { horizontal: string; vertical: string };
-  analogStickRight?: IParseResult & { horizontal: string; vertical: string };
+  analogStickLeft?: IParseResult & { horizontal: number; vertical: number };
+  analogStickRight?: IParseResult & { horizontal: number; vertical: number };
   vibrator?: IParseResult;
   ack?: IParseResult;
   subcommandID?: IParseResult;

@@ -10,18 +10,21 @@ body {
   background: linear-gradient(to bottom, #4ca1af, #c4e0e5);
 }
 
-.connect_bt {
-    top: 10px;
-    right: 10px;
-    position: fixed;
+.actions {
+  top: 10px;
+  right: 10px;
+  position: fixed;
 }
 
-.joycon_freq {
+.debug {
+  width: -webkit-fill-available;
   bottom: 10px;
   left: 10px;
+  position: fixed;
   color: white;
   font-size: 2em;
-  position: fixed;
+  justify-content: space-between;
+  display: flex;
 }
 
 .joycon_freq.valid {

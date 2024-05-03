@@ -1,7 +1,7 @@
 import Stats from 'stats.js';
 import { createEventName, Event } from '@web-media/event-target';
 
-import { accX, accY, accZ, magnitude, filteredAccX, filteredAccY, filteredAccZ } from "../effects/StatsEffect";
+import { filteredMagnitude } from "../effects/StatsEffect";
 import { LowPassFilter } from "./LowPassFilter";
 import { IAcceleroMeter, IPacket } from "./joyCon/nintendoSwitch/JoyCon";
 import { eventTarget } from '../manager/EventManager';
@@ -15,12 +15,13 @@ class NumberRecord {
   private maxValue = 0;
   private _value = 0;
 
-  public readonly history: number[] = [];
+  public history: number[] = [];
+
+  public recording = false;
 
   constructor(
-    private panel: Stats.Panel,
+    private panel?: Stats.Panel,
     private _update?: (x: number) => void,
-    private recordHistory = true,
   ) {
   }
 
@@ -29,11 +30,17 @@ class NumberRecord {
     this._update?.(x);
     this.maxValue = Math.max(this.maxValue, x);
     this._value = x;
-    this.panel.update(x, this.maxValue);
+    this.panel?.update(x, this.maxValue);
 
-    if (this.recordHistory) {
+    if (this.recording) {
       this.history.push(x);
     }
+  }
+
+  clear() {
+    this.maxValue = 0;
+    this._value = 0;
+    this.history = [];
   }
 }
 
@@ -45,26 +52,48 @@ interface IStepEventDetail {
 export const STEP_EVENT = createEventName<IStepEventDetail>();
 
 export class StepCounter {
-  private static readonly STEP_THRESHOLD: number = 1.2;
+  private static readonly STEP_THRESHOLD: number = 0.5;
   private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 300;
-  private static readonly FILTER_ALPHA: number = 0.1;
+  private static readonly FILTER_ALPHA: number = 0.15;
 
   private lastStepTimestamp: number = 0;
   private stepCount: number = 0;
   private state: StepState = StepState.WAITING_FOR_PEAK;
-  private lowPassFilterX: LowPassFilter = new LowPassFilter(StepCounter.FILTER_ALPHA);
-  private lowPassFilterY: LowPassFilter = new LowPassFilter(StepCounter.FILTER_ALPHA);
-  private lowPassFilterZ: LowPassFilter = new LowPassFilter(StepCounter.FILTER_ALPHA);
 
-  private filteredAccX = new NumberRecord(filteredAccX);
-  private filteredAccY = new NumberRecord(filteredAccY);
-  private filteredAccZ = new NumberRecord(filteredAccZ);
-  private accX = new NumberRecord(accX, (x) => { this.filteredAccX.value = this.lowPassFilterX.filter(x); });
-  private accY = new NumberRecord(accY, (x) => { this.filteredAccY.value = this.lowPassFilterY.filter(x); });
-  private accZ = new NumberRecord(accZ, (x) => { this.filteredAccZ.value = this.lowPassFilterZ.filter(x); });
+  private accX = new NumberRecord();
+  private accY = new NumberRecord();
+  private accZ = new NumberRecord();
+
+  private oriH = new NumberRecord();
+  private oriV = new NumberRecord();
   
-  private magnitude = new NumberRecord(magnitude);
+  private magnitude = new NumberRecord();
+  private guide = new NumberRecord();
+  private time = new NumberRecord();
+  private magnitudeFilter: LowPassFilter = new LowPassFilter(StepCounter.FILTER_ALPHA);
+  private filteredMagnitude = new NumberRecord(filteredMagnitude);
   private maxMagnitude = 0;
+
+  private lastPacket: IPacket | null = null;
+
+  private _recording = false;
+
+  get recording() {
+    return this._recording;
+  }
+
+  set recording(x) {
+    this._recording = x;
+    this.accX.recording = x;
+    this.accY.recording = x;
+    this.accZ.recording = x;
+    this.oriH.recording = x;
+    this.oriV.recording = x;
+    this.magnitude.recording = x;
+    this.filteredMagnitude.recording = x;
+    this.guide.recording = x;
+    this.time.recording = x;
+  }
 
   constructor() {
     // @ts-ignore
@@ -76,39 +105,77 @@ export class StepCounter {
       return;
     }
 
+    this.lastPacket = packet;
+    if (!this.recording) {
+      this.tick();
+    }
+  }
+
+  reset() {
+    this.accX.clear();
+    this.accY.clear();
+    this.accZ.clear();
+    this.oriH.clear();
+    this.oriV.clear();
+
+    this.magnitude.clear();
+    this.filteredMagnitude.clear();
+    this.guide.clear();
+    this.time.clear();
+    this.maxMagnitude = 0;
+    this.lastPacket = null;
+  }
+
+  tick = () => {
     const now = Date.now();
-    const accelData: IAcceleroMeter = packet.accelerometers[packet.accelerometers.length - 1];
+    const packet = this.lastPacket;
+    if (!packet || !packet.accelerometers) return;
+
+    const ori = packet.analogStickLeft ?? packet.analogStickRight;
+
+    if (!ori) return;
+
+    const accData = packet.accelerometers[packet.accelerometers.length - 1];
 
     // Applying low-pass filter
-    this.accX.value = accelData.x.acc;
-    this.accY.value = accelData.y.acc;
-    this.accZ.value = accelData.z.acc;
+    this.accX.value = accData.x.acc - 1;
+    this.accY.value = accData.y.acc;
+    this.accZ.value = accData.z.acc;
+
+    this.oriH.value = -ori.horizontal;
+    this.oriV.value = -ori.vertical;
 
     // Calculating acceleration after filtering
     this.magnitude.value = this.calculateMagnitude(
-      this.filteredAccX.value,
-      this.filteredAccY.value,
-      this.filteredAccZ.value,
+      this.accX.value,
+      this.accY.value,
+      this.accZ.value,
     );
+    this.filteredMagnitude.value = this.magnitudeFilter.filter(this.magnitude.value);
 
     this.maxMagnitude = Math.max(this.magnitude.value, this.maxMagnitude);
 
+    this.guide.value = Date.now() % 800 > 400 ? 1 : 0;
+    this.time.value = Date.now();
+
     switch (this.state) {
       case StepState.WAITING_FOR_PEAK:
-        if (this.magnitude.value > StepCounter.STEP_THRESHOLD) {
+        if (this.oriH.value > StepCounter.STEP_THRESHOLD) {
           if (now - this.lastStepTimestamp > StepCounter.MIN_TIME_BETWEEN_STEPS_MS) {
             this.stepCount++;
             this.lastStepTimestamp = now;
 
             eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.maxMagnitude, total: this.stepCount}));
-            this.maxMagnitude = 0;
           }
           this.state = StepState.WAITING_FOR_TROUGH;
         }
         break;
       case StepState.WAITING_FOR_TROUGH:
-        if (this.magnitude.value < StepCounter.STEP_THRESHOLD) {
+        if (this.oriH.value  < Math.min(this.maxMagnitude, StepCounter.STEP_THRESHOLD)) {
+          this.stepCount++;
+          eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.maxMagnitude, total: this.stepCount}));
           this.state = StepState.WAITING_FOR_PEAK;
+          this.maxMagnitude = 0;
         }
         break;
     }
@@ -120,7 +187,7 @@ export class StepCounter {
   }
 
   private calculateMagnitude(x: number, y: number, z: number): number {
-    return Math.sqrt(x * x + y * y + z * z);
+    return -y + z;
   }
 
   public getStepCount(): number {
@@ -128,15 +195,17 @@ export class StepCounter {
   }
 
   public dumpRecord = () => {
-    let result = 'fX, fY, fZ, X, Y, Z, Mag,';
-    for (let i = 0; i < this.filteredAccX.history.length; i += 1) {
-      result += this.filteredAccX.history[i] + ',';
-      result += this.filteredAccY.history[i] + ',';
-      result += this.filteredAccZ.history[i] + ',';
+    let result = 'X, Y, Z, H, V, Add, fAdd, guide, time\n';
+    for (let i = 0; i < this.accX.history.length; i += 1) {
       result += this.accX.history[i] + ',';
       result += this.accY.history[i] + ',';
       result += this.accZ.history[i] + ',';
+      result += this.oriH.history[i] + ',';
+      result += this.oriV.history[i] + ',';
       result += this.magnitude.history[i] + ',';
+      result += this.filteredMagnitude.history[i] + ',';
+      result += this.guide.history[i] + ',';
+      result += this.time.history[i] + '';
       result += '\n';
     }
     const element = document.createElement("a");

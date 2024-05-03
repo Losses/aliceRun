@@ -311,14 +311,14 @@ export function parseAnalogStick(rawData: Uint8Array, data: string[]) {
 }
 
 export function parseAnalogStickLeft(rawData: Uint8Array, data: string[]) {
-    let horizontal: number | string = rawData[6] | ((rawData[7] & 0xf) << 8);
+    let horizontal: number = rawData[6] | ((rawData[7] & 0xf) << 8);
     // ToDo: This should use proper calibration data and not a magic number
     // (1995).
-    horizontal = ((horizontal / 1995 - 1) * 2).toFixed(1);
-    let vertical: number | string = ((rawData[7] >> 4) | (rawData[8] << 4)) * -1;
+    horizontal = (horizontal / 1995 - 1) * 2;
+    let vertical: number = ((rawData[7] >> 4) | (rawData[8] << 4)) * -1;
     // ToDo: This should use proper calibration data and not a magic number
     // (2220).
-    vertical = ((vertical / 2220 + 1) * 2).toFixed(1);
+    vertical = Number.parseFloat(((vertical / 2220 + 1) * 2).toFixed(1));
     const analogStickLeft = {
         _raw: rawData.slice(6, 9), // index 6,7,8
         _hex: data.slice(6, 9),
@@ -330,14 +330,14 @@ export function parseAnalogStickLeft(rawData: Uint8Array, data: string[]) {
 }
 
 export function parseAnalogStickRight(rawData: Uint8Array, data: string[]) {
-    let horizontal: number | string = rawData[9] | ((rawData[10] & 0xf) << 8);
+    let horizontal: number = rawData[9] | ((rawData[10] & 0xf) << 8);
     // ToDo: This should use proper calibration data and not a magic number
     // (1995).
-    horizontal = ((horizontal / 1995 - 1) * 2).toFixed(1);
-    let vertical: number | string = ((rawData[10] >> 4) | (rawData[11] << 4)) * -1;
+    horizontal = ((horizontal / 1995 - 1) * 2);
+    let vertical: number = ((rawData[10] >> 4) | (rawData[11] << 4)) * -1;
     // ToDo: This should use proper calibration data and not a magic number
     // (2220).
-    vertical = ((vertical / 2220 + 1) * 2).toFixed(1);
+    vertical = (vertical / 2220 + 1) * 2;
     const analogStickRight = {
         _raw: rawData.slice(9, 12), // index 9,10,11
         _hex: data.slice(9, 12),

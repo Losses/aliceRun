@@ -14,7 +14,11 @@ export const DebugManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: 
 
     tracker.track(controls);
 
-    timeManager.addFn(() => controls.update(), FrameRateLevel.D0);
+    const stepGuide = document.querySelector('.step_guide')!;
+    timeManager.addFn(() => {
+        controls.update();
+        stepGuide.textContent = Date.now() % 800 > 400 ? 'UP' : 'DOWN';
+    }, FrameRateLevel.D0);
 
     return { };
 }
