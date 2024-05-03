@@ -11,7 +11,7 @@ export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tr
     plane.translate(0, 12, 0);
 
     const geometry = new THREE.InstancedBufferGeometry();
-    geometry.instanceCount = 10;
+    geometry.instanceCount = 4;
 
     const instanceIndex = new Array(geometry.instanceCount).fill(0).map((_, index) => index);
 
