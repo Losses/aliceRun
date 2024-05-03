@@ -6,11 +6,7 @@ import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6;
 
-export const GroundObject = (src: string, tracker: ResourceTracker) => {
-    // CompressedTexture('/textures/g1.ktx2', renderer).then((material) => {
-    //     items.map((x) => x.mesh.material = material);
-    //   });
-    
+export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tracker: ResourceTracker) => {
     const plane = new THREE.PlaneGeometry(24, 24);
 
     const geometry = new THREE.InstancedBufferGeometry();
@@ -19,6 +15,7 @@ export const GroundObject = (src: string, tracker: ResourceTracker) => {
     const instanceIndex = new Array(geometry.instanceCount).fill(0).map((_, index) => index);
 
     geometry.setIndex(plane.index);
+    geometry.setAttribute('uv', plane.getAttribute('uv'));
     geometry.setAttribute('position', plane.getAttribute('position'));
     geometry.setAttribute('instanceIndex', new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndex), 1));
 
@@ -27,6 +24,7 @@ export const GroundObject = (src: string, tracker: ResourceTracker) => {
         uniforms: {
             'time': { value: 0.0 },
             'seed': { value: Math.random() },
+            'map': { value: null },
             'gridWidth': { value: GRID_WIDTH },
             'gridHeight': { value: GRID_HEIGHT },
             'groundRadius': { value: RADIUS },
@@ -35,10 +33,15 @@ export const GroundObject = (src: string, tracker: ResourceTracker) => {
             'groundDeltaTheta': { value: 0 },
         },
         vertexShader: require('./shaders/groundObjectVertex.glsl'),
-        fragmentShader: require('./shaders/grassFragment.glsl'),
+        fragmentShader: require('./shaders/groundObjectFragment.glsl'),
         side: THREE.DoubleSide,
-        transparent: false,
+        transparent: true,
         glslVersion: THREE.GLSL3,
+    });
+
+    Promise.resolve(texture).then((x) => {
+        material.uniforms.map.value = x;
+        material.uniformsNeedUpdate = true;
     });
 
     const groundObject = new THREE.Mesh(geometry, material);

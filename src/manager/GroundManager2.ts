@@ -9,11 +9,9 @@ import { ResourceTracker } from '../ResourceTracker';
 import { CylinderGeometry2 } from '../components/CylinderGeometry2';
 import { GroundObject } from '../components/GroundObject';
 
-export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker, renderer: THREE.WebGLRenderer) => {
+export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker) => {
     const { ground } = Ground(tracker);
-    const { groundObject: treeG1 } = GroundObject('', tracker);
     scene.add(ground);
-    scene.add(treeG1);
 
     const light = new THREE.AmbientLight(0x404040); // soft white light
     scene.add(light);
@@ -25,8 +23,6 @@ export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker:
 
     const [updateValue] = useLerp(() => rotate, (x) => {
         (ground.geometry as CylinderGeometry2).updateTheta(-x);
-        treeG1.material.uniforms.groundDeltaTheta.value = x;
-        treeG1.material.uniformsNeedUpdate = true;
         rotate = x;
     });
 

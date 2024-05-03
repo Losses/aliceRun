@@ -7,14 +7,16 @@ import { eventTarget } from './manager/EventManager';
 import { STEP_EVENT } from './utils/StepCounter';
 import { GrassManager } from './manager/GrassManager';
 import { DebugManager } from './manager/DebugManager';
+import { GroundObjectManager } from './manager/GroundObjectManager';
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
 );
 
 DebugManager(config.camera, config.scene, config.tracker);
-GroundManager(config.camera, config.scene, config.tracker, config.renderer);
+GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);
+GroundObjectManager(config.camera, config.scene, config.tracker, config.renderer);
 
 window.requestAnimationFrame(() => {
   timeManager.addFn(() => config.composer.render(), FrameRateLevel.D0);

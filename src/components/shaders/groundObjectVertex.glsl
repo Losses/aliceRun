@@ -14,11 +14,12 @@ uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
+in vec2 uv;
 in vec3 position;
 in uint instanceIndex;
 
 out vec3 vPosition;
-out vec4 vColor;
+out vec2 vUv;
 
 uint murmurHash12(uvec2 src) {
   const uint M = 0x5bd1e995u;
@@ -66,7 +67,7 @@ void main() {
 
     // Basic position calculation
     float x = (randomValue1.x - 0.5) * gridWidth;
-    float theta = inPlaneTheta + baseTheta;
+    float theta = mod(inPlaneTheta, gridHeight) + groundBeginTheta;
     vec3 offset = groundCoord(theta, x);
 
     // Adjust position
@@ -74,6 +75,5 @@ void main() {
     
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 
-    // color
-    vColor = vec4(1, 0, 0, 1);
+    vUv = uv;
 }
