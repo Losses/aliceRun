@@ -8,9 +8,10 @@ const GRID_HEIGHT = Math.PI / 6;
 
 export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tracker: ResourceTracker) => {
     const plane = new THREE.PlaneGeometry(24, 24);
+    plane.translate(0, 12, 0);
 
     const geometry = new THREE.InstancedBufferGeometry();
-    geometry.instanceCount = 50;
+    geometry.instanceCount = 10;
 
     const instanceIndex = new Array(geometry.instanceCount).fill(0).map((_, index) => index);
 
@@ -26,15 +27,14 @@ export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tr
             'seed': { value: Math.random() },
             'map': { value: null },
             'gridWidth': { value: GRID_WIDTH },
-            'gridHeight': { value: GRID_HEIGHT },
+            'gridHeight': { value: GRID_HEIGHT * 2.2 },
             'groundRadius': { value: RADIUS },
             'groundRatio': { value: SCALE_Z },
-            'groundBeginTheta': { value: -Math.PI / 7 },
+            'groundBeginTheta': { value: -Math.PI / 3 },
             'groundDeltaTheta': { value: 0 },
         },
         vertexShader: require('./shaders/groundObjectVertex.glsl'),
         fragmentShader: require('./shaders/groundObjectFragment.glsl'),
-        depthWrite: false,
         side: THREE.DoubleSide,
         transparent: true,
         glslVersion: THREE.GLSL3,
