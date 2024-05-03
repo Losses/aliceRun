@@ -30,9 +30,10 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   );
   camera.position.set(0, 0, 40);
 
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
   renderer.localClippingEnabled = true;
   tracker.track(renderer);
 

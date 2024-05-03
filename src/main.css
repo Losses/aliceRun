@@ -7,6 +7,7 @@ body {
 #three_canvas {
   width: 100vw !important;
   height: 100vh !important;
+  background: linear-gradient(to bottom, #4ca1af, #c4e0e5);
 }
 
 .connect_bt {
