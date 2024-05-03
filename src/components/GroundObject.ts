@@ -34,6 +34,7 @@ export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tr
         },
         vertexShader: require('./shaders/groundObjectVertex.glsl'),
         fragmentShader: require('./shaders/groundObjectFragment.glsl'),
+        depthWrite: false,
         side: THREE.DoubleSide,
         transparent: true,
         glslVersion: THREE.GLSL3,
