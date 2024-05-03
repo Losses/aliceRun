@@ -60,7 +60,7 @@ const DISTANCE_FACTOR = 5;
 const GRID_SEGMENTS_X = 128 * 2;
 const GRID_SEGMENTS_Y = 64 * 2;
 const GRID_WIDTH = 80;
-const GRID_HEIGHT = Math.PI / 6;
+const GRID_HEIGHT = Math.PI / 6 + 0.1;
 
 export const Grass = (tracker: ResourceTracker) => {
     const positions = createRectanglePositions(GRASS_WIDTH, 1, 1, GRASS_SEGMENTS);

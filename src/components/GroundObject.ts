@@ -26,6 +26,7 @@ export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tr
             'time': { value: 0.0 },
             'seed': { value: Math.random() },
             'map': { value: null },
+            'roadRatio': { value: 0.2 },
             'gridWidth': { value: GRID_WIDTH },
             'gridHeight': { value: GRID_HEIGHT * 2.2 },
             'groundRadius': { value: RADIUS },

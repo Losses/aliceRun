@@ -4,6 +4,7 @@ uniform float sineTime;
 
 uniform float time;
 uniform float seed;
+uniform float roadRatio;
 uniform float gridWidth;
 uniform float gridHeight;
 uniform float groundRadius;
@@ -66,7 +67,16 @@ void main() {
     vec3 randomValue1 = hash33(vec3(instanceIndex, seed, rounds));
 
     // Basic position calculation
-    float x = (randomValue1.x - 0.5) * gridWidth;
+    float xRatio = randomValue1.x - 0.5;
+    float halfRoadRatio = roadRatio / 2.;
+
+    if (xRatio < 0.) {
+      xRatio -= halfRoadRatio;
+    } else {
+      xRatio += halfRoadRatio;
+    }
+
+    float x =  xRatio * gridWidth;
     float theta = mod(inPlaneTheta, gridHeight) + groundBeginTheta;
     vec3 offset = groundCoord(theta, x);
 
