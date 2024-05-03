@@ -58,9 +58,9 @@ const GRASS_HEIGHT = 3;
 const GRASS_HEIGHT_FACT0R = 0.6;
 const DISTANCE_FACTOR = 5;
 const GRID_SEGMENTS_X = 128 * 2;
-const GRID_SEGMENTS_Y = 64 * 2;
+const GRID_SEGMENTS_Y = 64 * 1.5;
 const GRID_WIDTH = 80;
-const GRID_HEIGHT = Math.PI / 6 + 0.1;
+const GRID_HEIGHT = Math.PI / 8 + 0.1;
 
 export const Grass = (tracker: ResourceTracker) => {
     const positions = createRectanglePositions(GRASS_WIDTH, 1, 1, GRASS_SEGMENTS);
@@ -84,7 +84,7 @@ export const Grass = (tracker: ResourceTracker) => {
             'time': { value: 0.0 },
             'groundRadius': {value: RADIUS},
             'groundRatio': {value: SCALE_Z},
-            'groundBeginTheta': {value: -Math.PI / 7},
+            'groundBeginTheta': {value: -Math.PI / 8},
             'groundDeltaTheta': {value: 0},
             'windSpeedFactor': {value: WIND_SPEED_FACTOR},
             'grassBaseColor': {value: new THREE.Color(GRASS_BASE_COLOR)},
