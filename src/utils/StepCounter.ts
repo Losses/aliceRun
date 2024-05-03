@@ -15,9 +15,12 @@ class NumberRecord {
   private maxValue = 0;
   private _value = 0;
 
+  public readonly history: number[] = [];
+
   constructor(
     private panel: Stats.Panel,
     private _update?: (x: number) => void,
+    private recordHistory = true,
   ) {
   }
 
@@ -27,6 +30,10 @@ class NumberRecord {
     this.maxValue = Math.max(this.maxValue, x);
     this._value = x;
     this.panel.update(x, this.maxValue);
+
+    if (this.recordHistory) {
+      this.history.push(x);
+    }
   }
 }
 
@@ -58,6 +65,11 @@ export class StepCounter {
   
   private magnitude = new NumberRecord(magnitude);
   private maxMagnitude = 0;
+
+  constructor() {
+    // @ts-ignore
+    window.dumpRecord = this.dumpRecord;
+  }
 
   public processPacket(packet: IPacket): void {
     if (!packet.accelerometers) {
@@ -113,5 +125,29 @@ export class StepCounter {
 
   public getStepCount(): number {
     return this.stepCount;
+  }
+
+  public dumpRecord = () => {
+    let result = 'fX, fY, fZ, X, Y, Z, Mag,';
+    for (let i = 0; i < this.filteredAccX.history.length; i += 1) {
+      result += this.filteredAccX.history[i] + ',';
+      result += this.filteredAccY.history[i] + ',';
+      result += this.filteredAccZ.history[i] + ',';
+      result += this.accX.history[i] + ',';
+      result += this.accY.history[i] + ',';
+      result += this.accZ.history[i] + ',';
+      result += this.magnitude.history[i] + ',';
+      result += '\n';
+    }
+    const element = document.createElement("a");
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result));
+    element.setAttribute('download', `acc-${Date.now()}.csv`);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
   }
 }
