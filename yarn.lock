@@ -548,7 +548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/plugin@npm:2.12.0":
+"@parcel/plugin@npm:2.12.0, @parcel/plugin@npm:^2.0.0-beta.1":
   version: 2.12.0
   resolution: "@parcel/plugin@npm:2.12.0"
   dependencies:
@@ -2825,6 +2825,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parcel-reporter-static-files-copy@npm:^1.5.3":
+  version: 1.5.3
+  resolution: "parcel-reporter-static-files-copy@npm:1.5.3"
+  dependencies:
+    "@parcel/plugin": "npm:^2.0.0-beta.1"
+  checksum: 10/d9f6157f774f132a24ccbcc7a6407f2f75107f86306bee4f002406bc3e18d3a80d595f12bd3a6c2bd43621ead59b31aaba967521fcaf6f60e80fd62cc142e5d4
+  languageName: node
+  linkType: hard
+
 "parcel@npm:2.12.0":
   version: 2.12.0
   resolution: "parcel@npm:2.12.0"
@@ -3320,6 +3329,7 @@ __metadata:
     chart.js: "npm:^3.7.1"
     lodash: "npm:4.17.20"
     parcel: "npm:2.12.0"
+    parcel-reporter-static-files-copy: "npm:^1.5.3"
     random-seed: "npm:^0.3.0"
     stats.js: "npm:^0.17.0"
     three: "npm:0.138.3"

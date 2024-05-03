@@ -24,7 +24,11 @@
     "@types/three": "0.138.0",
     "@types/w3c-web-hid": "^1.0.2",
     "parcel": "2.12.0",
+    "parcel-reporter-static-files-copy": "^1.5.3",
     "typescript": "5.4.5"
+  },
+  "staticFiles": {
+    "staticPath": "static"
   },
   "keywords": [],
   "packageManager": "yarn@4.1.1"
