@@ -13,8 +13,17 @@
 
 <body>
   <div id="app"></div>
-  <div id="title_screen">
-    <section class="title_section">
+  <section class="connect_section screen">
+    <button class="connect_bt">
+      <img class="joycon" alt="Joycon" src="src/assets/images/joycon.svg" />
+      <div class="hint">
+        <div>Connect to your</div>
+        <div class="large">Joy-Con</div>
+      </div>
+    </button>
+  </section>
+  <div class="connected hidden">
+    <section class="title_section screen">
       <div class="logo_container"><img class="logo" alt="Logo" src="src/assets/images/logo.svg" /></div>
       <div class="button_container"><button>Single Player</button></div>
       <div class="button_container"><button>Multiple Player</button></div>
@@ -23,7 +32,6 @@
     </section>
   </div>
   <div class="actions">
-    <button class="connect_bt" type="button">Connect Controller</button>
     <button class="start_record" type="button">Record</button>
   </div>
   <div class="debug">

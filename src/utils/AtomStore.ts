@@ -123,6 +123,23 @@ export class AtomStore {
     this.eventTarget.fire(new Event(eventName, value));
   }
 
+  createStore<T>(initialValue: T) {
+    const store = AtomDefinition<T>(initialValue);
+    this.register(store);
+    const that = this;
+    return {
+      get value() {
+        return that.getValue(store);
+      },
+      set value(x: T) {
+        that.setValue(store, x);
+      },
+      subscribe: (fn: Subscriber<T>) => {
+        this.subscribe(store, fn);
+      },
+    };
+  }
+
   dispose() {
     this.store.clear();
     this.eventNameTable.clear();

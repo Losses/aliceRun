@@ -37,14 +37,71 @@ body {
   display: flex;
 }
 
-/** Title Screen **/
+button {
+  background: rgba(255, 255, 255, 0.25);
+  border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
+  border-width: 1px;
+  border-style: solid;
+  color: white;
+  font-family: "Raleway", sans-serif;
+  font-weight: 200;
+  backdrop-filter: blur(4px);
+  transition: border-image, backdrop-filter 200ms;
+}
 
-#title_screen {
+button:hover {
+  border-image: linear-gradient(60deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 1)) 10%;
+  backdrop-filter: blur(20px);
+}
+
+.screen {
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   position: absolute;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/** Joycon Screen **/
+
+.connect_section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.connect_bt {
+  padding: 0.5em 2em;
+  font-size: 1.6em;
+  display: flex;
+  min-width: 280px;
+  justify-content: center;
+  align-items: center;
+}
+
+.connect_bt .joycon {
+  height: 5.5em;
+  margin-right: 0.3em;
+}
+
+.connect_bt .hint {
+  font-weight: 400;
+  padding-right: 0.5em;
+  text-align: start;
+}
+
+.connect_bt .large {
+  font-size: 1.6em;
+  font-weight: 800;
+}
+
+/** Title Screen **/
+
+#title_screen {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,8 +109,12 @@ body {
 }
 
 .title_section {
+  top: 50%;
   width: 100%;
+  height: min-content;
   text-align: center;
+  position: absolute;
+  transform: translateY(-50%);
 }
 
 .title_section > div {
@@ -69,21 +130,7 @@ body {
 .title_section button {
   width: 100%;
   max-width: 400px;
+  font-size: 26px;
   margin: 20px 0;
   padding: 12px;
-  border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
-  border-width: 1px;
-  border-style: solid;
-  color: white;
-  font-size: 26px;
-  font-family: "Raleway", sans-serif;
-  font-weight: 200;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
-  transition: border-image, backdrop-filter 200ms;
-}
-
-.title_section button:hover {
-  border-image: linear-gradient(60deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 1)) 10%;
-  backdrop-filter: blur(20px);
 }
