@@ -1181,13 +1181,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.161":
-  version: 4.14.161
-  resolution: "@types/lodash@npm:4.14.161"
-  checksum: 10/a84ad7362b0d08eb658ff2324c86dc8cec6742ca93a0893d48c99b1f5b233b7eedd168b9c46f485a7fd88d67c5ac17286f552ff241e12019b7c38fef4c238fab
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:^20.12.8":
   version: 20.12.8
   resolution: "@types/node@npm:20.12.8"
@@ -1201,13 +1194,6 @@ __metadata:
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
   checksum: 10/4df9de98150d2978afc2161482a3a8e6617883effba3223324f079de97ba7eabd7d84b90ced11c3f82b0c08d4a8383f678c9f73e9c41258f769b3fa234a2bb4f
-  languageName: node
-  linkType: hard
-
-"@types/random-seed@npm:^0.3.3":
-  version: 0.3.3
-  resolution: "@types/random-seed@npm:0.3.3"
-  checksum: 10/df09d84043a0f0c88bb993cfc88efae30d8360f51e04eb74bc03a64f962c987c43753c3b422c1d5fda96462f0ae24c044671aacfa9530f2adc0afb38be6b2eee
   languageName: node
   linkType: hard
 
@@ -1440,13 +1426,6 @@ __metadata:
     ansi-styles: "npm:^4.1.0"
     supports-color: "npm:^7.1.0"
   checksum: 10/cb3f3e594913d63b1814d7ca7c9bafbf895f75fbf93b92991980610dfd7b48500af4e3a5d4e3a8f337990a96b168d7eb84ee55efdce965e2ee8efc20f8c8f139
-  languageName: node
-  linkType: hard
-
-"chart.js@npm:^3.7.1":
-  version: 3.7.1
-  resolution: "chart.js@npm:3.7.1"
-  checksum: 10/6bbc976bb740103deb89abce5bec999d344b6469c69ddd12037d150067a3ecc0f5a81562a933f21ca94062d5b0e3ac54c543797859754992d6c5d05a7a6515cf
   languageName: node
   linkType: hard
 
@@ -2275,13 +2254,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stringify-safe@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "json-stringify-safe@npm:5.0.1"
-  checksum: 10/59169a081e4eeb6f9559ae1f938f656191c000e0512aa6df9f3c8b2437a4ab1823819c6b9fd1818a4e39593ccfd72e9a051fdd3e2d1e340ed913679e888ded8c
-  languageName: node
-  linkType: hard
-
 "json5@npm:^2.2.0":
   version: 2.2.0
   resolution: "json5@npm:2.2.0"
@@ -2441,13 +2413,6 @@ __metadata:
   bin:
     download-lmdb-prebuilds: bin/download-prebuilds.js
   checksum: 10/250625da0ba036b481d1dadafae1fd2ae09b2cad637fe2dba5f297675cdfb046a2828731872e9ed8aed532dce67714545f63bdcfee4d1b19ccfa1bbe8d8eefbc
-  languageName: node
-  linkType: hard
-
-"lodash@npm:4.17.20":
-  version: 4.17.20
-  resolution: "lodash@npm:4.17.20"
-  checksum: 10/a5f94125d73e38853d37d7307f1ca26df057376c992d4ef13ceda38936fb81bb9e60d53da0b36e47576edcd565f5bed98671704045c6df0730dcf1fcee14851e
   languageName: node
   linkType: hard
 
@@ -2975,15 +2940,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"random-seed@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "random-seed@npm:0.3.0"
-  dependencies:
-    json-stringify-safe: "npm:^5.0.1"
-  checksum: 10/7e6b395736a84d0c7c8610e4fa81cf630814fa51dd332841732714f2a5a0012cf0813d37bfaff2b73957fe4b83e0c5a8f41f990ddf3109db921854789686e713
-  languageName: node
-  linkType: hard
-
 "react-error-overlay@npm:6.0.9":
   version: 6.0.9
   resolution: "react-error-overlay@npm:6.0.9"
@@ -3319,18 +3275,13 @@ __metadata:
   resolution: "three-typescript-template@workspace:."
   dependencies:
     "@parcel/transformer-glsl": "npm:2.12.0"
-    "@types/lodash": "npm:4.14.161"
     "@types/node": "npm:^20.12.8"
-    "@types/random-seed": "npm:^0.3.3"
     "@types/stats.js": "npm:^0.17.3"
     "@types/three": "npm:0.138.0"
     "@types/w3c-web-hid": "npm:^1.0.2"
     "@web-media/event-target": "npm:^0.0.2"
-    chart.js: "npm:^3.7.1"
-    lodash: "npm:4.17.20"
     parcel: "npm:2.12.0"
     parcel-reporter-static-files-copy: "npm:^1.5.3"
-    random-seed: "npm:^0.3.0"
     stats.js: "npm:^0.17.0"
     three: "npm:0.138.3"
     tslib: "npm:^2.3.1"

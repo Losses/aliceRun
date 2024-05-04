@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { ResourceTracker } from '../ResourceTracker';
 import { timeManager } from '../manager/TimeManager';
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
+import { VISUAL_LOAD } from '../stores/visualLoad';
 
 function createRectanglePositions(
     width: number,
@@ -48,6 +49,10 @@ function createRectangleIndices(widthSegments: number, heightSegments: number) {
     return indices;
 }
 
+const SEGMENTS_BASE_X = 128 * 2;
+const SEGMENTS_BASE_Y = 64 * 1.5;
+const MAX_SEGMENTS = SEGMENTS_BASE_X * SEGMENTS_BASE_Y;
+
 const WIND_SPEED_FACTOR = 0.5;
 const GRASS_BASE_COLOR = 0x0c3302;
 const GRASS_TIP_COLOR = 0x7f7f19;
@@ -57,8 +62,8 @@ const GRASS_WIDTH = 0.6;
 const GRASS_HEIGHT = 3;
 const GRASS_HEIGHT_FACT0R = 0.6;
 const DISTANCE_FACTOR = 5;
-const GRID_SEGMENTS_X = 128 * 2;
-const GRID_SEGMENTS_Y = 64 * 1.5;
+const GRID_SEGMENTS_X = Math.ceil(SEGMENTS_BASE_X * VISUAL_LOAD.value);
+const GRID_SEGMENTS_Y = Math.ceil(SEGMENTS_BASE_Y * VISUAL_LOAD.value);
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 8 + 0.1;
 
@@ -69,7 +74,7 @@ export const Grass = (tracker: ResourceTracker) => {
     const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
     const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
 
-    const instanceIndex = new Array(GRID_SEGMENTS_X * GRID_SEGMENTS_Y).fill(0).map((_, index) => index);
+    const instanceIndex = new Array(MAX_SEGMENTS).fill(0).map((_, index) => index);
 
     const geometry = new THREE.InstancedBufferGeometry();
     geometry.instanceCount = GRID_SEGMENTS_X * GRID_SEGMENTS_Y;
@@ -119,6 +124,18 @@ export const Grass = (tracker: ResourceTracker) => {
 
     tracker.track(geometry);
     tracker.track(material);
+
+    VISUAL_LOAD.subscribe((value) => {
+        const Xs = Math.ceil(SEGMENTS_BASE_X * value);
+        const Ys = Math.ceil(SEGMENTS_BASE_Y * value);
+        geometry.instanceCount = Xs * Ys;
+        material.uniforms.gridSegmentsX.value = Xs;
+        material.uniforms.gridSegmentsY.value = Ys;
+        material.uniforms.gridSegmentWidth.value = GRID_WIDTH / Xs;
+        material.uniforms.gridSegmentHeight.value = GRID_HEIGHT / Ys;
+
+        material.uniformsNeedUpdate = true;
+    });
 
     return { grass };
 }

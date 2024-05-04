@@ -40,7 +40,7 @@ body {
 
 .glass {
   color: white;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.24);
   border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
   border-width: 1px;
   border-style: solid;
