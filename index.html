@@ -13,7 +13,7 @@
 
 <body>
   <div id="app"></div>
-  <section class="connect_section screen">
+  <section class="connect_section screen hidden">
     <button class="connect_bt">
       <img class="joycon" alt="Joycon" src="src/assets/images/joycon.svg" />
       <div class="hint">
@@ -22,12 +22,21 @@
       </div>
     </button>
   </section>
-  <div class="connected hidden">
-    <section class="title_section screen">
+  <div class="connected">
+    <section class="title_section centered_section screen" data-router="/">
       <div class="logo_container"><img class="logo" alt="Logo" src="src/assets/images/logo.svg" /></div>
       <div class="button_container"><button>Single Player</button></div>
       <div class="button_container"><button>Multiple Player</button></div>
-      <div class="button_container"><button>Settings</button>
+      <div class="button_container"><button data-to-router="/settings">Settings</button></div>
+    </section>
+    <section class="settings_section centered_section screen hidden" data-router="/settings">
+      <div class="large">Settings</div>
+      <button data-to-router="/settings/diagnosis-hid">Diagnoses HID Data</button>
+      <button data-to-router="/">Back</button>
+    </section>
+    <section class="recording screen hidden" data-router="/settings/diagnosis-hid">
+      <div>
+        Up and Down
       </div>
     </section>
   </div>

@@ -8,11 +8,13 @@ import { STEP_EVENT } from './utils/StepCounter';
 import { GrassManager } from './manager/GrassManager';
 import { DebugManager } from './manager/DebugManager';
 import { GroundObjectManager } from './manager/GroundObjectManager';
+import { RouterManager } from './manager/RouterManager';
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
 );
 
+RouterManager();
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);

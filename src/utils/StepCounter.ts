@@ -1,47 +1,13 @@
-import Stats from 'stats.js';
 import { createEventName, Event } from '@web-media/event-target';
 
-import { filteredMagnitude } from "../effects/StatsEffect";
-import { LowPassFilter } from "./LowPassFilter";
-import { IAcceleroMeter, IPacket } from "./joyCon/nintendoSwitch/JoyCon";
+import { Sparkline } from './Sparkline';
 import { eventTarget } from '../manager/EventManager';
+import { type IPacket } from "./joyCon/nintendoSwitch/JoyCon";
+import { LowPassFilter } from "./LowPassFilter";
 
 enum StepState {
   WAITING_FOR_PEAK,
   WAITING_FOR_TROUGH
-}
-
-class NumberRecord {
-  private maxValue = 0;
-  private _value = 0;
-
-  public history: number[] = [];
-
-  public recording = false;
-
-  constructor(
-    private panel?: Stats.Panel,
-    private _update?: (x: number) => void,
-  ) {
-  }
-
-  get value() { return this._value };
-  set value(x: number) {
-    this._update?.(x);
-    this.maxValue = Math.max(this.maxValue, x);
-    this._value = x;
-    this.panel?.update(x, this.maxValue);
-
-    if (this.recording) {
-      this.history.push(x);
-    }
-  }
-
-  clear() {
-    this.maxValue = 0;
-    this._value = 0;
-    this.history = [];
-  }
 }
 
 interface IStepEventDetail {
@@ -60,26 +26,25 @@ export class StepCounter {
   private stepCount: number = 0;
   private state: StepState = StepState.WAITING_FOR_PEAK;
 
-  private accX = new NumberRecord();
-  private accY = new NumberRecord();
-  private accZ = new NumberRecord();
+  private data = {
+    accX: new Sparkline(),
+    accY: new Sparkline(),
+    accZ: new Sparkline(),
+    gyoX: new Sparkline(),
+    gyoY: new Sparkline(),
+    gyoZ: new Sparkline(),
+    oriX: new Sparkline(),
+    oriY: new Sparkline(),
+    oriZ: new Sparkline(),
+    oriH: new Sparkline(),
+    oriV: new Sparkline(),
+    magnitude: new Sparkline(),
+    guide: new Sparkline(),
+    time: new Sparkline(),
+    filteredMagnitude: new Sparkline(),
+  } as const;
 
-  private gyoX = new NumberRecord();
-  private gyoY = new NumberRecord();
-  private gyoZ = new NumberRecord();
-
-  private oriX = new NumberRecord();
-  private oriY = new NumberRecord();
-  private oriZ = new NumberRecord();
-
-  private oriH = new NumberRecord();
-  private oriV = new NumberRecord();
-  
-  private magnitude = new NumberRecord();
-  private guide = new NumberRecord();
-  private time = new NumberRecord();
   private magnitudeFilter: LowPassFilter = new LowPassFilter(StepCounter.FILTER_ALPHA);
-  private filteredMagnitude = new NumberRecord(filteredMagnitude);
   private maxMagnitude = 0;
 
   private lastPacket: IPacket | null = null;
@@ -92,21 +57,18 @@ export class StepCounter {
 
   set recording(x) {
     this._recording = x;
-    this.accX.recording = x;
-    this.accY.recording = x;
-    this.accZ.recording = x;
-    this.gyoX.recording = x;
-    this.gyoY.recording = x;
-    this.gyoZ.recording = x;
-    this.oriX.recording = x;
-    this.oriY.recording = x;
-    this.oriZ.recording = x;
-    this.oriH.recording = x;
-    this.oriV.recording = x;
-    this.magnitude.recording = x;
-    this.filteredMagnitude.recording = x;
-    this.guide.recording = x;
-    this.time.recording = x;
+    Object.values(this.data).forEach((a) => a.recording = x);
+  }
+
+  private _monitoring = false;
+
+  get monitoring() {
+    return this._recording;
+  }
+
+  set monitoring(x) {
+    this._monitoring = x;
+    Object.values(this.data).forEach((a) => a.monitoring = x);
   }
 
   constructor() {
@@ -126,24 +88,9 @@ export class StepCounter {
   }
 
   reset() {
-    this.accX.clear();
-    this.accY.clear();
-    this.accZ.clear();
-    this.gyoX.clear();
-    this.gyoY.clear();
-    this.gyoZ.clear();
-    this.oriX.clear();
-    this.oriY.clear();
-    this.oriZ.clear();
-    this.oriH.clear();
-    this.oriV.clear();
-
-    this.magnitude.clear();
-    this.filteredMagnitude.clear();
-    this.guide.clear();
-    this.time.clear();
     this.maxMagnitude = 0;
     this.lastPacket = null;
+    Object.values(this.data).forEach((a) => a.clear());
   }
 
   tick = () => {
@@ -164,37 +111,37 @@ export class StepCounter {
     if (!acc) return;
 
     // Applying low-pass filter
-    this.accX.value = acc.x - 1;
-    this.accY.value = acc.y;
-    this.accZ.value = acc.z;
+    this.data.accX.value = acc.x - 1;
+    this.data.accY.value = acc.y;
+    this.data.accZ.value = acc.z;
 
-    this.gyoX.value = gyo.rps.x;
-    this.gyoY.value = gyo.rps.y;
-    this.gyoZ.value = gyo.rps.z;
+    this.data.gyoX.value = gyo.rps.x;
+    this.data.gyoY.value = gyo.rps.y;
+    this.data.gyoZ.value = gyo.rps.z;
 
-    this.oriX.value = ori.alpha;
-    this.oriY.value = ori.beta;
-    this.oriZ.value = ori.gamma;
+    this.data.oriX.value = ori.alpha;
+    this.data.oriY.value = ori.beta;
+    this.data.oriZ.value = ori.gamma;
 
-    this.oriH.value = -ori0.horizontal;
-    this.oriV.value = -ori0.vertical;
+    this.data.oriH.value = -ori0.horizontal;
+    this.data.oriV.value = -ori0.vertical;
 
     // Calculating acceleration after filtering
-    this.magnitude.value = this.calculateMagnitude(
-      this.accX.value,
-      this.accY.value,
-      this.accZ.value,
+    this.data.magnitude.value = this.calculateMagnitude(
+      this.data.accX.value,
+      this.data.accY.value,
+      this.data.accZ.value,
     );
-    this.filteredMagnitude.value = this.magnitudeFilter.filter(this.magnitude.value);
+    this.data.filteredMagnitude.value = this.magnitudeFilter.filter(this.data.magnitude.value);
 
-    this.maxMagnitude = Math.max(this.magnitude.value, this.maxMagnitude);
+    this.maxMagnitude = Math.max(this.data.magnitude.value, this.maxMagnitude);
 
-    this.guide.value = Date.now() % 800 > 400 ? 1 : 0;
-    this.time.value = Date.now();
+    this.data.guide.value = Date.now() % 800 > 400 ? 1 : 0;
+    this.data.time.value = Date.now();
 
     switch (this.state) {
       case StepState.WAITING_FOR_PEAK:
-        if (this.oriH.value > StepCounter.STEP_THRESHOLD) {
+        if (this.data.oriH.value > StepCounter.STEP_THRESHOLD) {
           if (now - this.lastStepTimestamp > StepCounter.MIN_TIME_BETWEEN_STEPS_MS) {
             this.stepCount++;
             this.lastStepTimestamp = now;
@@ -205,7 +152,7 @@ export class StepCounter {
         }
         break;
       case StepState.WAITING_FOR_TROUGH:
-        if (this.oriH.value  < Math.min(this.maxMagnitude, StepCounter.STEP_THRESHOLD)) {
+        if (this.data.oriH.value  < Math.min(this.maxMagnitude, StepCounter.STEP_THRESHOLD)) {
           this.stepCount++;
           eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.maxMagnitude, total: this.stepCount}));
           this.state = StepState.WAITING_FOR_PEAK;
@@ -230,22 +177,22 @@ export class StepCounter {
 
   public dumpRecord = () => {
     let result = 'aX, aY, aZ, oX, oY, oZ, oH, oV, gX, gY, gZ, Add, fAdd, guide, time\n';
-    for (let i = 0; i < this.accX.history.length; i += 1) {
-      result += this.accX.history[i] + ',';
-      result += this.accY.history[i] + ',';
-      result += this.accZ.history[i] + ',';
-      result += this.oriX.history[i] + ',';
-      result += this.oriY.history[i] + ',';
-      result += this.oriZ.history[i] + ',';
-      result += this.oriH.history[i] + ',';
-      result += this.oriV.history[i] + ',';
-      result += this.gyoX.history[i] + ',';
-      result += this.gyoY.history[i] + ',';
-      result += this.gyoZ.history[i] + ',';
-      result += this.magnitude.history[i] + ',';
-      result += this.filteredMagnitude.history[i] + ',';
-      result += this.guide.history[i] + ',';
-      result += this.time.history[i] + '';
+    for (let i = 0; i < this.data.accX.history.length; i += 1) {
+      result += this.data.accX.history[i] + ',';
+      result += this.data.accY.history[i] + ',';
+      result += this.data.accZ.history[i] + ',';
+      result += this.data.oriX.history[i] + ',';
+      result += this.data.oriY.history[i] + ',';
+      result += this.data.oriZ.history[i] + ',';
+      result += this.data.oriH.history[i] + ',';
+      result += this.data.oriV.history[i] + ',';
+      result += this.data.gyoX.history[i] + ',';
+      result += this.data.gyoY.history[i] + ',';
+      result += this.data.gyoZ.history[i] + ',';
+      result += this.data.magnitude.history[i] + ',';
+      result += this.data.filteredMagnitude.history[i] + ',';
+      result += this.data.guide.history[i] + ',';
+      result += this.data.time.history[i] + '';
       result += '\n';
     }
     const element = document.createElement("a");

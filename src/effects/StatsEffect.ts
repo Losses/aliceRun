@@ -10,8 +10,6 @@ const RAW_MAGNITUDE_COLOR_D = '#161f0b';
 export const stats = new Stats();
 stats.showPanel(0);
 
-export const filteredMagnitude = stats.addPanel(new Stats.Panel('Magnitude', FILTERED_ACC_COLOR_A, FILTERED_ACC_COLOR_D));
-
 function animate() {
     stats.end();
     stats.begin();
