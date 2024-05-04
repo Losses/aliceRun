@@ -9,12 +9,14 @@ import { GrassManager } from './manager/GrassManager';
 import { DebugManager } from './manager/DebugManager';
 import { GroundObjectManager } from './manager/GroundObjectManager';
 import { RouterManager } from './manager/RouterManager';
+import { DiagnosisManager } from './manager/DiagnosisManager';
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
 );
 
 RouterManager();
+DiagnosisManager();
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);

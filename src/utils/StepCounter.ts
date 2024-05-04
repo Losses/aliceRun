@@ -26,7 +26,7 @@ export class StepCounter {
   private stepCount: number = 0;
   private state: StepState = StepState.WAITING_FOR_PEAK;
 
-  private data = {
+  public readonly data = {
     accX: new Sparkline(),
     accY: new Sparkline(),
     accZ: new Sparkline(),
@@ -63,7 +63,7 @@ export class StepCounter {
   private _monitoring = false;
 
   get monitoring() {
-    return this._recording;
+    return this._monitoring;
   }
 
   set monitoring(x) {
@@ -82,9 +82,7 @@ export class StepCounter {
     }
 
     this.lastPacket = packet;
-    if (!this.recording) {
-      this.tick();
-    }
+    this.tick();
   }
 
   reset() {
@@ -128,9 +126,9 @@ export class StepCounter {
 
     // Calculating acceleration after filtering
     this.data.magnitude.value = this.calculateMagnitude(
-      this.data.accX.value,
-      this.data.accY.value,
-      this.data.accZ.value,
+      this.data.gyoX.value,
+      this.data.gyoY.value,
+      -this.data.gyoZ.value,
     );
     this.data.filteredMagnitude.value = this.magnitudeFilter.filter(this.data.magnitude.value);
 
@@ -159,6 +157,12 @@ export class StepCounter {
           this.maxMagnitude = 0;
         }
         break;
+    }
+  }
+
+  updateSparklines = () => {
+    if (this._monitoring) {
+      Object.values(this.data).forEach((x) => x.tick());
     }
   }
 

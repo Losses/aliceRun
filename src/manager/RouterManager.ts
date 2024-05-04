@@ -19,4 +19,6 @@ export const RouterManager = () => {
             }
         });
     });
+
+    ROUTER_ID.value = '/';
 }

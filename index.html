@@ -13,8 +13,8 @@
 
 <body>
   <div id="app"></div>
-  <section class="connect_section screen hidden">
-    <button class="connect_bt">
+  <section class="connect_section screen">
+    <button class="connect_bt glass">
       <img class="joycon" alt="Joycon" src="src/assets/images/joycon.svg" />
       <div class="hint">
         <div>Connect to your</div>
@@ -22,26 +22,33 @@
       </div>
     </button>
   </section>
-  <div class="connected">
+  <div class="connected hidden">
     <section class="title_section centered_section screen" data-router="/">
       <div class="logo_container"><img class="logo" alt="Logo" src="src/assets/images/logo.svg" /></div>
-      <div class="button_container"><button>Single Player</button></div>
-      <div class="button_container"><button>Multiple Player</button></div>
-      <div class="button_container"><button data-to-router="/settings">Settings</button></div>
+      <button class="menu-button glass">Single Player</button>
+      <button class="menu-button glass">Multiple Player</button>
+      <button class="menu-button glass" data-to-router="/settings">Settings</button>
     </section>
-    <section class="settings_section centered_section screen hidden" data-router="/settings">
-      <div class="large">Settings</div>
-      <button data-to-router="/settings/diagnosis-hid">Diagnoses HID Data</button>
-      <button data-to-router="/">Back</button>
+    <section class="settings_section centered_section screen" data-router="/settings">
+      <div class="menu-title">Settings</div>
+      <button class="menu-button glass" data-to-router="/settings/diagnosis-hid">Diagnoses HID</button>
+      <button class="menu-button glass" data-to-router="/">Back</button>
     </section>
-    <section class="recording screen hidden" data-router="/settings/diagnosis-hid">
-      <div>
-        Up and Down
+    <section class="recording centered_section screen" data-router="/settings/diagnosis-hid">
+      <div class="menu-title">Diagnoses HID</div>
+      <div class="menu-hint glass">
+        <p>
+          Press the record button, and the system will automatically start recording after three seconds, continuing for one minute.
+        </p>
+        <p>
+          If you are willing to help us collect debugging data for the sensor, please follow the flashing prompts to run in place.
+        </p>
       </div>
+      <div class="diagnosis-charts">
+      </div>
+      <button class="menu-button glass start_record">Record</button>
+      <button class="menu-button glass" data-to-router="/settings">Back</button>
     </section>
-  </div>
-  <div class="actions">
-    <button class="start_record" type="button">Record</button>
   </div>
   <div class="debug">
     <div class="joycon_freq">FREQ</div>

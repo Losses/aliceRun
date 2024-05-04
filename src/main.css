@@ -6,6 +6,8 @@ body {
   font-optical-sizing: auto;
   font-weight: 100;
   font-style: normal;
+  color: white;
+  text-shadow: 0 0 2em rgba(37, 60, 64, 0.5);
 }
 
 #app {
@@ -31,27 +33,30 @@ body {
   bottom: 10px;
   left: 10px;
   position: fixed;
-  color: white;
   font-size: 2em;
   justify-content: space-between;
   display: flex;
 }
 
-button {
-  background: rgba(255, 255, 255, 0.25);
+.glass {
+  color: white;
+  background: rgba(0, 0, 0, 0.1);
   border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
   border-width: 1px;
   border-style: solid;
-  color: white;
-  font-family: "Raleway", sans-serif;
-  font-weight: 200;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
   transition: border-image, backdrop-filter 200ms;
 }
 
-button:hover {
+.glass:hover {
   border-image: linear-gradient(60deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 1)) 10%;
   backdrop-filter: blur(20px);
+}
+
+button {
+  font-family: "Raleway", sans-serif;
+  font-weight: 200;
+  text-shadow: 0 0 1em rgba(37, 60, 64, 0.7);
 }
 
 .screen {
@@ -64,6 +69,35 @@ button:hover {
 
 .hidden {
   display: none !important;
+}
+
+.menu-button {
+  width: 100%;
+  max-width: 400px;
+  font-size: 26px;
+  margin: 20px auto;
+  padding: 12px;
+  display: block;
+}
+
+.menu-title {
+  font-size: 3em;
+  font-weight: 800;
+  margin-bottom: 0.6em;
+}
+
+.menu-hint {
+  max-width: 600px;
+  margin: 0 auto;
+  font-weight: 300;
+  line-height: 1.5em;
+  text-align: left;
+  padding: 0.5em 1em;
+}
+
+.menu-hint p {
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
 }
 
 /** Joycon Screen **/
@@ -127,10 +161,34 @@ button:hover {
   margin: 40px 0;
 }
 
-.title_section button {
-  width: 100%;
-  max-width: 400px;
-  font-size: 26px;
-  margin: 20px 0;
-  padding: 12px;
+/** Diagnosis screen **/
+
+.diagnosis-charts {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.diagnosis-sparkline-container {
+  margin: 7px;
+  display: inline-block;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.diagnosis-sparkline-container .label {
+  top: 0;
+  left: 0;
+  height: calc(100% - 2px);
+  width: 35%;
+  padding: 0 8px;
+  margin: 1px;
+  font-size: 0.6em;
+  text-align: left;
+  margin-right: 8px;
+  overflow: hidden;
+  line-height: 50px;
+  display: inline-block;
+  position: absolute;
+  font-weight: 600;
+  background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
 }

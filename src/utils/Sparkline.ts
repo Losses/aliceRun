@@ -25,19 +25,29 @@ export class NumberRecord {
     }
 }
 
+const SPACE_RATIO = 0.1;
+
 export class Sparkline {
     public readonly $canvas = document.createElement('canvas');
     private readonly context: CanvasRenderingContext2D | null = null;
 
     monitoring = false;
-    private data = new WindowedArray(100);
+    private data = new WindowedArray(2000);
 
     public readonly record = new NumberRecord();
 
     constructor() {
         this.context = this.$canvas.getContext('2d');
-        this.$canvas.width = 100;
-        this.$canvas.height = 50;
+
+        const dpr = window.devicePixelRatio || 1;
+
+        this.$canvas.classList.add('glass');
+
+        this.$canvas.width = 400 * dpr;
+        this.$canvas.height = 50 * dpr;
+
+        this.$canvas.style.width = '200px';
+        this.$canvas.style.height = '50px';
     }
 
     get value() {
@@ -80,16 +90,16 @@ export class Sparkline {
         const max = this.data.max;
         const min = this.data.min;
 
-        const normalizedData = data.map(value => (value - min) / (max - min));
+        const normalizedData = data.map(value => SPACE_RATIO + ((value - min) / (max - min) * (1 - SPACE_RATIO * 2)));
+
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
 
         ctx.beginPath();
         ctx.moveTo(0, $canvas.height - normalizedData[0] * $canvas.height);
         normalizedData.forEach((value, index) => {
             ctx.lineTo(index * step, $canvas.height - value * $canvas.height);
         });
-
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 2;
 
         ctx.stroke();
     }
