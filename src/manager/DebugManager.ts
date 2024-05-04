@@ -22,7 +22,12 @@ export const DebugManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: 
         controls.update();
     }, FrameRateLevel.D0);
 
-    
+    const vJoyCon = new URLSearchParams(location.search).get('virtualJoyCon');
+    if (vJoyCon !== null) {
+        document.querySelector('.connect_section')?.classList.add('hidden');
+        document.querySelector('.connected')?.classList.remove('hidden');
+    }
+
     //@ts-ignore
     window.step = stepCounter.mockStep;
     return { };
