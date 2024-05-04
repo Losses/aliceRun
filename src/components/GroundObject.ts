@@ -6,6 +6,8 @@ import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6;
 
+const MAX_INSTANCE_COUNT = 4;
+
 export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tracker: ResourceTracker) => {
     const plane = new THREE.PlaneGeometry(24, 24);
     plane.translate(0, 12, 0);
@@ -13,7 +15,7 @@ export const GroundObject = (texture: THREE.Texture | Promise<THREE.Texture>, tr
     const geometry = new THREE.InstancedBufferGeometry();
     geometry.instanceCount = 4;
 
-    const instanceIndex = new Array(geometry.instanceCount).fill(0).map((_, index) => index);
+    const instanceIndex = new Array(MAX_INSTANCE_COUNT).fill(0).map((_, index) => index);
 
     geometry.setIndex(plane.index);
     geometry.setAttribute('uv', plane.getAttribute('uv'));
