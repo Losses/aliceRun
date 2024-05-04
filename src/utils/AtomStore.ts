@@ -140,6 +140,32 @@ export class AtomStore {
     };
   }
 
+  createMemorizedStore<T>(initialValue: T, key: string) {
+    let localInitialValue = initialValue;
+
+    try {
+      const str = localStorage.getItem(key);
+      if (!str) throw undefined;
+      localInitialValue = JSON.parse(str);
+    } catch (e) {}
+
+    const store = AtomDefinition<T>(localInitialValue);
+    this.register(store);
+    const that = this;
+    return {
+      get value() {
+        return that.getValue(store);
+      },
+      set value(x: T) {
+        localStorage.setItem(key, JSON.stringify(x));
+        that.setValue(store, x);
+      },
+      subscribe: (fn: Subscriber<T>) => {
+        this.subscribe(store, fn);
+      },
+    };
+  }
+
   dispose() {
     this.store.clear();
     this.eventNameTable.clear();

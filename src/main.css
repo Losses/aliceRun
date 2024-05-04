@@ -40,7 +40,7 @@ body {
 
 .glass {
   color: white;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
   border-width: 1px;
   border-style: solid;
@@ -51,6 +51,56 @@ body {
 .glass:hover {
   border-image: linear-gradient(60deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 1)) 10%;
   backdrop-filter: blur(20px);
+}
+
+.glass-slide {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  margin: 20px auto;
+  padding: 12px;
+  font-size: 26px;
+  font-weight: 200;
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transition: color 200ms;
+}
+
+.glass-slide:hover {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.glass-slide input[type="range"] {
+  top: 0;
+  left: 0;
+  width: calc(100% - 4px);
+  height: calc(100% - 6px);
+  position: absolute;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.glass-slide input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  border: transparent;
+}
+
+.glass-slide input[type="range"]::-webkit-slider-thumb {
+  width: 10px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  margin-top: 2px;
+  height: 51px;
+}
+
+.glass-slide:hover input[type="range"]::-webkit-slider-thumb {
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
 }
 
 button {
