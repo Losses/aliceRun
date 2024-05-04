@@ -135,22 +135,6 @@ void main() {
     vec2 grassCoord = vec2(xID, yID);
     vec4 hashVal1 = hash42(grassCoord);
 
-    // Wind here
-    float windNoiseSample = noise12(grassCoord * 0.25 + time);
-
-    float curveAmount = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
-    curveAmount = easeIn(curveAmount, 2.0) * grassLeanFactor;
-    curveAmount *= heightPercent;
-
-    float windDir = noise12(grassCoord * 0.05 + windSpeedFactor * time);
-    windDir = remap(windDir, -1.0, 1.0, 0.0, 3.14159 * 2.);
-    vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
-    float randomAngle = hashVal1.x * 2.0 * 3.14159;
-    mat3 grassMat = rotateAxis(windAxis, curveAmount) * rotateY(randomAngle);
-
-    // Apply what we want
-    vPosition = grassMat * vPosition;
-
     // Basic position calculation
     float x = float(float(xID) - float(gridSegmentsX) / 2.0) * gridSegmentWidth;
     float theta = float(float(yID) - float(gridSegmentsY) / 2.0) * gridSegmentHeight;
@@ -160,6 +144,21 @@ void main() {
       x
     );
     vec3 offset = vec3(x, basicOffset.y, basicOffset.z);
+
+
+    // Wind here
+    float windNoiseSample = noise12(offset.xz * 0.25 + time);
+    float curveAmount = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
+    curveAmount = easeIn(curveAmount, 1.5) * grassLeanFactor;
+    curveAmount *= heightPercent;
+    float windDir = noise12(offset.xz * 0.05 + windSpeedFactor * time);
+    windDir = remap(windDir, -1.0, 1.0, 0.0, 3.14159 * 2.);
+    vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
+    float randomAngle = hashVal1.x * 2.0 * 3.14159;
+    mat3 grassMat = rotateAxis(windAxis, curveAmount) * rotateY(randomAngle);
+
+    // Apply what we want
+    vPosition = grassMat * vPosition;
 
     // Adjust height
     vPosition.y *= grassHeight;
@@ -173,5 +172,5 @@ void main() {
     // color
     // vColor = vec4(0., position.y, position.y, 1);
     vColor = vec4(mix(grassBaseColor, grassTipColor, easeIn(heightPercent, 4.)), 1);
-    // vColor = vec4(windDir, windDir, windDir, 1);
+    // vColor = vec4(curveAmount, curveAmount, curveAmount, 1);
 }
