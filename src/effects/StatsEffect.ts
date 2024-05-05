@@ -7,15 +7,15 @@ const FILTERED_ACC_COLOR_D = '#000d0b';
 const RAW_MAGNITUDE_COLOR_A = '#8BC34A';
 const RAW_MAGNITUDE_COLOR_D = '#161f0b';
 
-export const stats = new Stats();
-stats.showPanel(0);
+// export const stats = new Stats();
+// stats.showPanel(0);
 
-function animate() {
-    stats.end();
-    stats.begin();
-    requestAnimationFrame(animate);
-}
+// function animate() {
+//     stats.end();
+//     stats.begin();
+//     requestAnimationFrame(animate);
+// }
 
-requestAnimationFrame(animate);
+// requestAnimationFrame(animate);
 
-document.body.appendChild(stats.dom);
+// document.body.appendChild(stats.dom);

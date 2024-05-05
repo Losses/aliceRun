@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
     rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="src/main.css" />
   <title>Alice! Run!</title>
 </head>
@@ -25,9 +27,31 @@
   <div class="connected hidden">
     <section class="title_section centered_section screen" data-router="/">
       <div class="logo_container"><img class="logo" alt="Logo" src="src/assets/images/logo.svg" /></div>
-      <button class="menu-button glass" data-click-sound="glass-click.m4a">Single Player</button>
+      <button class="menu-button glass" data-to-router="/single" data-click-sound="glass-click.m4a">Single Player</button>
       <button class="menu-button glass">Multiple Player</button>
       <button class="menu-button glass" data-to-router="/settings">Settings</button>
+    </section>
+    <section class="screen" data-router="/single">
+      <div class="stat">
+        <div class="stat-item">
+          <div class="title">TYPE</div>
+          <div class="value type-value">--</div>
+        </div>
+        <div class="stat-item">
+          <div class="title">STEPS</div>
+          <div class="value steps-value">0000</div>
+        </div>
+        <div class="stat-item">
+          <div class="title">SPM</div>
+          <div class="value spm-value">000</div>
+        </div>
+        <div class="stat-item">
+          <div class="title">TIME</div>
+          <div class="value time-value">000:00</div>
+        </div>
+      </div>
+      
+      <button class="back_to_title glass" data-to-router="/">Back</button>
     </section>
     <section class="settings_section centered_section screen" data-router="/settings">
       <div class="menu-title">Settings</div>
@@ -57,9 +81,6 @@
       <button class="menu-button glass start_record">Record</button>
       <button class="menu-button glass" data-to-router="/settings">Back</button>
     </section>
-  </div>
-  <div class="debug">
-    <div class="joycon_freq">FREQ</div>
   </div>
   <script src="src/index.ts" type="module"></script>
 </body>

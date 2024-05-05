@@ -242,3 +242,31 @@ button {
   font-weight: 600;
   background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
 }
+
+/** Single Player **/
+.stat {
+  top: 0;
+  right: 0;
+  position: fixed;
+  display: flex;
+}
+
+.stat-item {
+  margin: 20px;
+  text-align: center;
+}
+
+.stat-item .value {
+  font-size: 60px;
+  font-family: 'Inconsolata';
+  font-weight: 800;
+}
+
+.back_to_title {
+  bottom: 20px;
+  left: 20px;
+  padding: 0.25em 1em;
+  font-size: 1.5em;
+  font-weight: 300;
+  position: fixed;
+}

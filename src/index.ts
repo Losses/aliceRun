@@ -10,6 +10,7 @@ import { RouterManager } from './manager/RouterManager';
 import { DiagnosisManager } from './manager/DiagnosisManager';
 import { SettingsManager } from './manager/SettingsManager';
 import { AudioManager } from './manager/AudioManager';
+import { RunStatManager } from './manager/RunStatManager';
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
@@ -19,6 +20,7 @@ RouterManager();
 DiagnosisManager();
 SettingsManager();
 AudioManager();
+RunStatManager();
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);
