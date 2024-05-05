@@ -11,6 +11,7 @@ import { DiagnosisManager } from './manager/DiagnosisManager';
 import { SettingsManager } from './manager/SettingsManager';
 import { AudioManager } from './manager/AudioManager';
 import { RunStatManager } from './manager/RunStatManager';
+import { ColorManager } from './manager/ColorManager';
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
@@ -21,6 +22,7 @@ DiagnosisManager();
 SettingsManager();
 AudioManager();
 RunStatManager();
+ColorManager();
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);

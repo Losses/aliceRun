@@ -108,6 +108,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@material/material-color-utilities@npm:^0.2.7":
+  version: 0.2.7
+  resolution: "@material/material-color-utilities@npm:0.2.7"
+  checksum: 10/7f32774664fdbe385616bfc429454c0a4420ac47255a352d7df7e238537b34b237ee252627e74165dbd236f305730da2abe661765d17769fdb8de485808c305c
+  languageName: node
+  linkType: hard
+
 "@mischnic/json-sourcemap@npm:^0.1.0":
   version: 0.1.1
   resolution: "@mischnic/json-sourcemap@npm:0.1.1"
@@ -3274,6 +3281,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "three-typescript-template@workspace:."
   dependencies:
+    "@material/material-color-utilities": "npm:^0.2.7"
     "@parcel/transformer-glsl": "npm:2.12.0"
     "@types/node": "npm:^20.12.8"
     "@types/stats.js": "npm:^0.17.3"

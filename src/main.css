@@ -20,6 +20,7 @@ body {
   width: 100vw !important;
   height: 100vh !important;
   background: linear-gradient(to bottom, #4ca1af, #c4e0e5);
+  /* background: linear-gradient(to bottom, #23074d, #cc5333); */
 }
 
 .actions {
