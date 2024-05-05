@@ -15,3 +15,5 @@ export const updateCanvasSize = () => {
 }
 
 RENDERING_DETAIL.subscribe(updateCanvasSize);
+
+export const RENDERING_PIXELATED = store.createMemorizedStore(false, 'alice-run-pixelated');

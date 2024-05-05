@@ -1,4 +1,4 @@
-import { RENDERING_DETAIL, VISUAL_LOAD } from "../stores/settings";
+import { RENDERING_DETAIL, RENDERING_PIXELATED, VISUAL_LOAD } from "../stores/settings";
 
 export const SettingsManager = () => {
     const $visualLoad = document.querySelector('.visual-load') as HTMLInputElement | null;
@@ -22,4 +22,23 @@ export const SettingsManager = () => {
         const value = parseFloat((event.target as HTMLInputElement).value);
         RENDERING_DETAIL.value = value;
     });
+
+    const $pixelated = document.querySelector('.rendering-pixelated') as HTMLInputElement | null;
+
+    if (!$pixelated) return;
+
+    $pixelated.checked = RENDERING_PIXELATED.value;
+
+    $pixelated.addEventListener('change', (event: Event) => {
+        const value = (event.target as HTMLInputElement).checked;
+        RENDERING_PIXELATED.value = value;
+    });
+
+    RENDERING_PIXELATED.subscribe((x) => {
+        if (x) {
+            document.body.classList.add('pixelated');
+        } else {
+            document.body.classList.remove('pixelated');
+        }
+    }, true);
 }

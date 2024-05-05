@@ -134,8 +134,12 @@ export class AtomStore {
       set value(x: T) {
         that.setValue(store, x);
       },
-      subscribe: (fn: Subscriber<T>) => {
+      subscribe: (fn: Subscriber<T>, instantlyTrigger = false) => {
         this.subscribe(store, fn);
+
+        if (instantlyTrigger) {
+          fn(that.getValue(store));
+        }
       },
     };
   }
@@ -160,8 +164,12 @@ export class AtomStore {
         localStorage.setItem(key, JSON.stringify(x));
         that.setValue(store, x);
       },
-      subscribe: (fn: Subscriber<T>) => {
+      subscribe: (fn: Subscriber<T>, instantlyTrigger = false) => {
         this.subscribe(store, fn);
+
+        if (instantlyTrigger) {
+          fn(that.getValue(store));
+        }
       },
     };
   }

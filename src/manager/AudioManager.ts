@@ -4,6 +4,8 @@ const ALL_SOUNDS = [
     'glass-enter.m4a',
     'slide-down.m4a',
     'slide-up.m4a',
+    'checkbox-on.m4a',
+    'checkbox-off.m4a',
 ] as const;
 
 export const AudioManager = async () => {
@@ -39,11 +41,23 @@ export const AudioManager = async () => {
     });
 
     document.querySelectorAll('.glass-slide').forEach(($) => {
-        $.addEventListener('mousedown', (event) => {
+        $.addEventListener('mousedown', () => {
             playSound('slide-down.m4a');
         });
-        $.addEventListener('mouseup', (event) => {
+        $.addEventListener('mouseup', () => {
             playSound('slide-up.m4a');
+        });
+    });
+
+    document.querySelectorAll('.glass-checkbox input').forEach(($) => {
+        $.addEventListener('change', (event) => {
+            const target = event.target as HTMLInputElement;
+
+            if (target.checked) {
+                playSound('checkbox-on.m4a');
+            } else {
+                playSound('checkbox-off.m4a');
+            }
         });
     });
 };
