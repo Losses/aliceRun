@@ -8,6 +8,7 @@ export const CompressedTexture = (path: string, renderer: THREE.WebGLRenderer) =
     loader.load(
         path,
         (texture) => {
+            texture.encoding = THREE.LinearEncoding;
             resolve(texture);
             loader.dispose();
         },
