@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { CANVAS_SIZE, updateCanvasSize } from "./stores/settings";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
 
 import { ResourceTracker } from "./ResourceTracker";
@@ -49,19 +50,16 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   finalComposer.addPass(renderScene);
   finalComposer.addPass(smaaPass);
 
-  function onWindowResize() {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-
+  CANVAS_SIZE.subscribe(({width, height}) => {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
     renderer.setSize(width, height);
     smaaPass.setSize(width, height);
     finalComposer.setSize(width, height);
-  }
+  });
 
-  window.addEventListener("resize", onWindowResize, false);
+  window.addEventListener("resize", updateCanvasSize, false);
 
   $container.appendChild(renderer.domElement);
 

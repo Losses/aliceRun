@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { ResourceTracker } from '../ResourceTracker';
 import { timeManager } from '../manager/TimeManager';
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
-import { VISUAL_LOAD } from '../stores/visualLoad';
+import { VISUAL_LOAD } from '../stores/settings';
 
 function createRectanglePositions(
     width: number,
