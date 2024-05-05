@@ -68,6 +68,7 @@ export const DiagnosisManager = () => {
             if (!trueRecording) {
                 stepCounter.reset();
                 stepCounter.recording = true;
+                trueRecording = true;
             }
             $recordButton.textContent = 'Stop';
         }

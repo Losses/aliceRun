@@ -18,9 +18,9 @@ interface IStepEventDetail {
 export const STEP_EVENT = createEventName<IStepEventDetail>();
 
 export class StepCounter {
-  private static readonly STEP_THRESHOLD: number = 0.5;
+  private static readonly STEP_THRESHOLD_LOW: number = -0.007;
+  private static readonly STEP_THRESHOLD_HIGH: number = 0.007;
   private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 300;
-  private static readonly FILTER_ALPHA: number = 0.15;
 
   private lastStepTimestamp: number = 0;
   private stepCount: number = 0;
@@ -41,10 +41,8 @@ export class StepCounter {
     magnitude: new Sparkline(),
     guide: new Sparkline(),
     time: new Sparkline(),
-    filteredMagnitude: new Sparkline(),
   } as const;
 
-  private magnitudeFilter: LowPassFilter = new LowPassFilter(StepCounter.FILTER_ALPHA);
   private maxMagnitude = 0;
 
   private lastPacket: IPacket | null = null;
@@ -130,7 +128,6 @@ export class StepCounter {
       this.data.gyoY.value,
       -this.data.gyoZ.value,
     );
-    this.data.filteredMagnitude.value = this.magnitudeFilter.filter(this.data.magnitude.value);
 
     this.maxMagnitude = Math.max(this.data.magnitude.value, this.maxMagnitude);
 
@@ -139,22 +136,24 @@ export class StepCounter {
 
     switch (this.state) {
       case StepState.WAITING_FOR_PEAK:
-        if (this.data.oriH.value > StepCounter.STEP_THRESHOLD) {
+        if (this.data.gyoY.value < StepCounter.STEP_THRESHOLD_LOW) {
           if (now - this.lastStepTimestamp > StepCounter.MIN_TIME_BETWEEN_STEPS_MS) {
             this.stepCount++;
             this.lastStepTimestamp = now;
 
             eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.maxMagnitude, total: this.stepCount}));
+            this.maxMagnitude = 0;
           }
           this.state = StepState.WAITING_FOR_TROUGH;
         }
         break;
       case StepState.WAITING_FOR_TROUGH:
-        if (this.data.oriH.value  < Math.min(this.maxMagnitude, StepCounter.STEP_THRESHOLD)) {
+        if (this.data.gyoY.value > Math.min(this.maxMagnitude, StepCounter.STEP_THRESHOLD_HIGH)) {
           this.stepCount++;
+
           eventTarget.dispatchEvent(new Event(STEP_EVENT, {magnitude: this.maxMagnitude, total: this.stepCount}));
+
           this.state = StepState.WAITING_FOR_PEAK;
-          this.maxMagnitude = 0;
         }
         break;
     }
@@ -172,7 +171,7 @@ export class StepCounter {
   }
 
   private calculateMagnitude(x: number, y: number, z: number): number {
-    return -y + z;
+    return Math.sqrt(x * x + y * y + z * z);
   }
 
   public getStepCount(): number {
@@ -180,7 +179,7 @@ export class StepCounter {
   }
 
   public dumpRecord = () => {
-    let result = 'aX, aY, aZ, oX, oY, oZ, oH, oV, gX, gY, gZ, Add, fAdd, guide, time\n';
+    let result = 'aX, aY, aZ, oX, oY, oZ, oH, oV, gX, gY, gZ, Add, guide, time\n';
     for (let i = 0; i < this.data.accX.history.length; i += 1) {
       result += this.data.accX.history[i] + ',';
       result += this.data.accY.history[i] + ',';
@@ -194,7 +193,6 @@ export class StepCounter {
       result += this.data.gyoY.history[i] + ',';
       result += this.data.gyoZ.history[i] + ',';
       result += this.data.magnitude.history[i] + ',';
-      result += this.data.filteredMagnitude.history[i] + ',';
       result += this.data.guide.history[i] + ',';
       result += this.data.time.history[i] + '';
       result += '\n';
