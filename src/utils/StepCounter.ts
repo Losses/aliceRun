@@ -3,7 +3,6 @@ import { createEventName, Event } from '@web-media/event-target';
 import { Sparkline } from './Sparkline';
 import { eventTarget } from '../manager/EventManager';
 import { type IPacket } from "./joyCon/nintendoSwitch/JoyCon";
-import { LowPassFilter } from "./LowPassFilter";
 
 enum StepState {
   WAITING_FOR_PEAK,
