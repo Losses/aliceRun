@@ -10,4 +10,8 @@ export class LowPassFilter {
       this.filteredValue = this.alpha * value + (1 - this.alpha) * this.filteredValue;
       return this.filteredValue;
     }
+
+    public reset() {
+      this.filteredValue = 0;
+    }
   }

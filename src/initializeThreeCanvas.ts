@@ -8,8 +8,6 @@ import { PointerLockControls } from "three/examples/jsm/controls/PointerLockCont
 
 import { ResourceTracker } from "./ResourceTracker";
 
-import './effects/StatsEffect';
-
 export const action = {
   moveForward: false,
   moveBackward: false,

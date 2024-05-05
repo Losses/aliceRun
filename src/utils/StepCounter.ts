@@ -52,7 +52,6 @@ export class StepCounter {
   private _recording = false;
   
   private lastStepTimestamp: number = 0;
-  private strideRateFilter: LowPassFilter = new LowPassFilter(0.2);
 
   get recording() {
     return this._recording;
@@ -96,7 +95,6 @@ export class StepCounter {
       const deltaTime = now - this.lastStepTimestamp;
 
       const strideRate = 60000 / deltaTime;
-      this.data.strideRate.value = this.strideRateFilter.filter(strideRate);
 
       eventTarget.dispatchEvent(
         new Event(
