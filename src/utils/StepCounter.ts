@@ -21,7 +21,7 @@ export const STEP_EVENT = createEventName<IStepEventDetail>();
 export class StepCounter {
   private static readonly STEP_THRESHOLD_LOW: number = -0.007;
   private static readonly STEP_THRESHOLD_HIGH: number = 0.005;
-  private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 100;
+  private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 200;
 
   private stepCount: number = 0;
   private state: StepState = StepState.WAITING_FOR_PEAK;
