@@ -9,7 +9,7 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.2.7",
     "@web-media/event-target": "^0.0.2",
-    "@web-media/phonograph": "^2.2.2",
+    "@web-media/phonograph": "^2.3.0",
     "standardized-audio-context": "^25.3.72",
     "stats.js": "^0.17.0",
     "three": "0.138.3",

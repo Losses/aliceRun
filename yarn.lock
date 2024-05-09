@@ -1258,14 +1258,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web-media/phonograph@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "@web-media/phonograph@npm:2.2.2"
+"@web-media/phonograph@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@web-media/phonograph@npm:2.3.0"
   dependencies:
     "@web-media/event-target": "npm:^0.0.2"
     "@web-media/open-promise": "npm:^0.3.2"
     standardized-audio-context: "npm:25.3.54"
-  checksum: 10/9b82be3c84392a24e2629671d93532f5a96500a8143a6b3185322f0f3c139f11a0171a2392f9358a20e801ba249f5375bedde020204c00157f0f6578a5538244
+  checksum: 10/f987b46e90b1988f3513762dc50294927464ec1efa6bb7574f7b4b565e4ff41501ca9d2db048a06646b230eab6313f810656f135cd5e2885a09f6001eecf8b06
   languageName: node
   linkType: hard
 
@@ -3386,7 +3386,7 @@ __metadata:
     "@types/three": "npm:0.138.0"
     "@types/w3c-web-hid": "npm:^1.0.2"
     "@web-media/event-target": "npm:^0.0.2"
-    "@web-media/phonograph": "npm:^2.2.2"
+    "@web-media/phonograph": "npm:^2.3.0"
     parcel: "npm:2.12.0"
     parcel-reporter-static-files-copy: "npm:^1.5.3"
     standardized-audio-context: "npm:^25.3.72"
