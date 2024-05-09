@@ -1,17 +1,42 @@
-export interface EventDetail<T = string> {
+import { Clip, Mp3DeMuxAdapter } from "@web-media/phonograph";
+import { globalAudioContext } from "../manager/AudioManager";
+
+export interface IPlayAudioStoryEvent {
+    type: 'audio',
+    url: string,
+}
+
+export interface ITimelineEventDetail<T> {
     time: number;
     detail: T;
 };
 
-export class TimelineManager {
-    private events: EventDetail[];
+
+const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
+
+export class TimelineManager<T extends IPlayAudioStoryEvent> {
+    private events: ITimelineEventDetail<T>[];
     private startTime: number = Date.now();
     private isPaused: boolean = false;
     private eventIndex: number = 0;
     private pauseTime: number | null = null;
 
-    constructor(events: EventDetail[]) {
+    private audioMap = new Map<string, Clip<unknown, unknown>>();
+
+    constructor(events: ITimelineEventDetail<T>[]) {
         this.events = events.sort((a, b) => a.time - b.time);
+        this.events.map((x) => {
+            if (x.detail.type === 'audio') {
+                this.audioMap.set(
+                    x.detail.url,
+                    new Clip({
+                        context: globalAudioContext,
+                        url: STORY_AUDIO_URL_BASE + x.detail.url,
+                        adapter: new Mp3DeMuxAdapter(),
+                    })
+                );
+            }
+        })
     }
 
     public reset() {
@@ -34,7 +59,7 @@ export class TimelineManager {
         }
     }
 
-    private onEvent(event: EventDetail): void {
+    private onEvent(event: ITimelineEventDetail<T>): void {
         console.log(`Event at ${event.time}: ${event.detail}`);
     }
 

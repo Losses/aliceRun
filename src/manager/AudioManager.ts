@@ -1,3 +1,5 @@
+import { AudioContext } from "standardized-audio-context";
+
 const ALL_SOUNDS = [
     'glass-click.m4a',
     'glass-clcik2.m4a',
@@ -8,15 +10,16 @@ const ALL_SOUNDS = [
     'checkbox-off.m4a',
 ] as const;
 
+export const globalAudioContext = new AudioContext();
+
 export const AudioManager = async () => {
-    const context = new AudioContext();
 
     const sounds = {} as Record<typeof ALL_SOUNDS[number], AudioBuffer | undefined>;
 
     ALL_SOUNDS.forEach(async (x) => {
         const res = await fetch(`/sfx/${x}`);
         const buffer = await res.arrayBuffer();
-        sounds[x] = await context.decodeAudioData(buffer);
+        sounds[x] = await globalAudioContext.decodeAudioData(buffer);
     });
 
     const playSound = (id: typeof ALL_SOUNDS[number]) => {
@@ -24,17 +27,19 @@ export const AudioManager = async () => {
 
         if (!audioBuffer) return;
 
-        const source = context.createBufferSource();
+        const source = globalAudioContext.createBufferSource();
         source.buffer = audioBuffer;
-        source.connect(context.destination);
+        source.connect(globalAudioContext.destination);
 
         source.start();
     }
 
     document.querySelectorAll('.glass').forEach(($) => {
-        $.addEventListener('click', () => { {
-            playSound(($ as HTMLElement).dataset.clickSound as typeof ALL_SOUNDS[number] ?? 'glass-click2.m4a');
-        }});
+        $.addEventListener('click', () => {
+            {
+                playSound(($ as HTMLElement).dataset.clickSound as typeof ALL_SOUNDS[number] ?? 'glass-click2.m4a');
+            }
+        });
         $.addEventListener('mouseenter', () => {
             playSound('glass-enter.m4a');
         });

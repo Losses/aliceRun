@@ -32,6 +32,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.23.8, @babel/runtime@npm:^7.24.5":
+  version: 7.24.5
+  resolution: "@babel/runtime@npm:7.24.5"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 10/e0f4f4d4503f7338749d1dd92361ad132d683bde64e6b61d6c855e100dcd01592295fcfdcc960c946b85ef7908dc2f501080da58447c05812cf3cd80c599bb62
+  languageName: node
+  linkType: hard
+
 "@choojs/findup@npm:^0.2.0":
   version: 0.2.1
   resolution: "@choojs/findup@npm:0.2.1"
@@ -1225,10 +1234,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ungap/event-target@npm:^0.2.3":
+  version: 0.2.4
+  resolution: "@ungap/event-target@npm:0.2.4"
+  checksum: 10/cb9eba860cb9b36476ad730d1f734b8fec8bafce128da980c4f66058411bdf96265e5482142e2605e3382393906c7b30c7295894ce194d5cfec71f74db2cf2db
+  languageName: node
+  linkType: hard
+
 "@web-media/event-target@npm:^0.0.2":
   version: 0.0.2
   resolution: "@web-media/event-target@npm:0.0.2"
   checksum: 10/0717c4fdb51f30afc64bea5da67aee65536c048256770d560ae8ba777fbdee0e4110da9342615a6d268e6ec3a5afbc7f4abeaafbc06b15ff15d6e314443004a0
+  languageName: node
+  linkType: hard
+
+"@web-media/open-promise@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@web-media/open-promise@npm:0.3.2"
+  dependencies:
+    "@ungap/event-target": "npm:^0.2.3"
+    debug: "npm:^4.3.4"
+  checksum: 10/ca3409bb24f7e4877134c85a32d5cabf181ccca2ffe83bd4891273709fbcb357ea2da6301bcd58e247c19aa63c5f02612bbe8e6f9a4b02fd3a04486e8d8027a2
+  languageName: node
+  linkType: hard
+
+"@web-media/phonograph@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@web-media/phonograph@npm:2.2.2"
+  dependencies:
+    "@web-media/event-target": "npm:^0.0.2"
+    "@web-media/open-promise": "npm:^0.3.2"
+    standardized-audio-context: "npm:25.3.54"
+  checksum: 10/9b82be3c84392a24e2629671d93532f5a96500a8143a6b3185322f0f3c139f11a0171a2392f9358a20e801ba249f5375bedde020204c00157f0f6578a5538244
   languageName: node
   linkType: hard
 
@@ -1315,6 +1352,26 @@ __metadata:
     delegates: "npm:^1.0.0"
     readable-stream: "npm:^3.6.0"
   checksum: 10/7266eee19d0be9dd8e58b63cfb1e1ad45945125fac1e75f00237b55960891bf3bb0be291757a8d9dcf1dbfacfb3802d3eb3f9a064084a6a70a61fe0571f9318f
+  languageName: node
+  linkType: hard
+
+"automation-events@npm:^6.0.7":
+  version: 6.0.14
+  resolution: "automation-events@npm:6.0.14"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.8"
+    tslib: "npm:^2.6.2"
+  checksum: 10/1cf2f82e358c57fbe3043f6348d67907d112e18bd77dce1d565ec5237e061e6358b8aecc31525fb9d6328c0e07da2bc3512739d032959c252954faa25a723f13
+  languageName: node
+  linkType: hard
+
+"automation-events@npm:^7.0.5":
+  version: 7.0.5
+  resolution: "automation-events@npm:7.0.5"
+  dependencies:
+    "@babel/runtime": "npm:^7.24.5"
+    tslib: "npm:^2.6.2"
+  checksum: 10/82c0504e85e9e4d4cd531af364c56b4b385aecb07458b9281d4e45d3e693bd6c632ae3c5e187aa2ff1226f84049a19600ebe3d5b12b6e41dc10734ea9947c7d3
   languageName: node
   linkType: hard
 
@@ -1601,6 +1658,18 @@ __metadata:
     supports-color:
       optional: true
   checksum: 10/723a9570dcd15d146ea4992f0dca12467d1b00f534abb42473df166d36826fcae8bab045aef59ac2f407b47a23266110bc0e646df8ac82f7800c11384f82050e
+  languageName: node
+  linkType: hard
+
+"debug@npm:^4.3.4":
+  version: 4.3.4
+  resolution: "debug@npm:4.3.4"
+  dependencies:
+    ms: "npm:2.1.2"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10/0073c3bcbd9cb7d71dd5f6b55be8701af42df3e56e911186dfa46fac3a5b9eb7ce7f377dd1d3be6db8977221f8eb333d945216f645cf56f6b688cd484837d255
   languageName: node
   linkType: hard
 
@@ -2991,6 +3060,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"regenerator-runtime@npm:^0.14.0":
+  version: 0.14.1
+  resolution: "regenerator-runtime@npm:0.14.1"
+  checksum: 10/5db3161abb311eef8c45bcf6565f4f378f785900ed3945acf740a9888c792f75b98ecb77f0775f3bf95502ff423529d23e94f41d80c8256e8fa05ed4b07cf471
+  languageName: node
+  linkType: hard
+
 "resolve-from@npm:^4.0.0":
   version: 4.0.0
   resolution: "resolve-from@npm:4.0.0"
@@ -3171,6 +3247,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"standardized-audio-context@npm:25.3.54":
+  version: 25.3.54
+  resolution: "standardized-audio-context@npm:25.3.54"
+  dependencies:
+    "@babel/runtime": "npm:^7.22.6"
+    automation-events: "npm:^6.0.7"
+    tslib: "npm:^2.6.0"
+  checksum: 10/537204879f3d77aaa16e252c069fad134117a9d33f7213c5fc7f70cc51b708f36b349b7c3fc6297dbceed1fbdb476c18200d3b429a5f995c9882dece699bf6a9
+  languageName: node
+  linkType: hard
+
+"standardized-audio-context@npm:^25.3.72":
+  version: 25.3.72
+  resolution: "standardized-audio-context@npm:25.3.72"
+  dependencies:
+    "@babel/runtime": "npm:^7.24.5"
+    automation-events: "npm:^7.0.5"
+    tslib: "npm:^2.6.2"
+  checksum: 10/1532a4aa8ec9a7fa0482f42e2d58a9edd23831b69b2653d00ea1983dc53951c1d5f1350ac0cda071823a19f227fee0a771052ceb683c04a8772e4e867188fe8e
+  languageName: node
+  linkType: hard
+
 "stats.js@npm:^0.17.0":
   version: 0.17.0
   resolution: "stats.js@npm:0.17.0"
@@ -3288,8 +3386,10 @@ __metadata:
     "@types/three": "npm:0.138.0"
     "@types/w3c-web-hid": "npm:^1.0.2"
     "@web-media/event-target": "npm:^0.0.2"
+    "@web-media/phonograph": "npm:^2.2.2"
     parcel: "npm:2.12.0"
     parcel-reporter-static-files-copy: "npm:^1.5.3"
+    standardized-audio-context: "npm:^25.3.72"
     stats.js: "npm:^0.17.0"
     three: "npm:0.138.3"
     tslib: "npm:^2.3.1"
@@ -3337,7 +3437,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.4.0":
+"tslib@npm:^2.4.0, tslib@npm:^2.6.0, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 10/bd26c22d36736513980091a1e356378e8b662ded04204453d353a7f34a4c21ed0afc59b5f90719d4ba756e581a162ecbf93118dc9c6be5acf70aa309188166ca
