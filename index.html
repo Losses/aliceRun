@@ -31,7 +31,13 @@
       <button class="menu-button glass">Multiple Player</button>
       <button class="menu-button glass" data-to-router="/settings">Settings</button>
     </section>
-    <section class="screen" data-router="/single">
+    <section class="centered_section screen" data-router="/single">
+      <div class="menu-title">Single Player</div>
+      <button class="menu-button glass" data-to-router="/single/play/story">Story Mode</button>
+      <button class="menu-button glass" data-to-router="/single/play/infinite">Infinite Mode</button>
+      <button class="menu-button glass" data-to-router="/">Back</button>
+    </section>
+    <section class="screen" data-router="/single/play/infinite|/single/play/story">
       <div class="stat">
         <div class="stat-item" hidden>
           <div class="title">TYPE</div>

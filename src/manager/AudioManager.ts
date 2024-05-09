@@ -1,11 +1,11 @@
 import { AudioContext } from "standardized-audio-context";
 import { createEventName } from "@web-media/event-target";
-import { Clip, Mp3DeMuxAdapter } from "@web-media/phonograph"; 
+import { Clip, Mp3DeMuxAdapter } from "@web-media/phonograph";
 import { eventTarget } from "./EventManager";
 
 const ALL_SOUNDS = [
     'glass-click.m4a',
-    'glass-clcik2.m4a',
+    'glass-click2.m4a',
     'glass-enter.m4a',
     'slide-down.m4a',
     'slide-up.m4a',

@@ -1,42 +1,25 @@
-import { Clip, Mp3DeMuxAdapter } from "@web-media/phonograph";
-import { globalAudioContext } from "../manager/AudioManager";
-
 export interface IPlayAudioStoryEvent {
-    type: 'audio',
     url: string,
 }
 
-export interface ITimelineEventDetail<T> {
+export interface ITimelineEventDetail<Type extends string, Detail> {
     time: number;
-    detail: T;
+    type: Type,
+    detail: Detail;
 };
 
+type EventCallback<Type extends string, Detail> = (x: ITimelineEventDetail<Type, Detail>) => void;
 
-const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
-export class TimelineManager<T extends IPlayAudioStoryEvent> {
-    private events: ITimelineEventDetail<T>[];
+export class TimelineManager<Type extends string, Detail, T extends ITimelineEventDetail<Type, Detail>> {
+    private events: ITimelineEventDetail<Type, Detail>[];
     private startTime: number = Date.now();
     private isPaused: boolean = false;
     private eventIndex: number = 0;
     private pauseTime: number | null = null;
 
-    private audioMap = new Map<string, Clip<unknown, unknown>>();
-
-    constructor(events: ITimelineEventDetail<T>[]) {
+    constructor(events: ITimelineEventDetail<Type, Detail>[], public callbacks: Record<Type, EventCallback<Type, Detail>>) {
         this.events = events.sort((a, b) => a.time - b.time);
-        this.events.map((x) => {
-            if (x.detail.type === 'audio') {
-                this.audioMap.set(
-                    x.detail.url,
-                    new Clip({
-                        context: globalAudioContext,
-                        url: STORY_AUDIO_URL_BASE + x.detail.url,
-                        adapter: new Mp3DeMuxAdapter(),
-                    })
-                );
-            }
-        })
     }
 
     public reset() {
@@ -59,8 +42,8 @@ export class TimelineManager<T extends IPlayAudioStoryEvent> {
         }
     }
 
-    private onEvent(event: ITimelineEventDetail<T>): void {
-        console.log(`Event at ${event.time}: ${event.detail}`);
+    private onEvent(event: ITimelineEventDetail<Type, Detail>): void {
+        this.callbacks[event.type]?.(event);
     }
 
     public pause(): void {

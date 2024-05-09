@@ -1,29 +1,45 @@
+import { Clip, Mp3DeMuxAdapter } from "@web-media/phonograph";
+import { globalAudioContext } from "../manager/AudioManager";
+
 import { ROUTER_ID } from "../stores/router";
-import { IPlayAudioStoryEvent, ITimelineEventDetail, TimelineManager } from "../utils/TimeLine"
-import { FrameRateLevel } from "../utils/TimeMagic";
 import { timeManager } from "./TimeManager";
+import { FrameRateLevel } from "../utils/TimeMagic";
+import { IPlayAudioStoryEvent, ITimelineEventDetail, TimelineManager } from "../utils/TimeLine"
 
 const Time = (ms = 0, s = 0, m = 0, h = 0) => {
     return ms + s * 1000 + m * 1000 * 60 + h * 1000 * 60 * 60;
 }
 
-const AudioEvent = (time: number, url: string): ITimelineEventDetail<IPlayAudioStoryEvent> => ({
+const AudioEvent = (time: number, url: string): ITimelineEventDetail<'audio', IPlayAudioStoryEvent> => ({
     time,
+    type: 'audio',
     detail: {
-        type: 'audio',
         url,
     }
 });
 
+const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
+
 export const StoryManager = () => {
     const timeLine = new TimelineManager([
         ...new Array(37).fill(0).map((_, index) => 
-            AudioEvent(Time(index, 30), `S001-EP001-${index.toString().padStart(3, '0')}.mp3`)
+            AudioEvent(Time(0, 3, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
         ),
-    ]);
+    ], {
+        audio: async (x) => {
+            const clip = new Clip({
+                context: globalAudioContext,
+                url: STORY_AUDIO_URL_BASE + x.detail.url,
+                adapter: new Mp3DeMuxAdapter(),
+            });
+
+            await clip.buffer();
+            clip.play();
+        },
+    });
 
     ROUTER_ID.subscribe((id) => {
-        if (id === '/single') {
+        if (id.includes('/single/play/story')) {
             timeLine.reset();
             timeManager.addFn(timeLine.tick, FrameRateLevel.D0);
         } else {

@@ -23,7 +23,7 @@ export class StepCounter {
   private static readonly STEP_THRESHOLD_HIGH: number = 0.005;
   private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 200;
 
-  private stepCount: number = 0;
+  public stepCount: number = 0;
   private state: StepState = StepState.WAITING_FOR_PEAK;
   
   public readonly data = {

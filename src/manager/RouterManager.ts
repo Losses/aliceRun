@@ -12,7 +12,7 @@ export const RouterManager = () => {
         const $$elements = document.querySelectorAll('[data-router]');
 
         $$elements.forEach((x) => {
-            if ((x as HTMLElement).dataset.router === id) {
+            if ((x as HTMLElement).dataset.router?.split('|')?.includes(id)) {
                 x.classList.remove('hidden');
             } else {
                 x.classList.add('hidden');

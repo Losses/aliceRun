@@ -7,6 +7,20 @@ import { eventTarget } from "./EventManager";
 import { stepCounter } from "./JoyConManager";
 import { timeManager } from "./TimeManager";
 
+export const INFINITE_TIME_KEY = 'alice-run-inf-time';
+export const INFINITE_STEP_KEY = 'alice-run-inf-step';
+
+const parseInt = (x: string | null | undefined) => {
+    if (x === null) return 0;
+    if (x === undefined) return 0;
+
+    const number = Number.parseFloat(x);
+
+    if (Number.isNaN(number)) return 0;
+
+    return Math.floor(number);
+}
+
 export const RunStatManager = () => {
     let startTime = 0;
 
@@ -24,6 +38,7 @@ export const RunStatManager = () => {
     const rateEstimator = new RateEstimator();
     const strideRateFilter = new LowPassFilter(0.2);
 
+    let lastSyncTime = 0;
     const tick = () => {
         const deltaTime = Date.now() - startTime;
         const minutes = Math.floor(deltaTime / (60 * 1000));
@@ -33,10 +48,17 @@ export const RunStatManager = () => {
     }
 
     ROUTER_ID.subscribe((id) => {
-        if (id === '/single') {
+        if (id.includes('/single/play/')) {
             rateEstimator.reset();
             stepCounter.reset();
             startTime = Date.now();
+
+            if (id === '/single/play/infinite') {
+                stepCounter.stepCount = parseInt(localStorage.getItem(INFINITE_STEP_KEY));
+                $steps.textContent = stepCounter.stepCount.toString().padStart(4, '0');
+                startTime = Date.now() - parseInt(localStorage.getItem(INFINITE_TIME_KEY));
+            }
+
             timeManager.addFn(tick, FrameRateLevel.D3);
         } else {
             timeManager.removeFn(tick);
@@ -44,13 +66,20 @@ export const RunStatManager = () => {
     });
 
     eventTarget.addEventListener(STEP_EVENT, ({detail: { magnitude, total, strideRate, type }}) => {
-        if (ROUTER_ID.value !== '/single') return;
+        if (!ROUTER_ID.value.includes('/single/play/')) return;
 
         rateEstimator.record();
         $steps.textContent = total.toString().padStart(4, '0');
 
         if ($type) {
             $type.textContent = type;
+        }
+
+        if (ROUTER_ID.value === '/single/play/infinite' && Date.now() - lastSyncTime > 600) {
+            const deltaTime = Date.now() - startTime;
+            localStorage.setItem(INFINITE_TIME_KEY, deltaTime.toString());
+            localStorage.setItem(INFINITE_STEP_KEY, stepCounter.stepCount.toString());
+            lastSyncTime = Date.now();
         }
       }
     );
