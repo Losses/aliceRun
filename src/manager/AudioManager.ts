@@ -1,3 +1,8 @@
+import { AudioContext } from "standardized-audio-context";
+import { createEventName } from "@web-media/event-target";
+import { Clip, Mp3DeMuxAdapter } from "@web-media/phonograph"; 
+import { eventTarget } from "./EventManager";
+
 const ALL_SOUNDS = [
     'glass-click.m4a',
     'glass-clcik2.m4a',
@@ -8,10 +13,23 @@ const ALL_SOUNDS = [
     'checkbox-off.m4a',
 ] as const;
 
+export const PLAY_ADVANCED_SOUND = createEventName<string>();
+
 export const AudioManager = async () => {
     const context = new AudioContext();
 
     const sounds = {} as Record<typeof ALL_SOUNDS[number], AudioBuffer | undefined>;
+
+    eventTarget.addEventListener(PLAY_ADVANCED_SOUND, async ({detail}) => {
+        const clip = new Clip({
+            url: detail,
+            adapter: new Mp3DeMuxAdapter(),
+            context,
+        });
+
+        await clip.buffer();
+        clip.play();
+    });
 
     ALL_SOUNDS.forEach(async (x) => {
         const res = await fetch(`/sfx/${x}`);
