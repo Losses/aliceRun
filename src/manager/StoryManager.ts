@@ -4,13 +4,17 @@ import { globalAudioContext } from "../manager/AudioManager";
 import { ROUTER_ID } from "../stores/router";
 import { timeManager } from "./TimeManager";
 import { FrameRateLevel } from "../utils/TimeMagic";
-import { IPlayAudioStoryEvent, ITimelineEventDetail, TimelineManager } from "../utils/TimeLine"
+import { ITimelineEvent, TimelineManager } from "../utils/TimeLine"
 
 const Time = (ms = 0, s = 0, m = 0, h = 0) => {
     return ms + s * 1000 + m * 1000 * 60 + h * 1000 * 60 * 60;
 }
 
-const AudioEvent = (time: number, url: string): ITimelineEventDetail<'audio', IPlayAudioStoryEvent> => ({
+export interface IPlayAudioStoryEvent {
+    url: string,
+}
+
+const AudioEvent = (time: number, url: string): ITimelineEvent<'audio', IPlayAudioStoryEvent> => ({
     time,
     type: 'audio',
     detail: {
@@ -18,28 +22,38 @@ const AudioEvent = (time: number, url: string): ITimelineEventDetail<'audio', IP
     }
 });
 
+const EndEvent = (time: number): ITimelineEvent<'end', null> => ({
+    time,
+    type: 'end',
+    detail: null,
+});
+
 const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
-export const StoryManager = () => {
-    const timeLine = new TimelineManager([
-        ...new Array(37).fill(0).map((_, index) => 
-            AudioEvent(Time(0, 3, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
-        ),
-    ], {
-        audio: (x) => {
-            const clip = new Clip({
-                context: globalAudioContext,
-                url: STORY_AUDIO_URL_BASE + x.detail.url,
-                adapter: new Mp3DeMuxAdapter(),
-            });
+export const timeLine = new TimelineManager([
+    ...new Array(37).fill(0).map((_, index) => 
+        AudioEvent(Time(0, 3, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
+    ),
+    EndEvent(Time(0, 31, 41)),
+], {
+    audio: (x: ITimelineEvent<"audio", IPlayAudioStoryEvent>) => {
+        const clip = new Clip({
+            context: globalAudioContext,
+            url: STORY_AUDIO_URL_BASE + x.detail.url,
+            adapter: new Mp3DeMuxAdapter(),
+        });
 
-            clip.buffer().then( async () => {
-                clip.play();
-            });
-            
-            return () => clip.dispose();
-        },
-    });
+        clip.buffer().then( async () => {
+            clip.play();
+        });
+        
+        return () => clip.dispose();
+    },
+    end: (x: ITimelineEvent<"end", null>) => {
+    }
+});
+
+export const StoryManager = () => {
 
     ROUTER_ID.subscribe((id) => {
         timeLine.reset();

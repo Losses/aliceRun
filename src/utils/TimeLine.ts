@@ -1,8 +1,4 @@
-export interface IPlayAudioStoryEvent {
-    url: string,
-}
-
-export interface ITimelineEventDetail<Type extends string, Detail> {
+export interface ITimelineEvent<Type extends string, Detail> {
     time: number;
     type: Type,
     detail: Detail;
@@ -10,22 +6,34 @@ export interface ITimelineEventDetail<Type extends string, Detail> {
 
 type DisposeFn = () => void;
 
-type EventCallback<Type extends string, Detail> = (x: ITimelineEventDetail<Type, Detail>) => DisposeFn | void;
+type EventCallback<Type extends string, Detail> = (x: ITimelineEvent<Type, Detail>) => DisposeFn | void;
 
-export class TimelineManager<Type extends string, Detail, T extends ITimelineEventDetail<Type, Detail>> {
-    private events: ITimelineEventDetail<Type, Detail>[];
-    private startTime: number = Date.now();
+type TimelineEventCallbacks<T extends ITimelineEvent<string, any>[]> = {
+    [Event in T[number] as Event['type']]: EventCallback<Event['type'], Event['detail']>;
+}
+
+export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
+    private events: T;
+    private startTime: number | null = null;
     private isPaused: boolean = false;
     private eventIndex: number = 0;
     private pauseTime: number | null = null;
     private disposers = new Set<DisposeFn>();
+    public readonly totalTime: number;
+    public timeLeft: number;
 
-    constructor(events: ITimelineEventDetail<Type, Detail>[], public callbacks: Record<Type, EventCallback<Type, Detail>>) {
+    constructor(
+        events: T,
+        public callbacks: TimelineEventCallbacks<T>
+    ) {
         this.events = events.sort((a, b) => a.time - b.time);
+
+        this.totalTime = events.find((x) => x.type === 'end')?.time ?? Infinity;
+        this.timeLeft = this.totalTime;
     }
 
     public reset() {
-        this.startTime = Date.now();
+        this.startTime = null;
         this.isPaused = false;
         this.eventIndex = 0;
         this.pauseTime = null;
@@ -34,21 +42,27 @@ export class TimelineManager<Type extends string, Detail, T extends ITimelineEve
         this.disposers.clear();
     }
 
-    tick = () => {
+    tick = (timestamp: number) => {
         if (this.isPaused) return;
 
-        const now = Date.now();
+        if (this.startTime === null) {
+            this.startTime = timestamp;
+            return;
+        }
+
         while (
             this.eventIndex < this.events.length &&
-            this.events[this.eventIndex].time + this.startTime <= now
+            this.events[this.eventIndex].time + this.startTime <= timestamp
         ) {
             this.onEvent(this.events[this.eventIndex]);
             this.eventIndex++;
         }
+
+        this.timeLeft = this.totalTime - (timestamp - this.startTime);
     }
 
-    private onEvent(event: ITimelineEventDetail<Type, Detail>): void {
-        const disposeFn = this.callbacks[event.type]?.(event);
+    private onEvent<C extends T[number], D extends C['type']>(event: C): void {
+        const disposeFn = (this.callbacks[event.type as D] as unknown as EventCallback<C['type'], C['detail']>)?.(event);
 
         if (disposeFn) {
             this.disposers.add(disposeFn);
@@ -65,7 +79,9 @@ export class TimelineManager<Type extends string, Detail, T extends ITimelineEve
     public resume(): void {
         if (this.isPaused && this.pauseTime != null) {
             const pausedDuration = Date.now() - this.pauseTime;
-            this.startTime += pausedDuration;
+            if (this.startTime !== null) {
+                this.startTime += pausedDuration;
+            }
             this.isPaused = false;
             this.pauseTime = null;
         }

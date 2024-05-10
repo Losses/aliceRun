@@ -5,10 +5,13 @@ import { STEP_EVENT } from "../utils/StepCounter";
 import { FrameRateLevel } from "../utils/TimeMagic";
 import { eventTarget } from "./EventManager";
 import { stepCounter } from "./JoyConManager";
+import { timeLine } from "./StoryManager";
 import { timeManager } from "./TimeManager";
 
 export const INFINITE_TIME_KEY = 'alice-run-inf-time';
 export const INFINITE_STEP_KEY = 'alice-run-inf-step';
+
+const isInfiniteMode = () => ROUTER_ID.value === '/single/play/infinite';
 
 const parseInt = (x: string | null | undefined) => {
     if (x === null) return 0;
@@ -40,7 +43,7 @@ export const RunStatManager = () => {
 
     let lastSyncTime = 0;
     const tick = () => {
-        const deltaTime = Date.now() - startTime;
+        const deltaTime = isInfiniteMode() ? (Date.now() - startTime) : timeLine.timeLeft;
         const minutes = Math.floor(deltaTime / (60 * 1000));
         const seconds = Math.floor(deltaTime % (60 * 1000) / 1000);
         $time.textContent = `${minutes.toString().padStart(3, '0')}:${seconds.toString().padStart(2, '0')}`;
@@ -75,7 +78,7 @@ export const RunStatManager = () => {
             $type.textContent = type;
         }
 
-        if (ROUTER_ID.value === '/single/play/infinite' && Date.now() - lastSyncTime > 600) {
+        if (isInfiniteMode() && Date.now() - lastSyncTime > 600) {
             const deltaTime = Date.now() - startTime;
             localStorage.setItem(INFINITE_TIME_KEY, deltaTime.toString());
             localStorage.setItem(INFINITE_STEP_KEY, stepCounter.stepCount.toString());
