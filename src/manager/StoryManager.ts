@@ -26,21 +26,24 @@ export const StoryManager = () => {
             AudioEvent(Time(0, 3, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
         ),
     ], {
-        audio: async (x) => {
+        audio: (x) => {
             const clip = new Clip({
                 context: globalAudioContext,
                 url: STORY_AUDIO_URL_BASE + x.detail.url,
                 adapter: new Mp3DeMuxAdapter(),
             });
 
-            await clip.buffer();
-            clip.play();
+            clip.buffer().then( async () => {
+                clip.play();
+            });
+            
+            return () => clip.dispose();
         },
     });
 
     ROUTER_ID.subscribe((id) => {
+        timeLine.reset();
         if (id.includes('/single/play/story')) {
-            timeLine.reset();
             timeManager.addFn(timeLine.tick, FrameRateLevel.D0);
         } else {
             timeManager.removeFn(timeLine.tick);

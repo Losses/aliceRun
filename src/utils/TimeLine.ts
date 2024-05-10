@@ -8,8 +8,9 @@ export interface ITimelineEventDetail<Type extends string, Detail> {
     detail: Detail;
 };
 
-type EventCallback<Type extends string, Detail> = (x: ITimelineEventDetail<Type, Detail>) => void;
+type DisposeFn = () => void;
 
+type EventCallback<Type extends string, Detail> = (x: ITimelineEventDetail<Type, Detail>) => DisposeFn | void;
 
 export class TimelineManager<Type extends string, Detail, T extends ITimelineEventDetail<Type, Detail>> {
     private events: ITimelineEventDetail<Type, Detail>[];
@@ -17,6 +18,7 @@ export class TimelineManager<Type extends string, Detail, T extends ITimelineEve
     private isPaused: boolean = false;
     private eventIndex: number = 0;
     private pauseTime: number | null = null;
+    private disposers = new Set<DisposeFn>();
 
     constructor(events: ITimelineEventDetail<Type, Detail>[], public callbacks: Record<Type, EventCallback<Type, Detail>>) {
         this.events = events.sort((a, b) => a.time - b.time);
@@ -27,6 +29,9 @@ export class TimelineManager<Type extends string, Detail, T extends ITimelineEve
         this.isPaused = false;
         this.eventIndex = 0;
         this.pauseTime = null;
+
+        this.disposers.forEach((x) => x());
+        this.disposers.clear();
     }
 
     tick = () => {
@@ -43,7 +48,11 @@ export class TimelineManager<Type extends string, Detail, T extends ITimelineEve
     }
 
     private onEvent(event: ITimelineEventDetail<Type, Detail>): void {
-        this.callbacks[event.type]?.(event);
+        const disposeFn = this.callbacks[event.type]?.(event);
+
+        if (disposeFn) {
+            this.disposers.add(disposeFn);
+        }
     }
 
     public pause(): void {
