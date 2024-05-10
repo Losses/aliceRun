@@ -5,6 +5,7 @@ import { ROUTER_ID } from "../stores/router";
 import { timeManager } from "./TimeManager";
 import { FrameRateLevel } from "../utils/TimeMagic";
 import { ITimelineEvent, TimelineManager } from "../utils/TimeLine"
+import { THEME_ID } from "./ColorManager";
 
 const Time = (ms = 0, s = 0, m = 0, h = 0) => {
     return ms + s * 1000 + m * 1000 * 60 + h * 1000 * 60 * 60;
@@ -28,6 +29,12 @@ const EndEvent = (time: number): ITimelineEvent<'end', null> => ({
     detail: null,
 });
 
+const ThemeEvent = (time: number, theme: string): ITimelineEvent<'theme', string> => ({
+    time,
+    type: 'theme',
+    detail: theme,
+});
+
 const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
 export const timeLine = new TimelineManager([
@@ -35,6 +42,8 @@ export const timeLine = new TimelineManager([
         AudioEvent(Time(0, 3, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
     ),
     EndEvent(Time(0, 31, 41)),
+    ThemeEvent(Time(0, 3, 19), 'dark'),
+    ThemeEvent(Time(0, 15, 27), 'clear'),
 ], {
     audio: (x: ITimelineEvent<"audio", IPlayAudioStoryEvent>) => {
         const clip = new Clip({
@@ -50,6 +59,9 @@ export const timeLine = new TimelineManager([
         return () => clip.dispose();
     },
     end: (x: ITimelineEvent<"end", null>) => {
+    },
+    theme: (x: ITimelineEvent<"theme", string>) => {
+        THEME_ID.value = x.detail;
     }
 });
 
