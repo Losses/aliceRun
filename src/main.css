@@ -301,3 +301,35 @@ button {
   font-weight: 300;
   position: fixed;
 }
+
+.right-panel {
+  --center-alpha: 0.75;
+  --edge-size: 15%;
+  --high-limit: 30%;
+  
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 400px;
+}
+
+.right-panel .bar {
+  width: 10px;
+  height: 100%;
+  background:
+    linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,var(--center-alpha)) var(--edge-size), rgba(255,255,255,var(--center-alpha)) calc(100% - var(--edge-size)), rgba(255,255,255,0) 100%);
+}
+
+.right-panel .current-value {
+  top: 0;
+  width: 16px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid white;
+  position: absolute;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transform: translateX(-3px);
+  box-sizing: border-box;
+  display: block;
+}

@@ -66,7 +66,6 @@ export const timeLine = new TimelineManager([
 });
 
 export const StoryManager = () => {
-
     ROUTER_ID.subscribe((id) => {
         timeLine.reset();
         if (id.includes('/single/play/story')) {

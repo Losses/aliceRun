@@ -40,10 +40,15 @@ export const useLerp = (
     }
   }, frameRateLevel);
 
-  const updateValue = (x: number) => {
+  const updateValue = (x: number, instantly = false) => {
     if (x === getCurrentValFn()) return;
     targetValue = x;
-    startLerp();
+
+    if (instantly) {
+      updateFn(targetValue);
+    } else {
+      startLerp();
+    }
   };
 
   const updateDamping = (x: number) => {

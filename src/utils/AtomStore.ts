@@ -134,6 +134,14 @@ export class AtomStore {
       set value(x: T) {
         that.setValue(store, x);
       },
+      reset(hard: boolean = false) {
+        if (hard) {
+          that.store.set(store, initialValue);
+        } else {
+
+          that.setValue(store, initialValue);
+        }
+      },
       subscribe: (fn: Subscriber<T>, instantlyTrigger = false) => {
         this.subscribe(store, fn);
 
