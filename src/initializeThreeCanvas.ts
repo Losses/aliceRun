@@ -1,11 +1,18 @@
 import * as THREE from "three";
 
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass";
+import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { SepiaShader } from 'three/examples/jsm/shaders/SepiaShader';
+import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader';
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
-import { CANVAS_SIZE, updateCanvasSize } from "./stores/settings";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
+import { CANVAS_SIZE, updateCanvasSize } from "./stores/settings";
 
+import { timeManager } from "./manager/TimeManager";
+import { GlitchShader } from "./utils/shaders/GlitchPass";
+import { FrameRateLevel } from "./utils/TimeMagic";
 import { ResourceTracker } from "./ResourceTracker";
 
 export const initializeThreeCanvas = ($container: HTMLDivElement) => {
@@ -28,8 +35,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   renderer.localClippingEnabled = true;
   tracker.track(renderer);
 
-
-
   const controls = new PointerLockControls(camera, document.body);
   scene.add(controls.getObject());
   tracker.track(controls);
@@ -37,10 +42,31 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
 
   const renderScene = new RenderPass(scene, camera);
+  const glitchPass = new ShaderPass(GlitchShader);
+  const sepiaPass = new ShaderPass(SepiaShader);
+  const vignettePass = new ShaderPass(VignetteShader);
+  const filmPass = new FilmPass(100);
 
+  timeManager.addFn((time) => {
+    glitchPass.uniforms.time.value = time;
+  }, FrameRateLevel.D3);
+  
   const finalComposer = new EffectComposer(renderer);
   finalComposer.addPass(renderScene);
   finalComposer.addPass(smaaPass);
+  finalComposer.addPass(sepiaPass);
+  finalComposer.addPass(vignettePass);
+  finalComposer.addPass(glitchPass);
+  finalComposer.addPass(filmPass);
+  
+  glitchPass.enabled = false;
+  filmPass.enabled = false;
+  sepiaPass.enabled = false;
+  vignettePass.enabled = false;
+  sepiaPass.uniforms['amount'].value = 1;
+  vignettePass.uniforms[ 'offset' ].value = 3;
+  vignettePass.uniforms[ 'darkness' ].value = 4;
+
 
   CANVAS_SIZE.subscribe(({width, height}) => {
     camera.aspect = width / height;
