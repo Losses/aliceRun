@@ -19,11 +19,11 @@ const isInfiniteMode = () => ROUTER_ID.value === '/single/play/infinite';
 const A = `255,255,255,`;
 const B = `255,0,0,`;
 
-const HIGHEST_POSSIBLE_SPM = 300;
-const LOWEST_POSSIBLE_SPM = 50;
+const HIGHEST_POSSIBLE_SPM = 350;
+const LOWEST_POSSIBLE_SPM = 80;
 
 export const TRUE_LOW_LIMIT = store.createStore(0);
-export const TRUE_HIGH_LIMIT = store.createStore(300);
+export const TRUE_HIGH_LIMIT = store.createStore(350);
 
 const normalizeSpeed = (spm: number) => {
     const r = (spm - LOWEST_POSSIBLE_SPM) / (HIGHEST_POSSIBLE_SPM - LOWEST_POSSIBLE_SPM);
