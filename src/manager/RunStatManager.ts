@@ -143,7 +143,7 @@ export const RunStatManager = () => {
         (x) => {
             TRUE_LOW_LIMIT.value = x;
         },
-        0.0005,
+        0.005,
     );
 
     const [updateHigh] = useLerp(
@@ -151,7 +151,7 @@ export const RunStatManager = () => {
         (x) => {
             TRUE_HIGH_LIMIT.value = x;
         },
-        0.0005,
+        0.005,
     );
 
     LOW_LIMIT.subscribe(updateLow);

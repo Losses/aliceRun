@@ -6,6 +6,7 @@ import { timeManager } from "./TimeManager";
 import { FrameRateLevel } from "../utils/TimeMagic";
 import { ITimelineEvent, TimelineManager } from "../utils/TimeLine"
 import { THEME_ID } from "./ColorManager";
+import { LOW_LIMIT } from "../stores/runStat";
 
 const Time = (ms = 0, s = 0, m = 0, h = 0) => {
     return ms + s * 1000 + m * 1000 * 60 + h * 1000 * 60 * 60;
@@ -35,14 +36,24 @@ const ThemeEvent = (time: number, theme: string): ITimelineEvent<'theme', string
     detail: theme,
 });
 
+const LowRpmLimitEvent = (time: number, rpm: number): ITimelineEvent<'lowRpm', number> => ({
+    time,
+    type: 'lowRpm',
+    detail: rpm,
+});
+
 const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
 export const timeLine = new TimelineManager([
     ...new Array(37).fill(0).map((_, index) => 
-        AudioEvent(Time(0, 3, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
+        AudioEvent(Time(0, 10, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
     ),
+    LowRpmLimitEvent(Time(0, 10), 170),
+    LowRpmLimitEvent(Time(0, 10, 1), 178),
     EndEvent(Time(0, 31, 41)),
+    LowRpmLimitEvent(Time(0, 6, 19), 265),
     ThemeEvent(Time(0, 3, 19), 'dark'),
+    LowRpmLimitEvent(Time(0, 10, 27), 170),
     ThemeEvent(Time(0, 15, 27), 'clear'),
 ], {
     audio: (x: ITimelineEvent<"audio", IPlayAudioStoryEvent>) => {
@@ -62,6 +73,9 @@ export const timeLine = new TimelineManager([
     },
     theme: (x: ITimelineEvent<"theme", string>) => {
         THEME_ID.value = x.detail;
+    },
+    lowRpm: (x: ITimelineEvent<'lowRpm', number>) => {
+        LOW_LIMIT.value = x.detail;
     }
 });
 
