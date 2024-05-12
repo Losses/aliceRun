@@ -6,6 +6,7 @@ import { useLerp } from "../utils/lerp";
 import { ROUTER_ID } from "../stores/router";
 import { type Effects } from "../initializeThreeCanvas";
 import { TRUE_HIGH_LIMIT, TRUE_LOW_LIMIT } from "./RunStatManager";
+import { P1_JOYCON } from "../stores/connection";
 
 export const HpManager = (effects: Effects) => {
     let lastCalculateTime = 0;
@@ -62,6 +63,7 @@ export const HpManager = (effects: Effects) => {
             if (bleeding) {
                 trueHp = Math.max(0, trueHp - 0.5);
                 updateHp(trueHp);
+                P1_JOYCON.value?.rumble(600, 600, 0.5);
                 lastCalculateTime = time;
 
             } else {
