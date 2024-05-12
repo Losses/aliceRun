@@ -14,6 +14,7 @@ import { RunStatManager } from './manager/RunStatManager';
 import { ColorManager } from './manager/ColorManager';
 import { StoryManager } from './manager/StoryManager';
 import { HpManager } from './manager/HpManager';
+import { SkyBoxManager } from './manager/SkyBoxManager';
 
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
@@ -30,6 +31,7 @@ HpManager();
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);
+SkyBoxManager(config.camera, config.scene, config.tracker);
 GroundObjectManager(config.camera, config.scene, config.tracker, config.renderer);
 
 window.requestAnimationFrame(() => {

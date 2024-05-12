@@ -53,7 +53,6 @@ export const GrassManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: 
     THEME_VALUE.subscribe((theme) => {
         (material.uniforms.grassBaseColor.value as THREE.Color).setHex(theme.grassBase);
         (material.uniforms.grassTipColor.value as THREE.Color).setHex(theme.grassTip);
-        $three.setAttribute('style', `background: linear-gradient(to bottom, #${theme.sky0.toString(16)}, #${theme.sky1.toString(16)})`);
 
         material.uniformsNeedUpdate = true;
     });

@@ -28,10 +28,9 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   );
   camera.position.set(0, 0, 40);
 
-  const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+  const renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0x000000, 0);
   renderer.localClippingEnabled = true;
   tracker.track(renderer);
 
@@ -54,10 +53,10 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   const finalComposer = new EffectComposer(renderer);
   finalComposer.addPass(renderScene);
   finalComposer.addPass(smaaPass);
-  finalComposer.addPass(sepiaPass);
   finalComposer.addPass(vignettePass);
   finalComposer.addPass(glitchPass);
   finalComposer.addPass(filmPass);
+  finalComposer.addPass(sepiaPass);
   
   glitchPass.enabled = false;
   filmPass.enabled = false;
