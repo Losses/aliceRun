@@ -11,16 +11,21 @@ const ALL_SOUNDS = [
     'slide-up.m4a',
     'checkbox-on.m4a',
     'checkbox-off.m4a',
+    'disconnect.m4a',
 ] as const;
 
+export type SoundId = typeof ALL_SOUNDS[number];
+
 export const globalAudioContext = new AudioContext();
+export const PLAY_SOUND = createEventName<SoundId>();
 export const PLAY_ADVANCED_SOUND = createEventName<string>();
+
 
 export const AudioManager = async () => {
 
     const sounds = {} as Record<typeof ALL_SOUNDS[number], AudioBuffer | undefined>;
 
-    eventTarget.addEventListener(PLAY_ADVANCED_SOUND, async ({detail}) => {
+    eventTarget.addEventListener(PLAY_ADVANCED_SOUND, async ({ detail }) => {
         const clip = new Clip({
             url: detail,
             adapter: new Mp3DeMuxAdapter(),
@@ -48,6 +53,10 @@ export const AudioManager = async () => {
 
         source.start();
     }
+
+    eventTarget.addEventListener(PLAY_SOUND, async ({ detail }) => {
+        playSound(detail);
+    });
 
     document.querySelectorAll('.glass').forEach(($) => {
         $.addEventListener('click', () => {

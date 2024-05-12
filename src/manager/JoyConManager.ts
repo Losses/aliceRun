@@ -1,25 +1,24 @@
+import { Event } from '@web-media/event-target';
+
+import { PLAY_SOUND } from './AudioManager';
+import { eventTarget } from './EventManager';
+
 import { StepCounter } from '../utils/StepCounter';
 import { P1_JOYCON, P2_JOYCON } from '../stores/connection';
-import { type JoyConLeft, type JoyConRight, type IPacket } from '../utils/joyCon/nintendoSwitch/JoyCon';
 import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCon/nintendoSwitch/connect';
-
-export interface IConnectedDevices {
-    p1: JoyConLeft | JoyConRight | null;
-    p2: JoyConLeft | JoyConRight | null;
-}
+import { type JoyConLeft, type JoyConRight, type IPacket, type JoyCon } from '../utils/joyCon/nintendoSwitch/JoyCon';
 
 export const p1 = new StepCounter(); // Create an instance of StepCounter
 
-const handleHidInput = (event: Event) => {
-    const customEvent = event as CustomEvent<IPacket>;
-
+const handleP1HidInput = (event: CustomEvent<IPacket>) => {
     // Process the packet with our step counter
-    p1.processPacket(customEvent.detail);
+    p1.processPacket(event.detail);
 };
 
 export const JoyConManager = () => {
     const $connectJoyconScreen = document.querySelector('.connect_section');
     const $connectedContent = document.querySelector('.connected');
+    const $reconnect = document.querySelector('.reconnect');
 
     if (!$connectJoyconScreen) {
         throw new Error('Connect section not found');
@@ -29,14 +28,16 @@ export const JoyConManager = () => {
         throw new Error('Connected section not found');
     }
 
+    if (!$reconnect) {
+        throw new Error('Reconnect section not found');
+    }
+
     document
         .querySelector('.connect_bt')
         ?.addEventListener('click', async () => {
             if (P1_JOYCON.value) return;
 
-            await connectToNintendoSwitchJoycon();
-
-            const joyCon = [...CONNECTED_JOY_CON.values()][0] as unknown as JoyConLeft | JoyConRight;
+            const joyCon = await connectToNintendoSwitchJoycon();
 
             if (!joyCon) return;
 
@@ -45,24 +46,55 @@ export const JoyConManager = () => {
             $connectJoyconScreen.classList.add('hidden');
             $connectedContent.classList.remove('hidden');
 
-            window.setInterval(async () => {
-                await joyCon.open();
-                await joyCon.enableStandardFullMode();
-                await joyCon.enableIMUMode();
-                await joyCon.enableVibration();
-            }, 2000);
-
-            joyCon.addEventListener('hidinput', handleHidInput as unknown as EventListener);
+            joyCon.addEventListener('hidinput', handleP1HidInput as unknown as EventListener);
         });
+
+    window.setInterval(() => {
+        CONNECTED_JOY_CON.forEach(async (joyCon) => {
+            await joyCon.open();
+            await joyCon.enableStandardFullMode();
+            await joyCon.enableIMUMode();
+            await joyCon.enableVibration();
+        });
+    }, 2000);
 
     const onDisconnect = (event: HIDConnectionEvent) => {
         if (event.device === P1_JOYCON.value?.device) {
+            P1_JOYCON.value.removeEventListener('hidinput', handleP1HidInput as EventListenerOrEventListenerObject);
             P1_JOYCON.value = null;
         }
 
         if (event.device === P2_JOYCON.value?.device) {
             P2_JOYCON.value = null;
         }
+    }
+
+    const waitForP1 = async (): Promise<void> => {
+        const joyCon = await connectToNintendoSwitchJoycon();
+        if (!joyCon) return;
+        
+        P1_JOYCON.value = joyCon;
+        
+        $reconnect.classList.add('hidden');
+        joyCon.addEventListener('hidinput', handleP1HidInput as unknown as EventListener);
+    }
+
+    $reconnect.addEventListener('click', waitForP1);
+    
+    P1_JOYCON.subscribe(async (x) => {
+        if (x) return;
+        
+        eventTarget.dispatchEvent(new Event(PLAY_SOUND, 'disconnect.m4a'));
+        $reconnect.classList.remove('hidden');
+        waitForP1();
+    });
+
+    // @ts-ignore
+    window.disconnect = () => {
+        $reconnect.classList.remove('hidden');
+        
+        eventTarget.dispatchEvent(new Event(PLAY_SOUND, 'disconnect.m4a'));
+        waitForP1();
     }
 
     navigator.hid.addEventListener('disconnect', onDisconnect);

@@ -27,7 +27,8 @@
   <div class="connected hidden">
     <section class="title_section centered_section screen" data-router="/">
       <div class="logo_container"><img class="logo" alt="Logo" src="src/assets/images/logo.svg" /></div>
-      <button class="menu-button glass" data-to-router="/single" data-click-sound="glass-click.m4a">Single Player</button>
+      <button class="menu-button glass" data-to-router="/single" data-click-sound="glass-click.m4a">Single
+        Player</button>
       <button class="menu-button glass">Multiple Player</button>
       <button class="menu-button glass" data-to-router="/settings">Settings</button>
     </section>
@@ -59,7 +60,7 @@
           <div class="value time-value">000:00</div>
         </div>
       </div>
-      
+
       <div class="right-panel">
         <div class="bar vertical-bar">
           <div class="low-range-limit-area"></div>
@@ -90,10 +91,12 @@
       <div class="menu-title">Diagnoses HID</div>
       <div class="menu-hint glass">
         <p>
-          Press the record button, and the system will automatically start recording after three seconds, continuing for one minute.
+          Press the record button, and the system will automatically start recording after three seconds, continuing for
+          one minute.
         </p>
         <p>
-          If you are willing to help us collect debugging data for the sensor, please follow the flashing prompts to run in place.
+          If you are willing to help us collect debugging data for the sensor, please follow the flashing prompts to run
+          in place.
         </p>
       </div>
       <div class="diagnosis-charts">
@@ -101,6 +104,12 @@
       <button class="menu-button glass start_record">Record</button>
       <button class="menu-button glass" data-to-router="/settings">Back</button>
     </section>
+    <div class="reconnect hidden">
+      <img class="joycon" alt="Joycon" src="src/assets/images/joyconDisconnected.svg" />
+      <div class="hint">
+        <div><span>Tap to</span><br /><span class="disconnected">Reconnect</span></div>
+      </div>
+    </div>
   </div>
   <script src="src/index.ts" type="module"></script>
 </body>

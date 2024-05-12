@@ -40,7 +40,7 @@ export const connectToNintendoSwitchJoycon = async () => {
   try {
     const [device] = await navigator.hid.requestDevice({ filters });
 
-    if (!device) return;
+    if (!device) return undefined;
 
     const joyCon = await connectDevice(device);
     CONNECTED_JOY_CON.push(joyCon);
@@ -57,13 +57,15 @@ export const connectToNintendoSwitchJoycon = async () => {
     }
 
     navigator.hid.addEventListener('disconnect', onDisconnect);
-  }
 
-  catch (error) {
+    return joyCon;
+  } catch (error) {
     if (error instanceof Error) {
       console.error(error.name, error.message);
     } else {
       console.error(error);
     }
+
+    return undefined;
   }
 };
