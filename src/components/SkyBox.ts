@@ -5,8 +5,6 @@ export const SkyBox = (tracker: ResourceTracker) => {
     const geometry = new THREE.SphereGeometry(500, 20, 20);
     geometry.computeBoundingBox();
 
-    console.log(geometry.boundingBox!.min);
-
     const material = new THREE.ShaderMaterial({
         uniforms: {
             color1: {
@@ -32,8 +30,6 @@ export const SkyBox = (tracker: ResourceTracker) => {
 
     tracker.track(geometry);
     tracker.track(material);
-
-    console.log(skyBox);
 
     return { skyBox };
 }

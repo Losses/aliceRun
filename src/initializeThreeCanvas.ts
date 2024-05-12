@@ -15,6 +15,8 @@ import { GlitchShader } from "./utils/shaders/GlitchPass";
 import { FrameRateLevel } from "./utils/TimeMagic";
 import { ResourceTracker } from "./ResourceTracker";
 
+export type Effects = ReturnType<typeof initializeThreeCanvas>['effects'];
+
 export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   const tracker = new ResourceTracker();
 
@@ -28,7 +30,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   );
   camera.position.set(0, 0, 40);
 
-  const renderer = new THREE.WebGLRenderer({antialias: true});
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.localClippingEnabled = true;
@@ -44,12 +46,14 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   const glitchPass = new ShaderPass(GlitchShader);
   const sepiaPass = new ShaderPass(SepiaShader);
   const vignettePass = new ShaderPass(VignetteShader);
-  const filmPass = new FilmPass(100);
+  const filmPass = new FilmPass(0, 0, 0, 0);
+
+  const effects = { glitchPass, sepiaPass, vignettePass, filmPass } as const;
 
   timeManager.addFn((time) => {
     glitchPass.uniforms.time.value = time;
   }, FrameRateLevel.D3);
-  
+
   const finalComposer = new EffectComposer(renderer);
   finalComposer.addPass(renderScene);
   finalComposer.addPass(smaaPass);
@@ -57,17 +61,13 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
   finalComposer.addPass(glitchPass);
   finalComposer.addPass(filmPass);
   finalComposer.addPass(sepiaPass);
-  
+
   glitchPass.enabled = false;
   filmPass.enabled = false;
   sepiaPass.enabled = false;
   vignettePass.enabled = false;
-  sepiaPass.uniforms['amount'].value = 1;
-  vignettePass.uniforms[ 'offset' ].value = 3;
-  vignettePass.uniforms[ 'darkness' ].value = 4;
 
-
-  CANVAS_SIZE.subscribe(({width, height}) => {
+  CANVAS_SIZE.subscribe(({ width, height }) => {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
@@ -88,6 +88,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
     controls,
     renderer,
     composer: finalComposer,
+    effects,
     tracker
   };
 };

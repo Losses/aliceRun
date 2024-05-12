@@ -27,7 +27,7 @@ AudioManager();
 ColorManager();
 StoryManager();
 RunStatManager();
-HpManager();
+HpManager(config.effects);
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
 GrassManager(config.camera, config.scene, config.tracker);
