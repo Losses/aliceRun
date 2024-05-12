@@ -3,6 +3,7 @@ import { createEventName, Event } from '@web-media/event-target';
 import { Sparkline } from './Sparkline';
 import { eventTarget } from '../manager/EventManager';
 import { type IPacket } from "./joyCon/nintendoSwitch/JoyCon";
+import { SENSITIVITY } from '../stores/settings';
 
 enum StepState {
   WAITING_FOR_PEAK,
@@ -159,7 +160,7 @@ export class StepCounter {
 
     switch (this.state) {
       case StepState.WAITING_FOR_PEAK:
-        if (this.data.gyoY.value > StepCounter.STEP_THRESHOLD_HIGH) {
+        if (this.data.gyoY.value > (StepCounter.STEP_THRESHOLD_HIGH * SENSITIVITY.value)) {
           if (now - this.lastStepTimestamp > StepCounter.MIN_TIME_BETWEEN_STEPS_MS) {
             this.step('UP');
             this.maxMagnitude = 0;
@@ -168,7 +169,7 @@ export class StepCounter {
         }
         break;
       case StepState.WAITING_FOR_TROUGH:
-        if (this.data.gyoY.value < StepCounter.STEP_THRESHOLD_LOW) {
+        if (this.data.gyoY.value < (StepCounter.STEP_THRESHOLD_LOW * SENSITIVITY.value)) {
           this.step('DN');
           this.state = StepState.WAITING_FOR_PEAK;
         }

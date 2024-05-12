@@ -1,4 +1,4 @@
-import { RENDERING_DETAIL, RENDERING_PIXELATED, VISUAL_LOAD } from "../stores/settings";
+import { SENSITIVITY, RENDERING_DETAIL, RENDERING_PIXELATED, VISUAL_LOAD } from "../stores/settings";
 
 export const SettingsManager = () => {
     const $visualLoad = document.querySelector('.visual-load') as HTMLInputElement | null;
@@ -41,4 +41,16 @@ export const SettingsManager = () => {
             document.body.classList.remove('pixelated');
         }
     }, true);
+
+    const $joyConSensitivity = document.querySelector('.sensitivity') as HTMLInputElement | null;
+
+    if (!$joyConSensitivity) return;
+
+    $joyConSensitivity.value = SENSITIVITY.value.toString();
+
+    $joyConSensitivity.addEventListener('change', (event: Event) => {
+        const value = parseFloat((event.target as HTMLInputElement).value);
+        SENSITIVITY.value = value;
+    });
+
 }
