@@ -1,5 +1,5 @@
 import { ROUTER_ID } from "../stores/router";
-import { HIGH_LIMIT, LOW_LIMIT } from "../stores/speedLimit";
+import { HIGH_LIMIT, LOW_LIMIT, SPM } from "../stores/runStat";
 import { LowPassFilter } from "../utils/LowPassFilter";
 import { RateEstimator } from "../utils/RateEstimator";
 import { STEP_EVENT } from "../utils/StepCounter";
@@ -165,6 +165,7 @@ export const RunStatManager = () => {
         $time.textContent = `${minutes.toString().padStart(3, '0')}:${seconds.toString().padStart(2, '0')}`;
         const spm = strideRateFilter.filter(rateEstimator.estimateRate());
         $spm.textContent = Math.floor(spm).toString().padStart(3, '0');
+        SPM.value = spm;
         updateBar(spm);
     }
 

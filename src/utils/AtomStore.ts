@@ -123,7 +123,7 @@ export class AtomStore {
     this.eventTarget.fire(new Event(eventName, value));
   }
 
-  createStore<T>(initialValue: T) {
+  createStore<T>(initialValue: T, diff = false) {
     const store = AtomDefinition<T>(initialValue);
     this.register(store);
     const that = this;
@@ -132,6 +132,10 @@ export class AtomStore {
         return that.getValue(store);
       },
       set value(x: T) {
+        if (diff && that.getValue(store) === x) {
+          return;
+        }
+
         that.setValue(store, x);
       },
       reset(hard: boolean = false) {
