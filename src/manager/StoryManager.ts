@@ -42,6 +42,12 @@ const LowRpmLimitEvent = (time: number, rpm: number): ITimelineEvent<'lowRpm', n
     detail: rpm,
 });
 
+const DebugAlertEvent = (time: number, text: string): ITimelineEvent<'debugAlert', string> => ({
+    time,
+    type: 'debugAlert',
+    detail: text,
+});
+
 const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
 export const timeLine = new TimelineManager([
@@ -55,6 +61,7 @@ export const timeLine = new TimelineManager([
     ThemeEvent(Time(0, 3, 19), 'dark'),
     LowRpmLimitEvent(Time(0, 10, 27), 170),
     ThemeEvent(Time(0, 15, 27), 'clear'),
+    DebugAlertEvent(Time(0, 40, 37), 'Story Finished'),
 ], {
     audio: (x: ITimelineEvent<"audio", IPlayAudioStoryEvent>) => {
         const clip = new Clip({
@@ -76,7 +83,10 @@ export const timeLine = new TimelineManager([
     },
     lowRpm: (x: ITimelineEvent<'lowRpm', number>) => {
         LOW_LIMIT.value = x.detail;
-    }
+    },
+    debugAlert: (x: ITimelineEvent<'debugAlert', string>) => {
+        alert(x.detail);
+    },
 });
 
 export const StoryManager = () => {
