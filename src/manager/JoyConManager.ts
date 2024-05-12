@@ -7,6 +7,7 @@ import { StepCounter } from '../utils/StepCounter';
 import { P1_JOYCON, P2_JOYCON } from '../stores/connection';
 import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCon/nintendoSwitch/connect';
 import { type JoyConLeft, type JoyConRight, type IPacket, type JoyCon } from '../utils/joyCon/nintendoSwitch/JoyCon';
+import { timeManager } from './TimeManager';
 
 export const p1 = new StepCounter(); // Create an instance of StepCounter
 
@@ -77,6 +78,7 @@ export const JoyConManager = () => {
         
         $reconnect.classList.add('hidden');
         joyCon.addEventListener('hidinput', handleP1HidInput as unknown as EventListener);
+        timeManager.play();
     }
 
     $reconnect.addEventListener('click', waitForP1);
@@ -84,6 +86,7 @@ export const JoyConManager = () => {
     P1_JOYCON.subscribe(async (x) => {
         if (x) return;
         
+        timeManager.pause();
         eventTarget.dispatchEvent(new Event(PLAY_SOUND, 'disconnect.m4a'));
         $reconnect.classList.remove('hidden');
         waitForP1();
