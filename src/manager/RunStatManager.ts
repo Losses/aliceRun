@@ -7,7 +7,7 @@ import { FrameRateLevel } from "../utils/TimeMagic";
 import { useLerp } from "../utils/lerp";
 import { store } from "./DataManager";
 import { eventTarget } from "./EventManager";
-import { stepCounter } from "./JoyConManager";
+import { p1 } from "./JoyConManager";
 import { timeLine } from "./StoryManager";
 import { timeManager } from "./TimeManager";
 
@@ -172,7 +172,7 @@ export const RunStatManager = () => {
     ROUTER_ID.subscribe((id) => {
         if (id.includes('/single/play/')) {
             rateEstimator.reset();
-            stepCounter.reset();
+            p1.reset();
             startTime = Date.now();
 
             LOW_LIMIT.reset(true);
@@ -181,8 +181,8 @@ export const RunStatManager = () => {
             TRUE_HIGH_LIMIT.reset(true);
 
             if (id === '/single/play/infinite') {
-                stepCounter.stepCount = parseInt(localStorage.getItem(INFINITE_STEP_KEY));
-                $steps.textContent = stepCounter.stepCount.toString().padStart(4, '0');
+                p1.stepCount = parseInt(localStorage.getItem(INFINITE_STEP_KEY));
+                $steps.textContent = p1.stepCount.toString().padStart(4, '0');
                 startTime = Date.now() - parseInt(localStorage.getItem(INFINITE_TIME_KEY));
             }
 
@@ -205,7 +205,7 @@ export const RunStatManager = () => {
         if (isInfiniteMode() && Date.now() - lastSyncTime > 600) {
             const deltaTime = Date.now() - startTime;
             localStorage.setItem(INFINITE_TIME_KEY, deltaTime.toString());
-            localStorage.setItem(INFINITE_STEP_KEY, stepCounter.stepCount.toString());
+            localStorage.setItem(INFINITE_STEP_KEY, p1.stepCount.toString());
             lastSyncTime = Date.now();
         }
     });

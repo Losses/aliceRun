@@ -1,33 +1,49 @@
 import { StepCounter } from '../utils/StepCounter';
-import { JOYCON_CONNECTED } from '../stores/connection';
-import type { JoyConLeft, JoyConRight, IPacket } from '../utils/joyCon/nintendoSwitch/JoyCon';
+import { P1_JOYCON, P2_JOYCON } from '../stores/connection';
+import { type JoyConLeft, type JoyConRight, type IPacket } from '../utils/joyCon/nintendoSwitch/JoyCon';
 import { connectToNintendoSwitchJoycon, CONNECTED_JOY_CON } from '../utils/joyCon/nintendoSwitch/connect';
 
+export interface IConnectedDevices {
+    p1: JoyConLeft | JoyConRight | null;
+    p2: JoyConLeft | JoyConRight | null;
+}
 
-export const stepCounter = new StepCounter(); // Create an instance of StepCounter
+export const p1 = new StepCounter(); // Create an instance of StepCounter
 
 const handleHidInput = (event: Event) => {
     const customEvent = event as CustomEvent<IPacket>;
 
     // Process the packet with our step counter
-    stepCounter.processPacket(customEvent.detail);
+    p1.processPacket(customEvent.detail);
 };
 
 export const JoyConManager = () => {
+    const $connectJoyconScreen = document.querySelector('.connect_section');
+    const $connectedContent = document.querySelector('.connected');
+
+    if (!$connectJoyconScreen) {
+        throw new Error('Connect section not found');
+    }
+
+    if (!$connectedContent) {
+        throw new Error('Connected section not found');
+    }
+
     document
         .querySelector('.connect_bt')
         ?.addEventListener('click', async () => {
-            if (JOYCON_CONNECTED.value) {
-                return;
-            }
+            if (P1_JOYCON.value) return;
 
             await connectToNintendoSwitchJoycon();
 
             const joyCon = [...CONNECTED_JOY_CON.values()][0] as unknown as JoyConLeft | JoyConRight;
 
-            if (joyCon) {
-                JOYCON_CONNECTED.value = true;
-            }
+            if (!joyCon) return;
+
+            P1_JOYCON.value = joyCon;
+
+            $connectJoyconScreen.classList.add('hidden');
+            $connectedContent.classList.remove('hidden');
 
             window.setInterval(async () => {
                 await joyCon.open();
@@ -39,24 +55,15 @@ export const JoyConManager = () => {
             joyCon.addEventListener('hidinput', handleHidInput as unknown as EventListener);
         });
 
-    const $connectJoyconScreen = document.querySelector('.connect_section');
-    const $connectedContent = document.querySelector('.connected');
-
-    JOYCON_CONNECTED.subscribe((x) => {
-        if (!$connectJoyconScreen) {
-            throw new Error('Connect section not found');
+    const onDisconnect = (event: HIDConnectionEvent) => {
+        if (event.device === P1_JOYCON.value?.device) {
+            P1_JOYCON.value = null;
         }
 
-        if (!$connectedContent) {
-            throw new Error('Connected section not found');
+        if (event.device === P2_JOYCON.value?.device) {
+            P2_JOYCON.value = null;
         }
+    }
 
-        if (x) {
-            $connectJoyconScreen.classList.add('hidden');
-            $connectedContent.classList.remove('hidden');
-        } else {
-            $connectJoyconScreen.classList.remove('hidden');
-            $connectedContent.classList.add('hidden');
-        }
-    });
+    navigator.hid.addEventListener('disconnect', onDisconnect);
 };

@@ -5,7 +5,7 @@ import { JoyCon, JoyConLeft, JoyConRight } from './JoyCon';
  * Converted to TypeScript
  */
 
-export const CONNECTED_JOY_CON = new Map<number, JoyCon>();
+export const CONNECTED_JOY_CON: JoyCon[] = [];
 const NINTENDO = 0x057e;
 
 const connectDevice = async (device: HIDDevice) => {
@@ -42,7 +42,21 @@ export const connectToNintendoSwitchJoycon = async () => {
 
     if (!device) return;
 
-    CONNECTED_JOY_CON.set(device.productId, await connectDevice(device));
+    const joyCon = await connectDevice(device);
+    CONNECTED_JOY_CON.push(joyCon);
+
+    const onDisconnect = (event: HIDConnectionEvent) => {      
+      if (event.device === device) {
+        navigator.hid.removeEventListener('disconnect', onDisconnect);
+
+        var index = CONNECTED_JOY_CON.indexOf(joyCon);
+        if (index !== -1) {
+          CONNECTED_JOY_CON.splice(index, 1);
+        }
+      }
+    }
+
+    navigator.hid.addEventListener('disconnect', onDisconnect);
   }
 
   catch (error) {

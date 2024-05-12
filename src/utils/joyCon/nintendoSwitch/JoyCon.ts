@@ -117,7 +117,7 @@ export interface IGyroscope {
 }
 
 export class JoyCon extends EventTarget {
-  constructor(private device: HIDDevice) {
+  constructor(public readonly device: HIDDevice) {
     super();
   }
 

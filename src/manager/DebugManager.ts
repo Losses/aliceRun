@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ResourceTracker } from '../ResourceTracker';
 import { timeManager } from './TimeManager';
 import { FrameRateLevel } from '../utils/TimeMagic';
-import { stepCounter } from './JoyConManager';
+import { p1 } from './JoyConManager';
 
 export const DebugManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker) => {
     // camera.position.set(-1200, 0, 0);
@@ -29,6 +29,6 @@ export const DebugManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: 
     }
 
     //@ts-ignore
-    window.step = stepCounter.mockStep;
+    window.step = p1.mockStep;
     return { };
 }

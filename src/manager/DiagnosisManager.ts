@@ -1,6 +1,6 @@
 import { ROUTER_ID } from "../stores/router"
 import { FrameRateLevel } from "../utils/TimeMagic";
-import { stepCounter } from "./JoyConManager";
+import { p1 } from "./JoyConManager";
 import { timeManager } from "./TimeManager";
 
 const WAIT_TIME = 5000;
@@ -9,7 +9,7 @@ export const DiagnosisManager = () => {
     const $main = document.querySelector('.diagnosis-charts');
     if (!$main) return;
 
-    Object.entries(stepCounter.data).forEach(([key, sparkline]) => {
+    Object.entries(p1.data).forEach(([key, sparkline]) => {
         const $container = document.createElement('div');
         $container.classList.add('diagnosis-sparkline-container');
         const $label = document.createElement('span');
@@ -23,12 +23,12 @@ export const DiagnosisManager = () => {
 
     ROUTER_ID.subscribe((id) => {
         const routerMatch = id === '/settings/diagnosis-hid';
-        stepCounter.monitoring = routerMatch;
+        p1.monitoring = routerMatch;
 
         if (routerMatch) {
-            timeManager.addFn(stepCounter.updateSparklines, FrameRateLevel.D0);
+            timeManager.addFn(p1.updateSparklines, FrameRateLevel.D0);
         } else {
-            timeManager.removeFn(stepCounter.updateSparklines);
+            timeManager.removeFn(p1.updateSparklines);
         }
     });
 
@@ -40,12 +40,12 @@ export const DiagnosisManager = () => {
     const switchRecording = () => {
         trueRecording = false;
         if (!$recordButton) return;
-        if (stepCounter.recording) {
+        if (p1.recording) {
             triggeredRecording = false;
             trueRecording = false;
             $recordButton.textContent = 'Record';
-            stepCounter.recording = false;
-            stepCounter.dumpRecord();
+            p1.recording = false;
+            p1.dumpRecord();
         } else {
             startTime = Date.now();
             triggeredRecording = true;
@@ -66,8 +66,8 @@ export const DiagnosisManager = () => {
             $recordButton.textContent = 'Ready';
         } else {
             if (!trueRecording) {
-                stepCounter.reset();
-                stepCounter.recording = true;
+                p1.reset();
+                p1.recording = true;
                 trueRecording = true;
             }
             $recordButton.textContent = 'Stop';
