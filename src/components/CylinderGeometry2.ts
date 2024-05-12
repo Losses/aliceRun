@@ -7,15 +7,7 @@ import {
 } from 'three';
 
 class CylinderThetaUpdateManager {
-	private sinCache = new Map<number, number>();
-	private cosCache = new Map<number, number>();
 	constructor(private readonly cylinder: CylinderGeometry2) { };
-
-	private setCache(map: Map<number, number>, theta: number, cachedValue: number) {
-		map.set(theta, cachedValue);
-
-		return cachedValue;
-	}
 
 	updateTheta = (deltaTheta: number) => {
 		const points = this.cylinder.points;
@@ -23,8 +15,8 @@ class CylinderThetaUpdateManager {
 		for (let i = 0; i < points.length; i += 1) {
 			const point = points[i];
 			const theta = point.baseTheta + deltaTheta;
-			const sinTheta = this.sinCache.get(theta) ?? this.setCache(this.sinCache, theta, Math.sin(theta));
-			const cosTheta = this.cosCache.get(theta) ?? this.setCache(this.cosCache, theta, Math.cos(theta));
+			const sinTheta = Math.sin(theta);
+			const cosTheta = Math.cos(theta);
 
 			point.updateTheta(sinTheta, cosTheta);
 		}

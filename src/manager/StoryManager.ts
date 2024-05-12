@@ -55,11 +55,11 @@ export const timeLine = new TimelineManager([
         AudioEvent(Time(0, 10, index), `S001-EP001-${(index + 1).toString().padStart(3, '0')}.mp3`)
     ),
     LowRpmLimitEvent(Time(0, 10), 170),
-    LowRpmLimitEvent(Time(0, 10, 1), 178),
+    LowRpmLimitEvent(Time(0, 10, 1), 195),
     EndEvent(Time(0, 31, 41)),
     LowRpmLimitEvent(Time(0, 6, 19), 265),
     ThemeEvent(Time(0, 3, 19), 'dark'),
-    LowRpmLimitEvent(Time(0, 10, 27), 170),
+    LowRpmLimitEvent(Time(0, 10, 27), 180),
     ThemeEvent(Time(0, 15, 27), 'clear'),
     DebugAlertEvent(Time(0, 40, 37), 'Story Finished'),
 ], {
@@ -69,10 +69,18 @@ export const timeLine = new TimelineManager([
             url: STORY_AUDIO_URL_BASE + x.detail.url,
             adapter: new Mp3DeMuxAdapter(),
         });
-
-        clip.buffer().then( async () => {
-            clip.play();
+        
+        
+        performance.mark(`advancedAudio-${x}:load:start`);
+        clip.buffer().then(async () => {
+            performance.mark(`advancedAudio-${x}:play:start`);
+            clip.play().then((x) => {
+                performance.mark(`advancedAudio-${x}:play:end`);
+                performance.measure(`advancedAudio-${x}:play`, `advancedAudio-${x}:play:start`, `advancedAudio-${x}:play:end`);
+            });
         });
+        performance.mark(`advancedAudio-${x}:load:end`);
+        performance.measure(`advancedAudio-${x}:load`, `advancedAudio-${x}:load:start`, `advancedAudio-${x}:load:end`);
         
         return () => clip.dispose();
     },
