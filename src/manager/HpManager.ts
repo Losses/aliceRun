@@ -16,7 +16,12 @@ export const HpManager = (effects: Effects) => {
         (x) => { HP.value = x }
     );
 
+    const $hpBar = document.querySelector('.hp-bar');
     const $hpVal = document.querySelector('.hp-bar-val');
+
+    if (!$hpBar) {
+        throw new Error(`HP not found`);
+    }
 
     if (!$hpVal) {
         throw new Error(`HP not found`);
@@ -77,8 +82,10 @@ export const HpManager = (effects: Effects) => {
 
         if (id === '/single/play/story') {
             timeManager.addFn(tick);
+            $hpBar.classList.remove('hidden');
         } else {
             timeManager.removeFn(tick);
+            $hpBar.classList.add('hidden');
         }
 
     }, true);
