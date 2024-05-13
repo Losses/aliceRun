@@ -16,6 +16,8 @@ import { StoryManager } from './manager/StoryManager';
 import { HpManager } from './manager/HpManager';
 import { SkyBoxManager } from './manager/SkyBoxManager';
 
+import './utils/setRandomInterval';
+
 const config = initializeThreeCanvas(
   document.querySelector("#app") as HTMLDivElement
 );

@@ -1,14 +1,14 @@
-class WindowAverageRecord {
+export class WindowAverageRecord {
     private windowSize: number;
     private pointer: number;
     private windowData: number[];
-    private averages: number[];
+    protected points: number[];
   
     constructor(windowSize: number) {
       this.windowSize = windowSize;
       this.pointer = 0;
       this.windowData = new Array(windowSize).fill(0);
-      this.averages = [];
+      this.points = [];
     }
   
     public addData(data: number): void {
@@ -18,18 +18,14 @@ class WindowAverageRecord {
       if (this.pointer === 0) {
         const sum = this.windowData.reduce((acc, val) => acc + val, 0);
         const avg = sum / this.windowSize;
-        this.averages.push(avg);
+        this.points.push(avg);
       }
     }
   
     public reset(): void {
       this.pointer = 0;
       this.windowData.fill(0);
-      this.averages = [];
-    }
-
-    public getAverages() {
-      return this.averages;
+      this.points = [];
     }
   }
   

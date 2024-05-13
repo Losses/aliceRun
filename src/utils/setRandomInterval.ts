@@ -12,8 +12,9 @@ function setRandomInterval(callback: CallbackFunction, centralTime: number, rand
     };
   
     run();
-  
-    // 返回一个函数，用于取消间隔
+
     return () => clearTimeout(timeoutId);
   }
   
+// @ts-ignore
+window.setRandomInterval = setRandomInterval;

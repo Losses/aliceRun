@@ -2,8 +2,10 @@ import { ROUTER_ID } from "../stores/router";
 import { HIGH_LIMIT, LOW_LIMIT, SPM } from "../stores/runStat";
 import { LowPassFilter } from "../utils/LowPassFilter";
 import { RateEstimator } from "../utils/RateEstimator";
+import { SpmStatPainter } from "../utils/SpmStatPainter";
 import { STEP_EVENT } from "../utils/StepCounter";
 import { FrameRateLevel } from "../utils/TimeMagic";
+import { WindowAverageRecord } from "../utils/WindowAverageRecord";
 import { useLerp } from "../utils/lerp";
 import { store } from "./DataManager";
 import { eventTarget } from "./EventManager";
@@ -121,7 +123,10 @@ const parseInt = (x: string | null | undefined) => {
     return Math.floor(number);
 }
 
-export const spmStat = new WindowAverageRecord(60 * 10);
+export const spmStat = new SpmStatPainter(60 * 2);
+
+// @ts-ignore
+window.spmStat = spmStat;
 
 export const RunStatManager = () => {
     let startTime = 0;

@@ -351,6 +351,20 @@ button {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.0) 50%, rgba(255, 255, 255, 0.5));
 }
 
+.spm-stat {
+  top: 50%;
+  left: 50%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+}
+
+.spm-chart-container {
+  width: 600px;
+  height: 320px;
+  background: black;
+}
+
 /** Device disconnected **/
 
 .reconnect {
