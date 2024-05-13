@@ -121,6 +121,8 @@ const parseInt = (x: string | null | undefined) => {
     return Math.floor(number);
 }
 
+export const spmStat = new WindowAverageRecord(60 * 10);
+
 export const RunStatManager = () => {
     let startTime = 0;
 
@@ -166,6 +168,7 @@ export const RunStatManager = () => {
         const spm = strideRateFilter.filter(rateEstimator.estimateRate());
         $spm.textContent = Math.floor(spm).toString().padStart(3, '0');
         SPM.value = spm;
+        spmStat.addData(spm);
         updateBar(spm);
     }
 
@@ -179,6 +182,7 @@ export const RunStatManager = () => {
             HIGH_LIMIT.reset(true);
             TRUE_LOW_LIMIT.reset(true);
             TRUE_HIGH_LIMIT.reset(true);
+            spmStat.reset();
 
             if (id === '/single/play/infinite') {
                 p1.stepCount = parseInt(localStorage.getItem(INFINITE_STEP_KEY));
