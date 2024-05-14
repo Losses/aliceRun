@@ -1,56 +1,68 @@
-import { SENSITIVITY, RENDERING_DETAIL, RENDERING_PIXELATED, VISUAL_LOAD } from "../stores/settings";
+import {
+   RENDERING_DETAIL,
+   RENDERING_PIXELATED,
+   SENSITIVITY,
+   VISUAL_LOAD,
+} from '../stores/settings';
 
 export const SettingsManager = () => {
-    const $visualLoad = document.querySelector('.visual-load') as HTMLInputElement | null;
+   const $visualLoad = document.querySelector(
+      '.visual-load',
+   ) as HTMLInputElement | null;
 
-    if (!$visualLoad) return;
+   if (!$visualLoad) return;
 
-    $visualLoad.value = VISUAL_LOAD.value.toString();
+   $visualLoad.value = VISUAL_LOAD.value.toString();
 
-    $visualLoad.addEventListener('change', (event: Event) => {
-        const value = parseFloat((event.target as HTMLInputElement).value);
-        VISUAL_LOAD.value = value;
-    });
+   $visualLoad.addEventListener('change', (event: Event) => {
+      const value = Number.parseFloat((event.target as HTMLInputElement).value);
+      VISUAL_LOAD.value = value;
+   });
 
-    const $renderingDetail = document.querySelector('.rendering-detail') as HTMLInputElement | null;
+   const $renderingDetail = document.querySelector(
+      '.rendering-detail',
+   ) as HTMLInputElement | null;
 
-    if (!$renderingDetail) return;
+   if (!$renderingDetail) return;
 
-    $renderingDetail.value = RENDERING_DETAIL.value.toString();
+   $renderingDetail.value = RENDERING_DETAIL.value.toString();
 
-    $renderingDetail.addEventListener('change', (event: Event) => {
-        const value = parseFloat((event.target as HTMLInputElement).value);
-        RENDERING_DETAIL.value = value;
-    });
+   $renderingDetail.addEventListener('change', (event: Event) => {
+      const value = Number.parseFloat((event.target as HTMLInputElement).value);
+      RENDERING_DETAIL.value = value;
+   });
 
-    const $pixelated = document.querySelector('.rendering-pixelated') as HTMLInputElement | null;
+   const $pixelated = document.querySelector(
+      '.rendering-pixelated',
+   ) as HTMLInputElement | null;
 
-    if (!$pixelated) return;
+   if (!$pixelated) return;
 
-    $pixelated.checked = RENDERING_PIXELATED.value;
+   $pixelated.checked = RENDERING_PIXELATED.value;
 
-    $pixelated.addEventListener('change', (event: Event) => {
-        const value = (event.target as HTMLInputElement).checked;
-        RENDERING_PIXELATED.value = value;
-    });
+   $pixelated.addEventListener('change', (event: Event) => {
+      const value = (event.target as HTMLInputElement).checked;
+      RENDERING_PIXELATED.value = value;
+   });
 
-    RENDERING_PIXELATED.subscribe((x) => {
-        if (x) {
-            document.body.classList.add('pixelated');
-        } else {
-            document.body.classList.remove('pixelated');
-        }
-    }, true);
+   RENDERING_PIXELATED.subscribe((x) => {
+      if (x) {
+         document.body.classList.add('pixelated');
+      } else {
+         document.body.classList.remove('pixelated');
+      }
+   }, true);
 
-    const $joyConSensitivity = document.querySelector('.sensitivity') as HTMLInputElement | null;
+   const $joyConSensitivity = document.querySelector(
+      '.sensitivity',
+   ) as HTMLInputElement | null;
 
-    if (!$joyConSensitivity) return;
+   if (!$joyConSensitivity) return;
 
-    $joyConSensitivity.value = SENSITIVITY.value.toString();
+   $joyConSensitivity.value = SENSITIVITY.value.toString();
 
-    $joyConSensitivity.addEventListener('change', (event: Event) => {
-        const value = parseFloat((event.target as HTMLInputElement).value);
-        SENSITIVITY.value = value;
-    });
-
-}
+   $joyConSensitivity.addEventListener('change', (event: Event) => {
+      const value = Number.parseFloat((event.target as HTMLInputElement).value);
+      SENSITIVITY.value = value;
+   });
+};

@@ -1,118 +1,121 @@
-import { timeManager } from "../manager/TimeManager";
-import { FrameRateLevel, TickCallback } from "./TimeMagic";
+import { timeManager } from '../manager/TimeManager';
+import { FrameRateLevel, type TickCallback } from './TimeMagic';
 
 export const useRaf = (fn: TickCallback, frameRateLevel?: FrameRateLevel) => {
-  const ticker = timeManager;
+   const ticker = timeManager;
 
-  const wrappedFn: TickCallback = (...x) => {
-    fn(...x);
-  };
+   const wrappedFn: TickCallback = (...x) => {
+      fn(...x);
+   };
 
-  const play = () => {
-    ticker.addFn(wrappedFn, frameRateLevel);
-  };
+   const play = () => {
+      ticker.addFn(wrappedFn, frameRateLevel);
+   };
 
-  const stop = () => {
-    ticker.removeFn(wrappedFn);
-  };
+   const stop = () => {
+      ticker.removeFn(wrappedFn);
+   };
 
-  return [play, stop] as const;
+   return [play, stop] as const;
 };
 
 export const useLerp = (
-  getCurrentValFn: () => number,
-  updateFn: (x: number) => void,
-  damping: number = 0.05,
-  threshold: number = 1e-5,
-  frameRateLevel: FrameRateLevel = FrameRateLevel.D1
+   getCurrentValFn: () => number,
+   updateFn: (x: number) => void,
+   damping = 0.05,
+   threshold = 1e-5,
+   frameRateLevel: FrameRateLevel = FrameRateLevel.D1,
 ) => {
-  let targetValue = getCurrentValFn();
-  let cachedDamping = damping;
+   let targetValue = getCurrentValFn();
+   let cachedDamping = damping;
 
-  const [startLerp, stopLerp] = useRaf((_, __, ticksElapsed) => {
-    const currentValue = getCurrentValFn();
-    updateFn(
-      currentValue + (targetValue - currentValue) * cachedDamping * ticksElapsed
-    );
-    if (Math.abs(targetValue - currentValue) < threshold) {
-      updateFn(targetValue);
-      stopLerp();
-    }
-  }, frameRateLevel);
+   const [startLerp, stopLerp] = useRaf((_, __, ticksElapsed) => {
+      const currentValue = getCurrentValFn();
+      updateFn(
+         currentValue +
+            (targetValue - currentValue) * cachedDamping * ticksElapsed,
+      );
+      if (Math.abs(targetValue - currentValue) < threshold) {
+         updateFn(targetValue);
+         stopLerp();
+      }
+   }, frameRateLevel);
 
-  const updateValue = (x: number, instantly = false) => {
-    if (x === getCurrentValFn()) return;
-    targetValue = x;
+   const updateValue = (x: number, instantly = false) => {
+      if (x === getCurrentValFn()) return;
+      targetValue = x;
 
-    if (instantly) {
-      updateFn(targetValue);
-    } else {
-      startLerp();
-    }
-  };
+      if (instantly) {
+         updateFn(targetValue);
+      } else {
+         startLerp();
+      }
+   };
 
-  const updateDamping = (x: number) => {
-    cachedDamping = x;
-  };
+   const updateDamping = (x: number) => {
+      cachedDamping = x;
+   };
 
-  return [updateValue, startLerp, stopLerp, updateDamping] as const;
+   return [updateValue, startLerp, stopLerp, updateDamping] as const;
 };
 
 export const useLerps = (
-  currentValueArr: number[],
-  updateFn: (x: number[]) => void,
-  damping: number = 0.05,
-  threshold: number = 1e-5,
-  frameRateLevel: FrameRateLevel = FrameRateLevel.D1
+   currentValueArr: number[],
+   updateFn: (x: number[]) => void,
+   damping = 0.05,
+   threshold = 1e-5,
+   frameRateLevel: FrameRateLevel = FrameRateLevel.D1,
 ) => {
-  let targetValues = [...currentValueArr];
-  let cachedDamping = damping;
+   let targetValues = [...currentValueArr];
+   let cachedDamping = damping;
 
-  const [startLerp, stopLerp] = useRaf((_, __, ticksElapsed) => {
-    currentValueArr.forEach((currentValue, index) => {
-      if (targetValues[index] === undefined) return;
+   const [startLerp, stopLerp] = useRaf((_, __, ticksElapsed) => {
+      currentValueArr.forEach((currentValue, index) => {
+         if (targetValues[index] === undefined) return;
 
-      currentValueArr[index] = currentValue + (targetValues[index] - currentValue) * cachedDamping * ticksElapsed
-    })
+         currentValueArr[index] =
+            currentValue +
+            (targetValues[index] - currentValue) * cachedDamping * ticksElapsed;
+      });
 
-    updateFn(currentValueArr);
+      updateFn(currentValueArr);
 
-    let meetTarget = true;
+      let meetTarget = true;
 
-    targetValues.forEach((targetValue, index) => {
-      if (targetValue === undefined) return;
+      targetValues.forEach((targetValue, index) => {
+         if (targetValue === undefined) return;
 
-      if (Math.abs(targetValue - currentValueArr[index]) >= threshold) {
-        meetTarget = false;
+         if (Math.abs(targetValue - currentValueArr[index]) >= threshold) {
+            meetTarget = false;
+         }
+      });
+
+      if (meetTarget) {
+         updateFn(targetValues);
+         stopLerp();
       }
-    });
+   }, frameRateLevel);
 
-    if (meetTarget) {
-      updateFn(targetValues);
-      stopLerp();
-    }
-  }, frameRateLevel);
+   const updateValue = (x: number[]) => {
+      let meetTarget = true;
 
-  const updateValue = (x: number[]) => {
-    let meetTarget = true;
+      x.forEach((targetValue, index) => {
+         if (targetValue === undefined) return;
 
-    x.forEach((targetValue, index) => {
-      if (targetValue === undefined) return;
+         if (targetValue !== currentValueArr[index]) {
+            meetTarget = false;
+         }
+      });
 
-      if (targetValue !== currentValueArr[index]) {
-        meetTarget = false;
-      }
-    });
+      if (meetTarget) return;
 
-    if (meetTarget) return;
+      targetValues = x;
+      startLerp();
+   };
 
-    targetValues = x;
-    startLerp();
-  };
+   const updateDamping = (x: number) => {
+      cachedDamping = x;
+   };
 
-  const updateDamping = (x: number) => {
-    cachedDamping = x;
-  };
-
-  return [updateValue, startLerp, stopLerp, updateDamping] as const;
+   return [updateValue, startLerp, stopLerp, updateDamping] as const;
 };

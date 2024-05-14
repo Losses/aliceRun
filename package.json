@@ -16,6 +16,7 @@
     "tslib": "^2.3.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.7.3",
     "@parcel/transformer-glsl": "2.12.0",
     "@types/node": "^20.12.8",
     "@types/stats.js": "^0.17.3",
