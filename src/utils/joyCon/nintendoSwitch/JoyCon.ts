@@ -123,6 +123,8 @@ export class JoyCon extends EventTarget {
       super();
    }
 
+   private listened = false;
+
    /**
     * Opens the device.
     */
@@ -130,10 +132,15 @@ export class JoyCon extends EventTarget {
       if (!this.device.opened) {
          await this.device.open();
       }
-      this.device.addEventListener(
-         'inputreport',
-         this._onInputReport.bind(this),
-      );
+
+      if (!this.listened) {
+         this.device.addEventListener(
+            'inputreport',
+            this._onInputReport.bind(this),
+         );
+
+         this.listened = true;
+      }
    }
 
    /**
