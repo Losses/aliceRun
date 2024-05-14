@@ -1,3 +1,4 @@
+import { SplineCurve, Vector2 } from "three";
 import { WindowAverageRecord } from "./WindowAverageRecord";
 
 export class SpmStatPainter extends WindowAverageRecord {
@@ -5,8 +6,8 @@ export class SpmStatPainter extends WindowAverageRecord {
 
     public $canvas = document.getElementById('spm-chart') as HTMLCanvasElement;
 
-    private normalized: number[] | null = null;
-    private interpolated: number[] | null = null;
+    private normalized: SplineCurve | null = null;
+    private interpolated: Vector2[] | null = null;
 
     constructor(windowSize: number) {
         super(windowSize);
@@ -28,11 +29,19 @@ export class SpmStatPainter extends WindowAverageRecord {
         if (this.normalized) return;
         const max = Math.max(...this.points);
         const min = Math.min(...this.points);
+        const unit = 1 / this.points.length;
 
-        this.normalized = this.points.map(value => ((value - min) / (max - min)));
+        this.normalized = new SplineCurve(
+            this.points.map((value, index) => {
+                return new Vector2(
+                    unit * index,
+                    (value - min) / (max - min)
+                );
+            }),
+        );
     }
 
-    private exponentialSmoothing(alpha = 0.99) {
+    private intepolate() {
         if (!this.normalized) {
             throw new Error(`Data not normalized`);
         }
@@ -41,29 +50,7 @@ export class SpmStatPainter extends WindowAverageRecord {
 
         if (this.interpolated && this.interpolated.length === outputLength) return;
 
-        console.log('smoothing', this.$canvas, outputLength);
-
-        this.interpolated = new Array(outputLength).fill(0);
-
-        const n = this.normalized.length - 1;
-
-        for (let i = 0; i < outputLength; i++) {
-            const x = i / (outputLength - 1);
-            const index = Math.floor(x * n);
-            // const weight = x * n - index;
-    
-            if (i === 0) {
-                this.interpolated[i] =  this.normalized[0];
-            } else if (i === outputLength - 1) {
-                this.interpolated[i] = this.normalized[i];
-            } else {
-                // this.interpolated[i] = alpha * this.interpolated[i] + (1 - alpha) * this.interpolated[i - 1];
-                // this.interpolated[i] = (1 - weight) * this.normalized[index] + weight * this.normalized[index + 1];
-                this.interpolated[i] = alpha * this.interpolated[i - 1] + (1 - alpha) * this.normalized[index];
-            }
-        }
-    
-        return this.interpolated;
+       this.interpolated = this.normalized.getPoints(outputLength);
     }
 
     public resizeToParent(): void {
@@ -83,7 +70,7 @@ export class SpmStatPainter extends WindowAverageRecord {
 
     draw(progress: number): void {
         this.normalize();
-        this.exponentialSmoothing();
+        this.intepolate();
 
         if (!this.normalized) {
             throw new Error(`Data not normalized`);
@@ -102,10 +89,8 @@ export class SpmStatPainter extends WindowAverageRecord {
 
         const drawPoints = Math.floor(this.interpolated.length * progress);
 
-        console.log(drawPoints, this.interpolated);
-
-        for (let x = 0; x <= drawPoints; x += 1) {
-            const y = 0.1 + height * (1 - this.interpolated[x]) * 0.8;
+        for (let x = 0; x < drawPoints; x += 1) {
+            const y = 0.1 * height + height * (1 - this.interpolated[x].y) * 0.8;
 
             if (x === 0) {
                 this.context.moveTo(x, y);

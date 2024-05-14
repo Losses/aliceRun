@@ -7,7 +7,6 @@ import { STEP_EVENT } from '../utils/StepCounter';
 import { eventTarget } from './EventManager';
 import { ResourceTracker } from '../ResourceTracker';
 import { CylinderGeometry2 } from '../components/CylinderGeometry2';
-import { GroundObject } from '../components/GroundObject';
 
 export const GroundManager = (camera: THREE.Camera, scene: THREE.Scene, tracker: ResourceTracker) => {
     const { ground } = Ground(tracker);
