@@ -1,6 +1,9 @@
 import { SplineCurve, Vector2 } from "three";
 import { WindowAverageRecord } from "./WindowAverageRecord";
 
+const BODY_ALPHA = 0.4;
+const TIP_SIZE = 50;
+
 export class SpmStatPainter extends WindowAverageRecord {
     private context: CanvasRenderingContext2D;
 
@@ -49,7 +52,7 @@ export class SpmStatPainter extends WindowAverageRecord {
         );
     }
 
-    private intepolate(alpha = 0.03) {
+    private intepolate(alpha = 0.2) {
         if (!this.normalized) {
             throw new Error(`Data not normalized`);
         }
@@ -99,11 +102,28 @@ export class SpmStatPainter extends WindowAverageRecord {
         this.context.clearRect(0, 0, width, height);
 
         this.context.strokeStyle = 'white';
-        this.context.lineWidth = 1.5;
+        this.context.lineWidth = 1.6;
 
         this.context.beginPath();
 
-        const drawPoints = Math.floor(this.interpolated.length * progress);
+        const totalPoints = this.interpolated.length;
+        const drawPoints = Math.floor(totalPoints * progress);
+
+        const gradient = this.context.createLinearGradient(0, 0, drawPoints, 0);
+
+        const bodyAlpha = drawPoints + TIP_SIZE > totalPoints
+            ? BODY_ALPHA + (1 - BODY_ALPHA) * (1 - ((totalPoints - drawPoints) / TIP_SIZE))
+            : BODY_ALPHA;
+        
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${bodyAlpha})`);
+        if (drawPoints < TIP_SIZE) {
+            gradient.addColorStop(1, 'white');
+        } else {
+            gradient.addColorStop((drawPoints - TIP_SIZE) / drawPoints, `rgba(255, 255, 255, ${bodyAlpha})`);
+            gradient.addColorStop(1, 'white');
+        }
+
+        this.context.strokeStyle = gradient;
 
         for (let x = 0; x < drawPoints; x += 1) {
             const y = 0.1 * height + height * (1 - this.interpolated[x].y) * 0.8;
