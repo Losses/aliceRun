@@ -6,6 +6,7 @@ export class SpmStatPainter extends WindowAverageRecord {
 
     public $canvas = document.getElementById('spm-chart') as HTMLCanvasElement;
 
+    private closed = false;
     private normalized: SplineCurve | null = null;
     private interpolated: Vector2[] | null = null;
 
@@ -20,9 +21,16 @@ export class SpmStatPainter extends WindowAverageRecord {
     }
 
     addData(x: number) {
+        if (this.closed) return;
+
         super.addData(x);
         this.normalized = null;
         this.interpolated = null;
+    }
+
+    reset(): void {
+        super.reset();
+        this.closed = false;
     }
 
     private normalize = () => {
@@ -41,7 +49,7 @@ export class SpmStatPainter extends WindowAverageRecord {
         );
     }
 
-    private intepolate() {
+    private intepolate(alpha = 0.03) {
         if (!this.normalized) {
             throw new Error(`Data not normalized`);
         }
@@ -51,6 +59,10 @@ export class SpmStatPainter extends WindowAverageRecord {
         if (this.interpolated && this.interpolated.length === outputLength) return;
 
        this.interpolated = this.normalized.getPoints(outputLength);
+
+       for (let i = 1; i < this.interpolated.length; i += 1) {
+            this.interpolated[i].y = this.interpolated[i].y * alpha + this.interpolated[i - 1].y * (1 - alpha);
+       }
     }
 
     public resizeToParent(): void {
@@ -67,6 +79,9 @@ export class SpmStatPainter extends WindowAverageRecord {
         this.$canvas.style.height = `${rect.height}px`;
     }
 
+    close() {
+        this.closed = true;
+    }
 
     draw(progress: number): void {
         this.normalize();
@@ -84,6 +99,7 @@ export class SpmStatPainter extends WindowAverageRecord {
         this.context.clearRect(0, 0, width, height);
 
         this.context.strokeStyle = 'white';
+        this.context.lineWidth = 1.5;
 
         this.context.beginPath();
 

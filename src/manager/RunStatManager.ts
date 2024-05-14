@@ -123,7 +123,7 @@ const parseInt = (x: string | null | undefined) => {
     return Math.floor(number);
 }
 
-export const spmStat = new SpmStatPainter(60 * 2);
+export const spmStat = new SpmStatPainter(20); // 60 * 2
 
 // @ts-ignore
 window.spmStat = spmStat;
@@ -217,5 +217,45 @@ export const RunStatManager = () => {
             localStorage.setItem(INFINITE_STEP_KEY, p1.stepCount.toString());
             lastSyncTime = Date.now();
         }
+    });
+
+    const $finishTraining = document.querySelector('.finish-training');
+    const $spmStat = document.querySelector('.spm-stat');
+    const $statChartBackButton = document.querySelector('.stat-chart-back');
+
+    if (!$finishTraining) {
+        throw new Error('Training not finished');
+    }
+    if (!$spmStat) {
+        throw new Error('Spm stat not finished');
+    }
+    if (!$statChartBackButton) {
+        throw new Error('statChartBackButton not finished');
+    }
+
+
+    let lineChartProgress = 0;
+
+    const [updateLineChartProgress] = useLerp(
+        () => lineChartProgress,
+        (x) => {
+            lineChartProgress = x;
+            spmStat.draw(x);
+        },
+        0.03
+    );
+
+    $finishTraining.addEventListener('click', () => {
+        spmStat.close();
+        updateLineChartProgress(0, true);
+        spmStat.resizeToParent();
+        $spmStat.classList.add('shown');
+        window.setTimeout(() => {
+            updateLineChartProgress(1);
+        }, 100);
+    });
+    
+    $statChartBackButton.addEventListener('click', () => {
+        $spmStat.classList.remove('shown');
     });
 }

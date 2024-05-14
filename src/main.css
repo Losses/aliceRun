@@ -293,7 +293,7 @@ button {
   font-weight: 800;
 }
 
-.back_to_title {
+.finish-training {
   bottom: 20px;
   left: 20px;
   padding: 0.25em 1em;
@@ -356,6 +356,15 @@ button {
   left: 50%;
   position: fixed;
   background: rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -55%);
+  visibility: hidden;
+  opacity: 0;
+  transition: translate 300ms, opacity 300ms, visibility 300ms;
+}
+
+.spm-stat.shown {
+  visibility: visible;
+  opacity: 1;
   transform: translate(-50%, -50%);
 }
 
