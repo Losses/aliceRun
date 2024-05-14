@@ -7,8 +7,6 @@ export class NumberRecord {
 
    public recording = false;
 
-   constructor() {}
-
    get value() {
       return this._value;
    }

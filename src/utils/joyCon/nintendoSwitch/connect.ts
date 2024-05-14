@@ -49,7 +49,7 @@ export const connectToNintendoSwitchJoycon = async () => {
          if (event.device === device) {
             navigator.hid.removeEventListener('disconnect', onDisconnect);
 
-            var index = CONNECTED_JOY_CON.indexOf(joyCon);
+            const index = CONNECTED_JOY_CON.indexOf(joyCon);
             if (index !== -1) {
                CONNECTED_JOY_CON.splice(index, 1);
             }

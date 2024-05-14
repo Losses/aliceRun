@@ -356,6 +356,7 @@ export class CylinderGeometry2 extends BufferGeometry {
       return this;
    }
 
+   // biome-ignore lint/suspicious/noExplicitAny: Users should know what they are doing
    static fromJSON(data: any) {
       return new CylinderGeometry2({
          radiusTop: data.radiusTop,

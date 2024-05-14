@@ -32,14 +32,14 @@ export function Madgwick(sampleInterval: number, options?: IMadgwickOptions) {
    options = options || {};
    const sampleFreq = 1000 / sampleInterval; // sample frequency in Hz
    let beta = options.beta || 1.0; // 2 * proportional gain - lower numbers are smoother, but take longer to get to correct attitude.
-   let initalised = options.doInitialisation === true ? false : true;
+   let initalised = options.doInitialisation !==true;
 
    //---------------------------------------------------------------------------------------------------
    // Variable definitions
-   let q0 = 1.0,
-      q1 = 0.0,
-      q2 = 0.0,
-      q3 = 0.0; // quaternion of sensor frame relative to auxiliary frame
+   let q0 = 1.0;
+   let q1 = 0.0;
+   let q2 = 0.0;
+   let q3 = 0.0; // quaternion of sensor frame relative to auxiliary frame
    let recipSampleFreq = 1.0 / sampleFreq;
 
    //= ===================================================================================================
@@ -56,21 +56,27 @@ export function Madgwick(sampleInterval: number, options?: IMadgwickOptions) {
       az = 0,
    ) {
       let recipNorm;
-      let s0, s1, s2, s3;
-      let qDot1, qDot2, qDot3, qDot4;
-      let v2q0,
-         v2q1,
-         v2q2,
-         v2q3,
-         v4q0,
-         v4q1,
-         v4q2,
-         v8q1,
-         v8q2,
-         q0q0,
-         q1q1,
-         q2q2,
-         q3q3;
+      let s0;
+      let s1;
+      let s2;
+      let s3;
+      let qDot1;
+      let qDot2;
+      let qDot3;
+      let qDot4;
+      let v2q0;
+      let v2q1;
+      let v2q2;
+      let v2q3;
+      let v4q0;
+      let v4q1;
+      let v4q2;
+      let v8q1;
+      let v8q2;
+      let q0q0;
+      let q1q1;
+      let q2q2;
+      let q3q3;
 
       // Rate of change of quaternion from gyroscope
       qDot1 = 0.5 * (-q1 * gx - q2 * gy - q3 * gz);
@@ -190,24 +196,40 @@ export function Madgwick(sampleInterval: number, options?: IMadgwickOptions) {
       }
 
       let recipNorm;
-      let s0, s1, s2, s3;
-      let qDot1, qDot2, qDot3, qDot4;
-      let hx, hy;
-      let v2q0mx,
-         v2q0my,
-         v2q0mz,
-         v2q1mx,
-         v2bx,
-         v2bz,
-         v4bx,
-         v4bz,
-         v2q0,
-         v2q1,
-         v2q2,
-         v2q3,
-         v2q0q2,
-         v2q2q3;
-      let q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
+      let s0;
+      let s1;
+      let s2;
+      let s3;
+      let qDot1;
+      let qDot2;
+      let qDot3;
+      let qDot4;
+      let hx;
+      let hy;
+      let v2q0mx;
+      let v2q0my;
+      let v2q0mz;
+      let v2q1mx;
+      let v2bx;
+      let v2bz;
+      let v4bx;
+      let v4bz;
+      let v2q0;
+      let v2q1;
+      let v2q2;
+      let v2q3;
+      let v2q0q2;
+      let v2q2q3;
+      let q0q0;
+      let q0q1;
+      let q0q2;
+      let q0q3;
+      let q1q1;
+      let q1q2;
+      let q1q3;
+      let q2q2;
+      let q2q3;
+      let q3q3;
 
       // Use IMU algorithm if magnetometer measurement invalid (avoids NaN in magnetometer normalisation)
       if (

@@ -134,7 +134,7 @@ export const Grass = (tracker: ResourceTracker) => {
 
    grass.frustumCulled = false;
    timeManager.addFn((time) => {
-      material.uniforms['time'].value = time * 0.001;
+      material.uniforms.time.value = time * 0.001;
    });
 
    tracker.track(geometry);

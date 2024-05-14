@@ -23,11 +23,11 @@ export const HpManager = (effects: Effects) => {
    const $hpVal = document.querySelector('.hp-bar-val');
 
    if (!$hpBar) {
-      throw new Error(`HP not found`);
+      throw new Error('HP not found');
    }
 
    if (!$hpVal) {
-      throw new Error(`HP not found`);
+      throw new Error('HP not found');
    }
 
    HP.subscribe((x) => {
@@ -58,14 +58,14 @@ export const HpManager = (effects: Effects) => {
       effects.sepiaPass.enabled = enableEffect;
       effects.vignettePass.enabled = enableEffect;
 
-      effects.sepiaPass.uniforms['amount'].value = Math.min(
+      effects.sepiaPass.uniforms.amount.value = Math.min(
          1,
          1 * effectFactor * 2,
       );
-      (effects.filmPass.uniforms as { nIntensity: any })['nIntensity'].value =
+      (effects.filmPass.uniforms as { nIntensity: { value: number } }).nIntensity.value =
          0.8 * effectFactor;
-      effects.vignettePass.uniforms['offset'].value = 3 * effectFactor;
-      effects.vignettePass.uniforms['darkness'].value = 4 * effectFactor;
+      effects.vignettePass.uniforms.offset.value = 3 * effectFactor;
+      effects.vignettePass.uniforms.darkness.value = 4 * effectFactor;
 
       if (time - lastCalculateTime > 400) {
          const bleeding =

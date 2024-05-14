@@ -172,8 +172,8 @@ export class JoyCon extends EventTarget {
                onDeviceInfo as unknown as EventListener,
             );
             const clearedDevideInfo = { ...deviceInfo };
-            delete clearedDevideInfo._raw;
-            delete clearedDevideInfo._hex;
+            clearedDevideInfo._raw = undefined;
+            clearedDevideInfo._hex = undefined;
             resolve(deviceInfo as IDeviceInfo);
          };
          this.addEventListener(
@@ -212,8 +212,8 @@ export class JoyCon extends EventTarget {
                onBatteryLevel as unknown as EventListener,
             );
             const clearedBatteryLevel = { ...batteryLevel };
-            delete clearedBatteryLevel._raw;
-            delete clearedBatteryLevel._hex;
+            clearedBatteryLevel._raw = undefined;
+            clearedBatteryLevel._hex = undefined;
             resolve(batteryLevel as IBatteryLevel);
          };
          this.addEventListener(
@@ -372,12 +372,12 @@ export class JoyCon extends EventTarget {
 
       const amp = clamp(amplitude, 0, 1);
 
-      let hfAmp;
-      if (amp == 0) {
+      let hfAmp: number;
+      if (amp === 0) {
          hfAmp = 0;
       } else if (amp < 0.117) {
          hfAmp =
-            (Math.log2(amp * 1000) * 32 - 0x60) / (5 - Math.pow(amp, 2)) - 1;
+            (Math.log2(amp * 1000) * 32 - 0x60) / (5 - amp ** 2) - 1;
       } else if (amp < 0.23) {
          hfAmp = Math.log2(amp * 1000) * 32 - 0x60 - 0x5c;
       } else {
@@ -541,25 +541,19 @@ export class JoyCon extends EventTarget {
 }
 
 class JoyConLeft extends JoyCon {
-   /**
-    * Creates an instance of JoyConLeft.
-    * @param {HIDDevice} device
-    * @memberof JoyConLeft
-    */
-   constructor(device: HIDDevice) {
-      super(device);
-   }
 
    _receiveInputEvent(packet: IPacket) {
-      delete packet.buttonStatus?.x;
-      delete packet.buttonStatus?.y;
-      delete packet.buttonStatus?.b;
-      delete packet.buttonStatus?.a;
-      delete packet.buttonStatus?.plus;
-      delete packet.buttonStatus?.r;
-      delete packet.buttonStatus?.zr;
-      delete packet.buttonStatus?.home;
-      delete packet.buttonStatus?.rightStick;
+      if (packet.buttonStatus) {
+         packet.buttonStatus.x = undefined;
+         packet.buttonStatus.y = undefined;
+         packet.buttonStatus.b = undefined;
+         packet.buttonStatus.a = undefined;
+         packet.buttonStatus.plus = undefined;
+         packet.buttonStatus.r = undefined;
+         packet.buttonStatus.zr = undefined;
+         packet.buttonStatus.home = undefined;
+         packet.buttonStatus.rightStick = undefined;
+      }
 
       this.dispatchEvent(new CustomEvent('hidinput', { detail: packet }));
    }
@@ -572,25 +566,19 @@ class JoyConLeft extends JoyCon {
  * @extends {JoyCon}
  */
 class JoyConRight extends JoyCon {
-   /**
-    *Creates an instance of JoyConRight.
-    * @param {HIDDevice} device
-    * @memberof JoyConRight
-    */
-   constructor(device: HIDDevice) {
-      super(device);
-   }
 
    _receiveInputEvent(packet: IPacket) {
-      delete packet.buttonStatus?.up;
-      delete packet.buttonStatus?.down;
-      delete packet.buttonStatus?.left;
-      delete packet.buttonStatus?.right;
-      delete packet.buttonStatus?.minus;
-      delete packet.buttonStatus?.l;
-      delete packet.buttonStatus?.zl;
-      delete packet.buttonStatus?.capture;
-      delete packet.buttonStatus?.leftStick;
+      if (packet.buttonStatus) {
+         packet.buttonStatus.up = undefined;
+         packet.buttonStatus.down = undefined;
+         packet.buttonStatus.left = undefined;
+         packet.buttonStatus.right = undefined;
+         packet.buttonStatus.minus = undefined;
+         packet.buttonStatus.l = undefined;
+         packet.buttonStatus.zl = undefined;
+         packet.buttonStatus.capture = undefined;
+         packet.buttonStatus.leftStick = undefined;
+      }
 
       this.dispatchEvent(new CustomEvent('hidinput', { detail: packet }));
    }

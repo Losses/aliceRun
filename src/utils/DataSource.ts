@@ -13,6 +13,7 @@ export const isDataSourceNodeController = <T>(
 ): x is DataSourceNodeController<T> => {
    if (typeof x !== 'object') return false;
    if (x === null) return false;
+   // biome-ignore lint/suspicious/noExplicitAny: To make a more strict check on the runtime
    if (typeof (x as any).getter !== 'function') return false;
 
    return true;
@@ -55,7 +56,7 @@ export class DataSource<T> {
       if (this.diff && value === this.internalData) return;
 
       this.subscribers.forEach((subscriber) => {
-         subscriber(value!);
+         subscriber(value);
       });
 
       this.internalData = value;
@@ -86,6 +87,7 @@ type SelectedValue<T, I, O> = SubscribedValue<T> extends I
 export const useSelector = <
    I extends T extends Subscribable<infer J> ? J : never,
    O,
+   // biome-ignore lint/suspicious/noExplicitAny: This is safe
    T extends Subscribable<any>,
 >(
    subscribe: T,
@@ -134,6 +136,7 @@ export const useCombinator = <T extends Subscribable<unknown>[]>(
       const controller = subscriber((subscribedData) => {
          dataSource.data[index] = subscribedData;
          // eslint-disable-next-line no-self-assign
+         // biome-ignore lint/correctness/noSelfAssign: This is on purpose to trigger data refreshing
          dataSource.data = dataSource.data;
       });
 

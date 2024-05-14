@@ -192,7 +192,7 @@ export class TimeMagic {
       if (!this.orderLevelMap.has(frameOrderLevel)) {
          this.orderLevelMap.set(frameOrderLevel, []);
       }
-      this.orderLevelMap.get(frameOrderLevel)!.push(x);
+      this.orderLevelMap.get(frameOrderLevel)?.push(x);
       this.updateMinRateLevel();
    }
 
@@ -234,7 +234,7 @@ export class TimeMagic {
          return;
       }
 
-      const fns = this.orderLevelMap.get(frameOrderLevel)!;
+      const fns = this.orderLevelMap.get(frameOrderLevel) ?? [];
 
       for (let i = 0; i < fns.length; i += 1) {
          fns[i](timestamp, deltaTime, framesElapsed);

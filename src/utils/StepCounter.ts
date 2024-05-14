@@ -216,26 +216,26 @@ export class StepCounter {
       let result =
          'aX, aY, aZ, oX, oY, oZ, oH, oV, gX, gY, gZ, Add, guide, time\n';
       for (let i = 0; i < this.data.accX.history.length; i += 1) {
-         result += this.data.accX.history[i] + ',';
-         result += this.data.accY.history[i] + ',';
-         result += this.data.accZ.history[i] + ',';
-         result += this.data.oriX.history[i] + ',';
-         result += this.data.oriY.history[i] + ',';
-         result += this.data.oriZ.history[i] + ',';
-         result += this.data.oriH.history[i] + ',';
-         result += this.data.oriV.history[i] + ',';
-         result += this.data.gyoX.history[i] + ',';
-         result += this.data.gyoY.history[i] + ',';
-         result += this.data.gyoZ.history[i] + ',';
-         result += this.data.magnitude.history[i] + ',';
-         result += this.data.guide.history[i] + ',';
-         result += this.data.time.history[i] + '';
+         result += `${this.data.accX.history[i]},`;
+         result += `${this.data.accY.history[i]},`;
+         result += `${this.data.accZ.history[i]},`;
+         result += `${this.data.oriX.history[i]},`;
+         result += `${this.data.oriY.history[i]},`;
+         result += `${this.data.oriZ.history[i]},`;
+         result += `${this.data.oriH.history[i]},`;
+         result += `${this.data.oriV.history[i]},`;
+         result += `${this.data.gyoX.history[i]},`;
+         result += `${this.data.gyoY.history[i]},`;
+         result += `${this.data.gyoZ.history[i]},`;
+         result += `${this.data.magnitude.history[i]},`;
+         result += `${this.data.guide.history[i]},`;
+         result += `${this.data.time.history[i]}`;
          result += '\n';
       }
       const element = document.createElement('a');
       element.setAttribute(
          'href',
-         'data:text/plain;charset=utf-8,' + encodeURIComponent(result),
+         `data:text/plain;charset=utf-8,${encodeURIComponent(result)}`,
       );
       element.setAttribute('download', `acc-${Date.now()}.csv`);
 
