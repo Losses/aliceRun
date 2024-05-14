@@ -288,7 +288,7 @@ button {
 }
 
 .stat-item .value {
-  font-size: 60px;
+  font-size: 3.8em;
   font-family: 'Inconsolata';
   font-weight: 800;
 }
@@ -355,10 +355,14 @@ button {
   top: 50%;
   left: 50%;
   position: fixed;
-  background: rgba(0, 0, 0, 0.5);
   transform: translate(-50%, -55%);
   visibility: hidden;
   opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
+  border-width: 1px;
+  border-style: solid;
+  backdrop-filter: blur(24px);
   transition: translate 300ms, opacity 300ms, visibility 300ms;
 }
 
@@ -370,8 +374,26 @@ button {
 
 .spm-chart-container {
   width: 600px;
-  height: 320px;
-  background: black;
+  height: 280px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.spm-stat .modal-title {
+  margin-top: 0.9em;
+  margin-bottom: 0.2em;
+  text-align: center;
+  font-size: 2em;
+  font-weight: 800;
+}
+
+.spm-stat .final-stat {
+  font-size: 0.8em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.final-stat .value {
+  font-weight: 700;
 }
 
 /** Device disconnected **/

@@ -92,13 +92,5 @@ export const JoyConManager = () => {
         waitForP1();
     });
 
-    // @ts-ignore
-    window.disconnect = () => {
-        $reconnect.classList.remove('hidden');
-        
-        eventTarget.dispatchEvent(new Event(PLAY_SOUND, 'disconnect.m4a'));
-        waitForP1();
-    }
-
     navigator.hid.addEventListener('disconnect', onDisconnect);
 };

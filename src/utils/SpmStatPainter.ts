@@ -102,7 +102,7 @@ export class SpmStatPainter extends WindowAverageRecord {
         this.context.clearRect(0, 0, width, height);
 
         this.context.strokeStyle = 'white';
-        this.context.lineWidth = 1.6;
+        this.context.lineWidth = 4;
 
         this.context.beginPath();
 

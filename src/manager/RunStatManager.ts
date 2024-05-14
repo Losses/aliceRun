@@ -5,7 +5,6 @@ import { RateEstimator } from "../utils/RateEstimator";
 import { SpmStatPainter } from "../utils/SpmStatPainter";
 import { STEP_EVENT } from "../utils/StepCounter";
 import { FrameRateLevel } from "../utils/TimeMagic";
-import { WindowAverageRecord } from "../utils/WindowAverageRecord";
 import { useLerp } from "../utils/lerp";
 import { store } from "./DataManager";
 import { eventTarget } from "./EventManager";
@@ -100,6 +99,13 @@ const getBarStyle = (lowLimit = 0.15, highLimit = 0.75, spm: number) => {
   border: 1px solid rgba(${isB ? B : A}1);`;
 };
 
+const formatTime = (_x: number) => {
+    const x = Math.floor(_x);
+    const minutes = Math.floor(x / (60 * 1000));
+    const seconds = Math.floor(x % (60 * 1000) / 1000);
+    return `${minutes.toString().padStart(3, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
 const $bar = document.querySelector(".right-panel .bar") as HTMLDivElement;
 const $val = document.querySelector(".right-panel .current-value") as HTMLDivElement;
 
@@ -123,13 +129,12 @@ const parseInt = (x: string | null | undefined) => {
     return Math.floor(number);
 }
 
-export const spmStat = new SpmStatPainter(20); // 60 * 2
-
-// @ts-ignore
-window.spmStat = spmStat;
+export const spmStat = new SpmStatPainter(60 * 2);
 
 export const RunStatManager = () => {
-    let startTime = 0;
+    let logicStartTime = 0;
+    let acturalStartTime = 0;
+    let lastStepsCount = 0;
 
     const $time = document.querySelector('.time-value');
     if (!$time) throw new Error('Time element not found');
@@ -166,10 +171,8 @@ export const RunStatManager = () => {
 
     let lastSyncTime = 0;
     const tick = () => {
-        const deltaTime = isInfiniteMode() ? (Date.now() - startTime) : timeLine.timeLeft;
-        const minutes = Math.floor(deltaTime / (60 * 1000));
-        const seconds = Math.floor(deltaTime % (60 * 1000) / 1000);
-        $time.textContent = `${minutes.toString().padStart(3, '0')}:${seconds.toString().padStart(2, '0')}`;
+        const deltaTime = isInfiniteMode() ? (Date.now() - logicStartTime) : timeLine.timeLeft;
+        $time.textContent = formatTime(deltaTime);
         const spm = strideRateFilter.filter(rateEstimator.estimateRate());
         $spm.textContent = Math.floor(spm).toString().padStart(3, '0');
         SPM.value = spm;
@@ -181,7 +184,8 @@ export const RunStatManager = () => {
         if (id.includes('/single/play/')) {
             rateEstimator.reset();
             p1.reset();
-            startTime = Date.now();
+            acturalStartTime = Date.now();
+            logicStartTime = Date.now();
 
             LOW_LIMIT.reset(true);
             HIGH_LIMIT.reset(true);
@@ -192,7 +196,8 @@ export const RunStatManager = () => {
             if (id === '/single/play/infinite') {
                 p1.stepCount = parseInt(localStorage.getItem(INFINITE_STEP_KEY));
                 $steps.textContent = p1.stepCount.toString().padStart(4, '0');
-                startTime = Date.now() - parseInt(localStorage.getItem(INFINITE_TIME_KEY));
+                logicStartTime = Date.now() - parseInt(localStorage.getItem(INFINITE_TIME_KEY));
+                lastStepsCount = p1.stepCount;
             }
 
             timeManager.addFn(tick, FrameRateLevel.D3);
@@ -212,7 +217,7 @@ export const RunStatManager = () => {
         }
 
         if (isInfiniteMode() && Date.now() - lastSyncTime > 600) {
-            const deltaTime = Date.now() - startTime;
+            const deltaTime = Date.now() - logicStartTime;
             localStorage.setItem(INFINITE_TIME_KEY, deltaTime.toString());
             localStorage.setItem(INFINITE_STEP_KEY, p1.stepCount.toString());
             lastSyncTime = Date.now();
@@ -236,13 +241,30 @@ export const RunStatManager = () => {
 
     let lineChartProgress = 0;
 
+    const $finalSteps = document.querySelector('.spm-stat .steps-value');
+    const $finalTime = document.querySelector('.spm-stat .time-value');
+    const $finalSpm = document.querySelector('.spm-stat .spm-value');
+
+    if (!$finalSteps) throw new Error(`Final steps element not found`);
+    if (!$finalTime) throw new Error(`Final time element not found`);
+    if (!$finalSpm) throw new Error(`Final SPM element not found`);
+
+    let finalSteps = 0;
+    let finalTime = 0;
+    let finalSpm = 0;
+
     const [updateLineChartProgress] = useLerp(
         () => lineChartProgress,
         (x) => {
             lineChartProgress = x;
             spmStat.draw(x);
+
+            $finalSteps.textContent = Math.floor(finalSteps * x).toString().padStart(4, '0');
+            $finalTime.textContent = formatTime(finalTime * x);
+            $finalSpm.textContent = Math.floor(finalSpm * x).toString().padStart(4, '0');
         },
-        0.03
+        0.03,
+        1e-2,
     );
 
     $finishTraining.addEventListener('click', () => {
@@ -253,6 +275,10 @@ export const RunStatManager = () => {
         window.setTimeout(() => {
             updateLineChartProgress(1);
         }, 100);
+
+        finalSteps = Math.floor(p1.stepCount - lastStepsCount);
+        finalTime = Date.now() - acturalStartTime;
+        finalSpm = spmStat.getAverageValue();
     });
     
     $statChartBackButton.addEventListener('click', () => {
