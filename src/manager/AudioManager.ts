@@ -72,6 +72,12 @@ export const AudioManager = async () => {
       });
    });
 
+   document.querySelectorAll('.story-list li').forEach(($) => {
+      $.addEventListener('mouseenter', () => {
+         playSound('glass-enter.m4a');
+      });
+   });
+
    document.querySelectorAll('.glass-slide').forEach(($) => {
       $.addEventListener('mousedown', () => {
          playSound('slide-down.m4a');

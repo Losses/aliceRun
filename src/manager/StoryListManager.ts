@@ -1,6 +1,4 @@
-import { ROUTER_ID } from "../stores/router";
-
-const MINIMAL_SCALE = 0.5;
+import { ROUTER_ID } from '../stores/router';
 
 export const StoryListManager = () => {
    const $list = document.querySelector('.story-list') as HTMLDivElement | null;
@@ -9,23 +7,34 @@ export const StoryListManager = () => {
 
    window.addEventListener('pointermove', (event) => {
       if (ROUTER_ID.value !== '/single/list') return;
-      const listCount = $list.querySelectorAll('li').length;
+      const $$list = $list.querySelectorAll(
+         'li > div',
+      ) as NodeListOf<HTMLDivElement>;
+      const listCount = $$list.length;
       const listWidth = $list.clientWidth;
       const windowWidth = document.body.clientWidth;
       const pointerPositoin = event.pageX;
       const pointerRatio = pointerPositoin / windowWidth;
 
-      const totalDistance = windowWidth * 0.5 + listWidth * 0.5;
-      const listPosition = windowWidth * 0.5 - totalDistance * pointerRatio;
+      const listPosition = $list.getBoundingClientRect().x;
       const pointerRelativePosition = pointerPositoin - listPosition;
       const pointerRelativeRatio = pointerRelativePosition / listWidth;
 
-      console.log(pointerRelativeRatio);
-
       $list.style.transform = `translate(${-(pointerRatio * 100)}%, -50%)`;
 
-      for (let i = 0; i < listCount; i += 1) {
-
+      const elementUnitRatio = 1 / listCount;
+      for (let elementIndex = 0; elementIndex < listCount; elementIndex += 1) {
+         const elementCentralRatio =
+            elementUnitRatio * elementIndex + elementUnitRatio * 0.5;
+         const directionalRatio = pointerRelativeRatio - elementCentralRatio;
+         const relativeRatio = 1 - Math.abs(directionalRatio);
+         $$list[elementIndex].style.transform = `rotate(45deg) scale(${
+            relativeRatio ** 4
+         })`;
+         $$list[elementIndex].style.fontWeight = (
+            50 +
+            750 * relativeRatio ** 6
+         ).toString();
       }
    });
-}
+};
