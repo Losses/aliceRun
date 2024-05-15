@@ -396,6 +396,40 @@ button {
   font-weight: 700;
 }
 
+/** Story List **/
+
+.story-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  user-select: none;
+}
+
+.story-list li {
+  --size: 80px;
+  display: block;
+  width: var(--size);
+  min-width: var(--size);
+  height: var(--size);
+  border: 1px solid white;
+  margin: 0 40px;
+  text-align: center;
+  line-height: var(--size);
+  font-size: 2em;
+  /* transform: rotate(45deg); */
+  box-sizing: border-box;
+}
+
+.story-list li > span {
+  display: block;
+  transform: rotate(-45deg);
+}
+
 /** Device disconnected **/
 
 .reconnect {

@@ -76,12 +76,13 @@ export const HpManager = (effects: Effects) => {
 
          if (bleeding) {
             trueHp = Math.max(0, trueHp - 0.5);
-            updateHp(trueHp);
             P1_JOYCON.value?.rumble(600, 600, 0.5);
-            lastCalculateTime = time;
          } else {
-            trueHp = Math.min(100, trueHp + 0.3);
+            trueHp = Math.min(100, trueHp + 0.1);
          }
+
+         updateHp(trueHp);
+         lastCalculateTime = time;
       }
    };
 
