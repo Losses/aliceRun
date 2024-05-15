@@ -1,9 +1,12 @@
-import { ROUTER_ID } from '../stores/router';
+import { QUERY_PARAMETER, ROUTER_ID } from '../stores/router';
 
 export const RouterManager = () => {
    document.querySelectorAll('[data-to-router]').forEach((x) =>
       x.addEventListener('click', () => {
-         ROUTER_ID.value = (x as HTMLElement).dataset.toRouter ?? '';
+         const trueValue = (x as HTMLElement).dataset.toRouter ?? '';
+         const [routerId, queryParameter] = trueValue.split('?');
+         ROUTER_ID.value = routerId;
+         QUERY_PARAMETER.value = new URLSearchParams(queryParameter);
       }),
    );
 
