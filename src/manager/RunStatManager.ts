@@ -284,7 +284,7 @@ export const RunStatManager = () => {
             .padStart(4, '0');
       },
       0.03,
-      1e-2,
+      1e-3,
    );
 
    $finishTraining.addEventListener('click', () => {
