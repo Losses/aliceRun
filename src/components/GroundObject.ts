@@ -8,6 +8,7 @@ const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6;
 
 const MAX_INSTANCE_COUNT = 4;
+const STAR_SHAPE_SIDES = 8;
 
 const StarShape = (n: number) => {
    const unit = Math.PI / n;
@@ -22,13 +23,11 @@ const StarShape = (n: number) => {
    return BufferGeometryUtils.mergeBufferGeometries(planes);
 }
 
-const STAR_SHAPE_SIDES = 8;
 
 export const GroundObject = (
    texture: THREE.Texture | Promise<THREE.Texture>,
    tracker: ResourceTracker,
 ) => {
-   // const plane = new THREE.PlaneGeometry(24, 24, 1, 1);
    const plane = StarShape(STAR_SHAPE_SIDES);
    plane.translate(0, 12, 0);
 
@@ -50,7 +49,7 @@ export const GroundObject = (
    );
    geometry.setAttribute(
       'planeIndex',
-      new THREE.BufferAttribute(new Uint32Array(planeIndex), 1),
+      new THREE.BufferAttribute(new Int32Array(planeIndex), 1),
    );
 
    // material

@@ -17,11 +17,11 @@ uniform mat4 projectionMatrix;
 
 in vec2 uv;
 in vec3 position;
-in uint planeIndex;
+in int planeIndex;
 in uint instanceIndex;
 
 out vec2 vUv;
-flat out uint vPlaneIndex;
+flat out int vPlaneIndex;
 flat out uint vInstanceIndex;
 
 uint murmurHash12(uvec2 src) {

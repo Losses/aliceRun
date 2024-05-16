@@ -8,7 +8,7 @@ uniform float curlFactor;
 uniform sampler2D map;
 
 in vec2 vUv;
-flat in uint vPlaneIndex;
+flat in int vPlaneIndex;
 flat in uint vInstanceIndex;
 
 out vec4 fragColor;
@@ -162,9 +162,8 @@ void main() {
    int planeIndex = int(vPlaneIndex);
    float fPlaneIndex = float(planeIndex);
 
-   if (planeIndex != 0) {
-         float subPlaneProgress = transitionProgress < 0.5 ? transitionProgress * 0.5 : 1. - transitionProgress;
-         if(dRnd >= subPlaneProgress / float(planeCount)) discard;
+   if (planeIndex == 0) {
+      if(dRnd < transitionProgress) discard;
    }
 
    float uvFactor = .8;
@@ -179,14 +178,23 @@ void main() {
    uv.x += distortion.x * curlFactor * transitionProgress;
    uv.y += distortion.y * curlFactor * transitionProgress;
 
+   if (planeIndex != 0) {
+      if(dRnd >= transitionProgress) discard;
+      float angleUnit = 3.141592653 / float(planeCount);
+      float particleAngle = atan(distortion.z - .5, distortion.x - .5); 
+
+      if (particleAngle < 0.0) {
+          particleAngle += 2.0 * 3.141592653;
+      }
+
+      int closestPlane = abs(int(round(particleAngle / angleUnit)) - planeCount);
+
+      if (planeIndex != closestPlane) discard;
+   }
+
    vec4 textureColor = texture(map, uv);
 
-   if(textureColor.a < 0.7)
-      discard;
-
-   if (planeIndex == 0) {
-      if(dRnd < transitionProgress) discard;
-   }
+   if(textureColor.a < 0.7) discard;
 
    fragColor = vec4(textureColor.rgb, textureColor.a);
 }
