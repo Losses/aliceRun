@@ -41,7 +41,6 @@ export const GroundObject = (
    
    const planeIndex = new Array(STAR_SHAPE_SIDES * 4).fill(0).map((_, index) => Math.floor(index / 4));
 
-   console.log(planeIndex);
    geometry.setIndex(plane.index);
    geometry.setAttribute('uv', plane.getAttribute('uv'));
    geometry.setAttribute('position', plane.getAttribute('position'));
@@ -62,6 +61,7 @@ export const GroundObject = (
          map: { value: null },
          transitionProgress: { value: 0 },
          curlFactor: { value: 0.3 },
+         planeCount: { value: STAR_SHAPE_SIDES },
          roadRatio: { value: 0.2 },
          gridWidth: { value: GRID_WIDTH },
          gridHeight: { value: GRID_HEIGHT * 2.2 },

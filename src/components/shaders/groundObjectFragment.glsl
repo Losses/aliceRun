@@ -1,5 +1,7 @@
 precision highp float;
 
+
+uniform int planeCount;
 uniform float time;
 uniform float transitionProgress;
 uniform float curlFactor;
@@ -153,19 +155,24 @@ float random(float x) {
 }
 
 void main() {
-   if (int(vPlaneIndex) != 0) discard;
-
    vec2 uv = vUv;
 
    float seed = vUv.x * vUv.y;
    float dRnd = random(time + seed + 2.);
+   int planeIndex = int(vPlaneIndex);
+   float fPlaneIndex = float(planeIndex);
+
+   if (planeIndex != 0) {
+         float subPlaneProgress = transitionProgress < 0.5 ? transitionProgress * 0.5 : 1. - transitionProgress;
+         if(dRnd >= subPlaneProgress / float(planeCount)) discard;
+   }
 
    float uvFactor = .8;
    float instanceIndex = float(vInstanceIndex);
    vec3 distortionBase = vec3(
-      uv.x * uvFactor + time * 0.1 + instanceIndex * 100.,
-      uv.y * uvFactor + time * 0.1 + instanceIndex * 100.,
-      (uv.x + uv.y) * uvFactor + instanceIndex * 100.
+      uv.x * uvFactor + time * 0.1 + (instanceIndex + fPlaneIndex) * 100.,
+      uv.y * uvFactor + time * 0.1 + (instanceIndex + fPlaneIndex) * 100.,
+      (uv.x + uv.y) * uvFactor + (instanceIndex + fPlaneIndex) * 100.
    );
    vec3 distortion = vec3(uv.x, uv.y, 1.) * curlNoise(distortionBase);
 
@@ -176,8 +183,10 @@ void main() {
 
    if(textureColor.a < 0.7)
       discard;
-   if(dRnd < transitionProgress)
-      discard;
+
+   if (planeIndex == 0) {
+      if(dRnd < transitionProgress) discard;
+   }
 
    fragColor = vec4(textureColor.rgb, textureColor.a);
 }

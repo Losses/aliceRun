@@ -71,6 +71,7 @@ export const GroundObjectManager = (
          transitionProgress = x;
       },
       0.055,
+      1e-2,
    )
 
    // @ts-ignore
