@@ -10,6 +10,7 @@ import { globalAudioContext } from '../manager/AudioManager';
 import type { IPlayAudioStoryEvent } from '../stories/utils';
 import { type ITimelineEvent, TimelineManager } from '../utils/TimeLine';
 import { stories } from '../stories';
+import { DIFFICULTY } from '../stores/settings';
 
 export const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
@@ -56,7 +57,8 @@ export const timeLine = new TimelineManager(
          THEME_ID.value = x.detail;
       },
       lowRpm: (x: ITimelineEvent<'lowRpm', number>) => {
-         LOW_LIMIT.value = x.detail;
+         const d = DIFFICULTY.value;
+         LOW_LIMIT.value = x.detail + ((d > 0) ? (d * (-1/120 * d + 5 / 2)) : d);
       },
       debugAlert: (x: ITimelineEvent<'debugAlert', string>) => {
          alert(x.detail);
@@ -69,12 +71,8 @@ export const StoryManager = () => {
       if (id.includes('/single/play/story')) {
          const episode = Math.floor(Number.parseFloat(QUERY_PARAMETER.value.get('episode') ?? '0'));
 
-         console.log(QUERY_PARAMETER.value);
-
-         console.log(episode);
          timeLine.storyId = episode;
    
-         console.log(timeLine);
          timeManager.addFn(timeLine.tick, FrameRateLevel.D0);
       } else {
          timeManager.removeFn(timeLine.tick);

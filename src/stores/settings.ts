@@ -14,6 +14,11 @@ export const SENSITIVITY = store.createMemorizedStore(
    'alice-run-sensitivity',
 );
 
+export const DIFFICULTY = store.createMemorizedStore(
+   0,
+   'alice-run-difficulty',
+);
+
 export const calculateWindowSize = () => ({
    width: Math.ceil(window.innerWidth * RENDERING_DETAIL.value),
    height: Math.ceil(window.innerHeight * RENDERING_DETAIL.value),
