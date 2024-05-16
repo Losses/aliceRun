@@ -83,6 +83,7 @@ export class StepCounter {
    }
 
    reset() {
+      this.stepCount = 0;
       this.maxMagnitude = 0;
       this.lastPacket = null;
       Object.values(this.data).forEach((a) => a.clear());
