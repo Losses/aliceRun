@@ -41,7 +41,6 @@ export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
 
       const events = this.eventSet[x] ?? this.eventSet[0];
 
-      console.log(events);
       this.events = events.sort((a, b) => a.time - b.time);
 
       this.totalTime =

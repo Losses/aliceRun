@@ -1,4 +1,5 @@
 import {
+   DIFFICULTY,
    RENDERING_DETAIL,
    RENDERING_PIXELATED,
    SENSITIVITY,
@@ -64,5 +65,18 @@ export const SettingsManager = () => {
    $joyConSensitivity.addEventListener('change', (event: Event) => {
       const value = Number.parseFloat((event.target as HTMLInputElement).value);
       SENSITIVITY.value = value;
+   });
+
+   const $difficulty = document.querySelector(
+      '.difficulty',
+   ) as HTMLInputElement | null;
+
+   if (!$difficulty) return;
+
+   $difficulty.value = DIFFICULTY.value.toString();
+
+   $difficulty.addEventListener('change', (event: Event) => {
+      const value = Number.parseFloat((event.target as HTMLInputElement).value);
+      DIFFICULTY.value = value;
    });
 };
