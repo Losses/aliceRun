@@ -6,7 +6,6 @@ import { STEP_ANGLE } from '../constants/ground';
 import { CompressedTexture } from '../utils/CompressedTexture';
 import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
-import { THEME_ID } from './ColorManager';
 import { eventTarget } from './EventManager';
 
 export const GroundObjectManager = (
@@ -56,9 +55,33 @@ export const GroundObjectManager = (
       updateValue(rotate + STEP_ANGLE);
    };
 
-   eventTarget.addEventListener(STEP_EVENT, ({ detail }) => {
+   eventTarget.addEventListener(STEP_EVENT, () => {
       step();
    });
+
+   let transitionProgress = 0;
+   const [lerpTransitionProgress] = useLerp(
+      () => transitionProgress,
+      (x) => {
+         for (let i = 0; i < groundObjects.length; i += 1) {
+            groundObjects[i].material.uniforms.transitionProgress.value = x;
+            groundObjects[i].material.uniformsNeedUpdate = true;
+         }
+
+         transitionProgress = x;
+      },
+      0.055,
+   )
+
+   // @ts-ignore
+   window.transitionOn = () => {
+      lerpTransitionProgress(1);
+   }
+
+   // @ts-ignore
+   window.transitionOff = () => {
+      lerpTransitionProgress(0);
+   }
 
    return { step };
 };

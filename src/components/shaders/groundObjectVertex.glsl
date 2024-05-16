@@ -17,10 +17,12 @@ uniform mat4 projectionMatrix;
 
 in vec2 uv;
 in vec3 position;
+in uint planeIndex;
 in uint instanceIndex;
 
-out vec3 vPosition;
 out vec2 vUv;
+flat out uint vPlaneIndex;
+flat out uint vInstanceIndex;
 
 uint murmurHash12(uvec2 src) {
   const uint M = 0x5bd1e995u;
@@ -86,4 +88,6 @@ void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 
     vUv = uv;
+    vInstanceIndex = instanceIndex;
+    vPlaneIndex = planeIndex;
 }
