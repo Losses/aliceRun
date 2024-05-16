@@ -8,7 +8,7 @@ import { LOW_LIMIT } from '../stores/runStat';
 import { timeManager } from './TimeManager';
 import { FrameRateLevel } from '../utils/TimeMagic';
 import { globalAudioContext } from '../manager/AudioManager';
-import { IPlayAudioStoryEvent } from '../stories/utils';
+import type { IPlayAudioStoryEvent } from '../stories/utils';
 import { type ITimelineEvent, TimelineManager } from '../utils/TimeLine';
 
 export const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
@@ -46,7 +46,12 @@ export const timeLine = new TimelineManager(
 
          return () => clip.dispose();
       },
-      end: (x: ITimelineEvent<'end', null>) => {},
+      end: (x: ITimelineEvent<'end', null>) => {
+         const $finishTraining = document.querySelector('.finish-training') as HTMLDivElement | null;
+         if ($finishTraining) {
+            $finishTraining.click();
+         }
+      },
       theme: (x: ITimelineEvent<'theme', string>) => {
          THEME_ID.value = x.detail;
       },

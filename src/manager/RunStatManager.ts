@@ -143,6 +143,7 @@ export const RunStatManager = () => {
    let logicStartTime = 0;
    let acturalStartTime = 0;
    let lastStepsCount = 0;
+   let stopTiming = false;
 
    const $time = document.querySelector('.time-value');
    if (!$time) throw new Error('Time element not found');
@@ -182,7 +183,11 @@ export const RunStatManager = () => {
       const deltaTime = isInfiniteMode()
          ? Date.now() - logicStartTime
          : timeLine.timeLeft;
-      $time.textContent = formatTime(deltaTime);
+
+      if (!stopTiming) {
+         $time.textContent = formatTime(deltaTime);
+      }
+
       const spm = strideRateFilter.filter(rateEstimator.estimateRate());
       $spm.textContent = Math.floor(spm).toString().padStart(3, '0');
       SPM.value = spm;
@@ -196,6 +201,7 @@ export const RunStatManager = () => {
          p1.reset();
          acturalStartTime = Date.now();
          logicStartTime = Date.now();
+         stopTiming = false;
 
          LOW_LIMIT.reset(true);
          HIGH_LIMIT.reset(true);
@@ -288,6 +294,7 @@ export const RunStatManager = () => {
    );
 
    $finishTraining.addEventListener('click', () => {
+      stopTiming = true;
       spmStat.close();
       updateLineChartProgress(0, true);
       spmStat.resizeToParent();
