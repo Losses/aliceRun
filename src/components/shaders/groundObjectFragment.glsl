@@ -1,5 +1,4 @@
-precision highp float;
-
+precision mediump float;
 
 uniform int planeCount;
 uniform float time;
@@ -156,39 +155,51 @@ void main() {
    int planeIndex = int(vPlaneIndex);
    float fPlaneIndex = float(planeIndex);
 
-   if (planeIndex == 0) {
-      if(dRnd < transitionProgress) discard;
+   if(planeIndex == 0) {
+      if(dRnd < transitionProgress)
+         discard;
+   }
+
+   if(planeIndex != 0 && transitionProgress == 0.) {
+      discard;
+   }
+
+   if (transitionProgress == 1.) {
+      discard;
    }
 
    float uvFactor = .8;
    float instanceIndex = float(vInstanceIndex);
-   vec3 distortionBase = vec3(
-      uv.x * uvFactor + time * 0.1 + (instanceIndex + fPlaneIndex) * 100.,
-      uv.y * uvFactor + time * 0.1 + (instanceIndex + fPlaneIndex) * 100.,
-      (uv.x + uv.y) * uvFactor + (instanceIndex + fPlaneIndex) * 100.
-   );
+   vec3 distortionBase = vec3(uv.x * uvFactor + time * 0.1 + (instanceIndex + fPlaneIndex) * 100., uv.y * uvFactor + time * 0.1 + (instanceIndex + fPlaneIndex) * 100., (uv.x + uv.y) * uvFactor + (instanceIndex + fPlaneIndex) * 100.);
    vec3 distortion = vec3(uv.x, uv.y, 1.) * curlNoise(distortionBase);
 
    uv.x += distortion.x * curlFactor * transitionProgress;
    uv.y += distortion.y * curlFactor * transitionProgress;
 
-   if (planeIndex != 0) {
-      if(dRnd >= transitionProgress) discard;
-      float angleUnit = 3.141592653 / float(planeCount);
-      float particleAngle = atan(distortion.z - .5, distortion.x - .5); 
+   if(planeIndex != 0) {
+   float dRnd2 = random(time + seed + 3.);
+      if(dRnd >= transitionProgress)
+         discard;
+      if (dRnd2 < transitionProgress)
+         discard;
 
-      if (particleAngle < 0.0) {
-          particleAngle += 2.0 * 3.141592653;
+      float angleUnit = 3.141592653 / float(planeCount);
+      float particleAngle = atan(distortion.z - .5, distortion.x - .5);
+
+      if(particleAngle < 0.0) {
+         particleAngle += 2.0 * 3.141592653;
       }
 
       int closestPlane = abs(int(round(particleAngle / angleUnit)) - planeCount);
 
-      if (planeIndex != closestPlane) discard;
+      if(planeIndex != closestPlane)
+         discard;
    }
 
    vec4 textureColor = texture(map, uv);
 
-   if(textureColor.a < 0.7) discard;
+   if(textureColor.a < 0.7)
+      discard;
 
    fragColor = vec4(textureColor.rgb, textureColor.a);
 }

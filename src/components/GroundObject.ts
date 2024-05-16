@@ -8,7 +8,7 @@ const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6;
 
 const MAX_INSTANCE_COUNT = 4;
-const STAR_SHAPE_SIDES = 8;
+const STAR_SHAPE_SIDES = 4;
 
 const StarShape = (n: number) => {
    const unit = Math.PI / n;
