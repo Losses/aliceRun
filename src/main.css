@@ -399,6 +399,18 @@ button {
 
 /** Story List **/
 
+.stories {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stories .empty-content {
+  height: 400px;
+  margin-bottom: 120px;
+}
+
 .story-list {
   margin: 0;
   padding: 0;

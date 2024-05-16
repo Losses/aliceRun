@@ -34,12 +34,16 @@
     </section>
     <section class="centered_section screen" data-router="/single">
       <div class="menu-title">Single Player</div>
-      <button class="menu-button glass" data-to-router="/single/play/story">Story Mode</button>
+      <button class="menu-button glass" data-to-router="/single/list">Story Mode</button>
       <button class="menu-button glass" data-to-router="/single/play/infinite">Infinite Mode</button>
-      <button class="menu-button glass" data-to-router="/single/list">Story List</button>
       <button class="menu-button glass" data-to-router="/">Back</button>
     </section>
-    <section class="screen" data-router="/single/list">
+    <section class="screen stories" data-router="/single/list">
+      <div class="main-content">
+        <div class="menu-title">Stories</div>
+        <div class="empty-content"></div>
+        <button class="menu-button glass" data-to-router="/single">Back</button>
+      </div>
       <ol class="story-list">
         <li><div data-to-router="/single/play/story?episode=0"><span>1</span></div></li>
         <li><div data-to-router="/single/play/story?episode=1"><span>2</span></div></li>
@@ -48,9 +52,6 @@
         <li><div data-to-router="/single/play/story?episode=0"><span>5</span></div></li>
         <li><div data-to-router="/single/play/story?episode=1"><span>6</span></div></li>
         <li><div data-to-router="/single/play/story?episode=0"><span>7</span></div></li>
-        <li><div data-to-router="/single/play/story?episode=1"><span>8</span></div></li>
-        <li><div data-to-router="/single/play/story?episode=0"><span>9</span></div></li>
-        <li><div data-to-router="/single/play/story?episode=1"><span>10</span></div></li>
       </ol>
     </section>
     <section class="screen" data-router="/single/play/infinite|/single/play/story">
