@@ -5,8 +5,8 @@ export const RouterManager = () => {
       x.addEventListener('click', () => {
          const trueValue = (x as HTMLElement).dataset.toRouter ?? '';
          const [routerId, queryParameter] = trueValue.split('?');
-         ROUTER_ID.value = routerId;
          QUERY_PARAMETER.value = new URLSearchParams(queryParameter);
+         ROUTER_ID.value = routerId;
       }),
    );
 

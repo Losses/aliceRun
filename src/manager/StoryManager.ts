@@ -2,19 +2,19 @@ import { Clip, Mp3DeMuxAdapter } from '@web-media/phonograph';
 
 import { THEME_ID } from './ColorManager';
 
-import { SE1EP01 } from '../stories/se01ep01';
-import { ROUTER_ID } from '../stores/router';
+import { QUERY_PARAMETER, ROUTER_ID } from '../stores/router';
 import { LOW_LIMIT } from '../stores/runStat';
 import { timeManager } from './TimeManager';
 import { FrameRateLevel } from '../utils/TimeMagic';
 import { globalAudioContext } from '../manager/AudioManager';
 import type { IPlayAudioStoryEvent } from '../stories/utils';
 import { type ITimelineEvent, TimelineManager } from '../utils/TimeLine';
+import { stories } from '../stories';
 
 export const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
 
 export const timeLine = new TimelineManager(
-   SE1EP01,
+   stories,
    {
       audio: (x: ITimelineEvent<'audio', IPlayAudioStoryEvent>) => {
          const clip = new Clip({
@@ -65,9 +65,16 @@ export const timeLine = new TimelineManager(
 );
 
 export const StoryManager = () => {
-   ROUTER_ID.subscribe((id) => {
-      timeLine.reset();
+   ROUTER_ID.subscribe((id) => {      
       if (id.includes('/single/play/story')) {
+         const episode = Math.floor(Number.parseFloat(QUERY_PARAMETER.value.get('episode') ?? '0'));
+
+         console.log(QUERY_PARAMETER.value);
+
+         console.log(episode);
+         timeLine.storyId = episode;
+   
+         console.log(timeLine);
          timeManager.addFn(timeLine.tick, FrameRateLevel.D0);
       } else {
          timeManager.removeFn(timeLine.tick);

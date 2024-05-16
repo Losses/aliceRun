@@ -8,8 +8,10 @@ type DisposeFn = () => void;
 
 type EventCallback<Type extends string, Detail> = (
    x: ITimelineEvent<Type, Detail>,
+// biome-ignore lint/suspicious/noConfusingVoidType: This is safe
 ) => DisposeFn | void;
 
+// biome-ignore lint/suspicious/noExplicitAny: This is safe
 type TimelineEventCallbacks<T extends ITimelineEvent<string, any>[]> = {
    [Event in T[number] as Event['type']]: EventCallback<
       Event['type'],
@@ -17,26 +19,42 @@ type TimelineEventCallbacks<T extends ITimelineEvent<string, any>[]> = {
    >;
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: This is safe
 export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
-   private events: T;
+   private events: T | null = null;
    private startTime: number | null = null;
    private isPaused = false;
    private eventIndex = 0;
    private pauseTime: number | null = null;
    private disposers = new Set<DisposeFn>();
-   public readonly totalTime: number;
-   public timeLeft: number;
+   public totalTime = 0;
+   public timeLeft = 0;
 
-   constructor(
-      events: T,
-      public callbacks: TimelineEventCallbacks<T>,
-   ) {
+   public _storyId = 0;
+
+   get storyId() {
+      return this._storyId;
+   }
+
+   set storyId(x) {
+      this._storyId = x;
+
+      const events = this.eventSet[x] ?? this.eventSet[0];
+
+      console.log(events);
       this.events = events.sort((a, b) => a.time - b.time);
 
       this.totalTime =
          events.find((x) => x.type === 'end')?.time ?? Number.POSITIVE_INFINITY;
       this.timeLeft = this.totalTime;
+
+      this.reset();
    }
+
+   constructor(
+      public eventSet: T[],
+      public callbacks: TimelineEventCallbacks<T>,
+   ) {}
 
    public reset() {
       this.startTime = null;
@@ -44,12 +62,15 @@ export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
       this.eventIndex = 0;
       this.pauseTime = null;
 
+      this.timeLeft = this.totalTime;
+
       this.disposers.forEach((x) => x());
       this.disposers.clear();
    }
 
    tick = (timestamp: number) => {
       if (this.isPaused) return;
+      if (!this.events) return;
 
       if (this.startTime === null) {
          this.startTime = timestamp;
