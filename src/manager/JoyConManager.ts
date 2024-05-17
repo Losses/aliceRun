@@ -3,26 +3,45 @@ import { Event } from '@web-media/event-target';
 import { PLAY_SOUND } from './AudioManager';
 import { eventTarget } from './EventManager';
 
-import { P1_JOYCON, P2_JOYCON } from '../stores/connection';
 import { StepCounter } from '../utils/StepCounter';
-import type {
-   IPacket,
-   JoyCon,
-   JoyConLeft,
-   JoyConRight,
-} from '../utils/joyCon/nintendoSwitch/JoyCon';
+import type { IPacket } from '../utils/joyCon/nintendoSwitch/JoyCon';
+import { P1_JOYCON, P2_JOYCON } from '../stores/connection';
 import {
    CONNECTED_JOY_CON,
    connectToNintendoSwitchJoycon,
 } from '../utils/joyCon/nintendoSwitch/connect';
 import { timeManager } from './TimeManager';
 
-export const p1 = new StepCounter(); // Create an instance of StepCounter
+export const p1 = new StepCounter();
+export const p2 = new StepCounter();
 
-const handleP1HidInput = (event: CustomEvent<IPacket>) => {
+type HIDPacketHandler = (event: CustomEvent<IPacket>) => void;
+
+const HandleJoyConInput = (p: StepCounter) => (event: CustomEvent<IPacket>) => {
    // Process the packet with our step counter
-   p1.processPacket(event.detail);
+   p.processPacket(event.detail);
 };
+
+const handleP1HidInput = HandleJoyConInput(p1);
+const handleP2HidInput = HandleJoyConInput(p2);
+
+const ConnectJoyCon = (store: typeof P1_JOYCON | typeof P2_JOYCON, handler: HIDPacketHandler ) => async () => {
+   if (store.value) return;
+
+   const joyCon = await connectToNintendoSwitchJoycon();
+
+   if (!joyCon) return;
+
+   store.value = joyCon;
+
+   joyCon.addEventListener(
+      'hidinput',
+      handler as unknown as EventListener,
+   );
+}
+
+const connectP1 = ConnectJoyCon(P1_JOYCON, handleP1HidInput);
+const connectP2 = ConnectJoyCon(P2_JOYCON, handleP2HidInput);
 
 export const JoyConManager = () => {
    const $connectJoyconScreen = document.querySelector('.connect_section');
@@ -44,21 +63,11 @@ export const JoyConManager = () => {
    document
       .querySelector('.connect_bt')
       ?.addEventListener('click', async () => {
-         if (P1_JOYCON.value) return;
-
-         const joyCon = await connectToNintendoSwitchJoycon();
-
-         if (!joyCon) return;
-
-         P1_JOYCON.value = joyCon;
+         await connectP1();
 
          $connectJoyconScreen.classList.add('hidden');
          $connectedContent.classList.remove('hidden');
 
-         joyCon.addEventListener(
-            'hidinput',
-            handleP1HidInput as unknown as EventListener,
-         );
       });
 
    window.setInterval(() => {
@@ -80,6 +89,10 @@ export const JoyConManager = () => {
       }
 
       if (event.device === P2_JOYCON.value?.device) {
+         P2_JOYCON.value.removeEventListener(
+            'hidinput',
+            handleP2HidInput as EventListenerOrEventListenerObject,
+         );
          P2_JOYCON.value = null;
       }
    };
@@ -108,6 +121,15 @@ export const JoyConManager = () => {
       $reconnect.classList.remove('hidden');
       waitForP1();
    });
+
+   
+   const $connectP2 = document.querySelector('.reconnect');
+
+   if (!$connectP2) {
+      throw new Error('Connect P2 button not found');
+   }
+
+   $connectP2.addEventListener('click', connectP2);
 
    navigator.hid.addEventListener('disconnect', onDisconnect);
 };

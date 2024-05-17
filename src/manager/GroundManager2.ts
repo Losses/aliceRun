@@ -7,6 +7,7 @@ import { STEP_ANGLE } from '../constants/ground';
 import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
 import { eventTarget } from './EventManager';
+import { p1 } from './JoyConManager';
 
 export const GroundManager = (
    camera: THREE.Camera,
@@ -33,7 +34,7 @@ export const GroundManager = (
       updateValue(rotate + STEP_ANGLE);
    };
 
-   eventTarget.addEventListener(STEP_EVENT, ({ detail }) => {
+   p1.addEventListener(STEP_EVENT, () => {
       step();
    });
 

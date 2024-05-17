@@ -7,6 +7,7 @@ import { CompressedTexture } from '../utils/CompressedTexture';
 import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
 import { eventTarget } from './EventManager';
+import { p1 } from './JoyConManager';
 
 export const GroundObjectManager = (
    camera: THREE.Camera,
@@ -55,7 +56,7 @@ export const GroundObjectManager = (
       updateValue(rotate + STEP_ANGLE);
    };
 
-   eventTarget.addEventListener(STEP_EVENT, () => {
+   p1.addEventListener(STEP_EVENT, () => {
       step();
    });
 

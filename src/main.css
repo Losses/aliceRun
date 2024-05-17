@@ -243,6 +243,22 @@ button {
   margin: 40px 0;
 }
 
+.connections {
+  top: 28px;
+  right: 18px;
+  position: fixed;
+}
+
+.connections .glass {
+  padding: 8px;
+  margin: 0 10px;
+}
+
+.connections img {
+  width: 24px;
+  display: block;
+}
+
 /** Diagnosis screen **/
 
 .diagnosis-charts {

@@ -13,7 +13,7 @@ import { VISUAL_LOAD } from '../stores/settings';
 import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
 import { THEME_VALUE } from './ColorManager';
-import { eventTarget } from './EventManager';
+import { p1 } from './JoyConManager';
 
 export const GrassManager = (
    camera: THREE.Camera,
@@ -40,7 +40,7 @@ export const GrassManager = (
       updateValue(rotation + STEP_ANGLE);
    };
 
-   eventTarget.addEventListener(STEP_EVENT, ({ detail }) => {
+   p1.addEventListener(STEP_EVENT, ({ detail }) => {
       step();
    });
 

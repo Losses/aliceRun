@@ -226,9 +226,9 @@ export const RunStatManager = () => {
       }
    });
 
-   eventTarget.addEventListener(
+   p1.addEventListener(
       STEP_EVENT,
-      ({ detail: { magnitude, total, strideRate, type } }) => {
+      ({ detail: { total, type } }) => {
          if (!ROUTER_ID.value.includes('/single/play/')) return;
 
          rateEstimator.record();

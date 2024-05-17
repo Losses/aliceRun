@@ -1,8 +1,7 @@
-import { Event, createEventName } from '@web-media/event-target';
+import { Event, Target, createEventName } from '@web-media/event-target';
 
-import { eventTarget } from '../manager/EventManager';
-import { SENSITIVITY } from '../stores/settings';
 import { Sparkline } from './Sparkline';
+import { SENSITIVITY } from '../stores/settings';
 import type { IPacket } from './joyCon/nintendoSwitch/JoyCon';
 
 enum StepState {
@@ -19,7 +18,7 @@ interface IStepEventDetail {
 
 export const STEP_EVENT = createEventName<IStepEventDetail>();
 
-export class StepCounter {
+export class StepCounter extends Target<[typeof STEP_EVENT]> {
    private static readonly STEP_THRESHOLD_LOW: number = -0.007;
    private static readonly STEP_THRESHOLD_HIGH: number = 0.005;
    private static readonly MIN_TIME_BETWEEN_STEPS_MS: number = 200;
@@ -59,7 +58,9 @@ export class StepCounter {
 
    set recording(x) {
       this._recording = x;
-      Object.values(this.data).forEach((a) => (a.recording = x));
+      Object.values(this.data).forEach((a) => {
+         a.recording = x;
+      });
    }
 
    private _monitoring = false;
@@ -70,7 +71,9 @@ export class StepCounter {
 
    set monitoring(x) {
       this._monitoring = x;
-      Object.values(this.data).forEach((a) => (a.monitoring = x));
+      Object.values(this.data).forEach((a) => {
+         a.monitoring = x;
+      });
    }
 
    public processPacket(packet: IPacket): void {
@@ -93,11 +96,8 @@ export class StepCounter {
       const now = Date.now();
       if (this.lastStepTimestamp) {
          this.stepCount++;
-         const deltaTime = now - this.lastStepTimestamp;
 
-         const strideRate = 60000 / deltaTime;
-
-         eventTarget.dispatchEvent(
+         this.dispatchEvent(
             new Event(STEP_EVENT, {
                magnitude: this.maxMagnitude,
                total: this.stepCount,
@@ -195,7 +195,7 @@ export class StepCounter {
 
    mockStep = () => {
       this.stepCount++;
-      eventTarget.dispatchEvent(
+      this.dispatchEvent(
          new Event(STEP_EVENT, {
             magnitude: 2,
             total: this.stepCount,
