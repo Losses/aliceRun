@@ -17,8 +17,21 @@ export const RouterManager = () => {
       }),
    );
 
+   QUERY_PARAMETER.subscribe((x) => {
+      Object.keys(document.body.dataset).forEach((d) => {
+         if (d.startsWith('::')){
+            document.body.dataset[d] = undefined;
+         }
+      });
+
+      x.forEach((value, key) => {
+         document.body.dataset[`::${key}`] = value;
+      });
+   });
+
    ROUTER_ID.subscribe((id) => {
       const $$elements = document.querySelectorAll('[data-router]');
+      document.body.dataset.router = id;
 
       $$elements.forEach((x) => {
          if ((x as HTMLElement).dataset.router?.split('|')?.includes(id)) {

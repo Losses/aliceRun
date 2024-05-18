@@ -1,5 +1,11 @@
 import { P2_JOYCON } from '../stores/connection';
-import { ROUTER_ID, isInfinite, isMultiple, isSingle } from '../stores/router';
+import {
+   QUERY_PARAMETER,
+   ROUTER_ID,
+   isInfinite,
+   isMultiple,
+   isSingle,
+} from '../stores/router';
 import { HIGH_LIMIT, LOW_LIMIT, P1_SPM, P2_SPM } from '../stores/runStat';
 import { LowPassFilter } from '../utils/LowPassFilter';
 import { RateEstimator } from '../utils/RateEstimator';
@@ -8,7 +14,7 @@ import { STEP_EVENT } from '../utils/StepCounter';
 import { FrameRateLevel } from '../utils/TimeMagic';
 import { forceSelect } from '../utils/forceSelect';
 import { useLerp } from '../utils/lerp';
-import { MULTIPLE_PLAYER_COLOR_PROGRESS } from './ColorManager';
+import { MULTIPLE_PLAYER_COLOR_PROGRESS, THEME_ID } from './ColorManager';
 import { store } from './DataManager';
 import { p1, p2 } from './JoyConManager';
 import { timeLine } from './StoryManager';
@@ -112,6 +118,10 @@ const formatTime = (_x: number) => {
       .padStart(2, '0')}`;
 };
 
+const formatNumber = (x: number, n: number) => {
+   return Math.floor(x).toString().padStart(n, '0');
+};
+
 const $bar = document.querySelector('.right-panel .bar') as HTMLDivElement;
 const $val = document.querySelector(
    '.right-panel .current-value',
@@ -182,9 +192,10 @@ export const RunStatManager = () => {
    let lastSyncTime = 0;
 
    const tickSystem = () => {
-      const deltaTime = isInfinite() || isMultiple()
-         ? Date.now() - logicStartTime
-         : timeLine.timeLeft;
+      const deltaTime =
+         isInfinite() || isMultiple()
+            ? Date.now() - logicStartTime
+            : timeLine.timeLeft;
 
       if (!stopTiming) {
          $time.textContent = formatTime(deltaTime);
@@ -195,7 +206,7 @@ export const RunStatManager = () => {
 
    const tickP1 = () => {
       const p1Spm = p1StrideRateFilter.filter(p1RateEstimator.estimateRate());
-      $spm.textContent = Math.floor(p1Spm).toString().padStart(3, '0');
+      $spm.textContent = formatNumber(p1Spm, 3);
       P1_SPM.value = p1Spm;
       p1SpmStat.addData(p1Spm);
    };
@@ -216,11 +227,6 @@ export const RunStatManager = () => {
    };
 
    ROUTER_ID.subscribe(() => {
-      console.log({
-         isSingle: isSingle(),
-         isMultiple: isMultiple(),
-      });
-
       if (isSingle() || isMultiple()) {
          p1RateEstimator.reset();
          p1.reset();
@@ -234,7 +240,6 @@ export const RunStatManager = () => {
          TRUE_HIGH_LIMIT.reset(true);
          p1SpmStat.reset();
 
-         console.log('will tick p1 and system');
          timeManager.addFn(tickSystem, FrameRateLevel.D3);
          timeManager.addFn(tickP1, FrameRateLevel.D3);
       } else {
@@ -242,12 +247,11 @@ export const RunStatManager = () => {
       }
 
       if (isSingle()) {
+         THEME_ID.value = 'clear';
          timeManager.removeFn(tickP2);
       }
 
       if (isMultiple()) {
-         console.log('will tick p2 and system');
-
          p2RateEstimator.reset();
          p2.reset();
          p2SpmStat.reset();
@@ -262,7 +266,7 @@ export const RunStatManager = () => {
 
       if (isInfinite()) {
          p1.stepCount = safeParseInt(localStorage.getItem(INFINITE_STEP_KEY));
-         $steps.textContent = p1.stepCount.toString().padStart(4, '0');
+         $steps.textContent = formatNumber(p1.stepCount, 4);
          logicStartTime =
             Date.now() - safeParseInt(localStorage.getItem(INFINITE_TIME_KEY));
          lastStepsCount = p1.stepCount;
@@ -277,7 +281,7 @@ export const RunStatManager = () => {
       if (!isSingle() && !isMultiple()) return;
 
       p1RateEstimator.record();
-      $steps.textContent = total.toString().padStart(4, '0');
+      $steps.textContent = formatNumber(total, 4);
 
       if ($type) {
          $type.textContent = type;
@@ -297,27 +301,42 @@ export const RunStatManager = () => {
 
    let lineChartProgress = 0;
 
-   const $finalSteps = forceSelect<HTMLDivElement>('.spm-stat .steps-value');
-   const $finalTime = forceSelect<HTMLDivElement>('.spm-stat .time-value');
-   const $finalSpm = forceSelect<HTMLDivElement>('.spm-stat .spm-value');
+   const $p1FinalSteps = forceSelect<HTMLDivElement>(
+      '.spm-stat .p1.steps-value',
+   );
+   const $p1FinalTime = forceSelect<HTMLDivElement>('.spm-stat .time-value');
+   const $p1FinalSpm = forceSelect<HTMLDivElement>('.spm-stat .p1.spm-value');
+   const $p2FinalSteps = forceSelect<HTMLDivElement>(
+      '.spm-stat .p2.steps-value',
+   );
+   const $p2FinalSpm = forceSelect<HTMLDivElement>('.spm-stat .p2.spm-value');
 
-   let finalSteps = 0;
-   let finalTime = 0;
-   let finalSpm = 0;
+   let p1FinalSteps = 0;
+   let p1FinalTime = 0;
+   let p1FinalSpm = 0;
+   let p2FinalSteps = 0;
+   let p2FinalSpm = 0;
 
    const [updateLineChartProgress] = useLerp(
       () => lineChartProgress,
       (x) => {
+         const m = isMultiple();
+
          lineChartProgress = x;
          p1SpmStat.draw(x);
 
-         $finalSteps.textContent = Math.floor(finalSteps * x)
-            .toString()
-            .padStart(4, '0');
-         $finalTime.textContent = formatTime(finalTime * x);
-         $finalSpm.textContent = Math.floor(finalSpm * x)
-            .toString()
-            .padStart(4, '0');
+         if (m) {
+            p2SpmStat.draw(x);
+         }
+
+         $p1FinalSteps.textContent = formatNumber(p1FinalSteps * x, 4);
+         $p1FinalTime.textContent = formatTime(p1FinalTime * x);
+         $p1FinalSpm.textContent = formatNumber(p1FinalSpm * x, 4);
+
+         if (m) {
+            $p2FinalSteps.textContent = formatNumber(p2FinalSteps * x, 4);
+            $p2FinalSpm.textContent = formatNumber(p2FinalSpm * x, 4);
+         }
       },
       0.03,
       1e-3,
@@ -333,11 +352,13 @@ export const RunStatManager = () => {
          updateLineChartProgress(1);
       }, 100);
 
-      finalSteps = Math.floor(p1.stepCount - lastStepsCount);
-      finalTime = Date.now() - acturalStartTime;
-      finalSpm = p1SpmStat.getAverageValue();
+      p1FinalSteps = Math.floor(p1.stepCount - lastStepsCount);
+      p1FinalTime = Date.now() - acturalStartTime;
+      p1FinalSpm = p1SpmStat.getAverageValue();
 
       if (isMultiple()) {
+         p2FinalSteps = Math.floor(p2.stepCount - lastStepsCount);
+         p2FinalSpm = p2SpmStat.getAverageValue();
          p2SpmStat.resizeToParent();
       }
    });

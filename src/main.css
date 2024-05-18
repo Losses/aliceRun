@@ -366,6 +366,14 @@ button {
   font-weight: 800;
 }
 
+.stat-item .p2 {
+  color: red;
+}
+
+.stat-item .title.p2 {
+  font-weight: 400;
+}
+
 .finish-training {
   bottom: 20px;
   left: 20px;
@@ -449,6 +457,13 @@ button {
   width: 600px;
   height: 280px;
   background: rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.spm-chart-container canvas {
+  top: 0;
+  left: 0;
+  position: absolute;
 }
 
 .spm-stat .modal-title {
@@ -463,10 +478,23 @@ button {
   font-size: 0.8em;
   display: flex;
   justify-content: space-around;
+  align-items: center;
 }
 
 .final-stat .value {
   font-weight: 700;
+}
+
+[data-\:\:mode="multiple"] .time-title {
+  display: none;
+}
+
+[data-\:\:mode="single"] .p2 {
+  display: none;
+}
+
+[data-\:\:mode="single"] #spm-chart-p2 {
+  display: none;
 }
 
 /** Story List **/

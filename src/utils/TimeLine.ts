@@ -56,6 +56,7 @@ export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
    ) {}
 
    public reset() {
+      if (this.startTime === null) return;
       this.startTime = null;
       this.isPaused = false;
       this.eventIndex = 0;

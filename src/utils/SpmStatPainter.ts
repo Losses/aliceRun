@@ -121,13 +121,13 @@ export class SpmStatPainter extends WindowAverageRecord {
 
       gradient.addColorStop(0, `rgba(${this.color}, ${bodyAlpha})`);
       if (drawPoints < TIP_SIZE) {
-         gradient.addColorStop(1, 'white');
+         gradient.addColorStop(1, `rgba(${this.color}, 1)`);
       } else {
          gradient.addColorStop(
             (drawPoints - TIP_SIZE) / drawPoints,
             `rgba(${this.color}, ${bodyAlpha})`,
          );
-         gradient.addColorStop(1, 'white');
+         gradient.addColorStop(1, `rgba(${this.color}, 1)`);
       }
 
       this.context.strokeStyle = gradient;
