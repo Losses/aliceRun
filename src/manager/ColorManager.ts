@@ -1,5 +1,5 @@
 import { Hct } from '@material/material-color-utilities';
-import { useLerp, useLerps } from '../utils/lerp';
+import { useLerps } from '../utils/lerp';
 import { store } from './DataManager';
 
 interface ITheme<T> {
@@ -11,16 +11,34 @@ interface ITheme<T> {
 
 const themeArgb: Record<string, ITheme<number>> = {
    dark: {
-      grassBase: 0xff290404,
       grassTip: 0xffdd1818,
+      grassBase: 0xff290404,
       sky0: 0xff23074d,
       sky1: 0xffcc5333,
    },
    clear: {
-      grassBase: 0xff0c3302,
       grassTip: 0xff7f7f19,
+      grassBase: 0xff0c3302,
       sky0: 0xff4ca1af,
       sky1: 0xffc4e0e5,
+   },
+   winter: {
+      grassTip: 0xffebdaa1,
+      grassBase: 0xff684c25,
+      sky0: 0xff295877,
+      sky1: 0xffa3cbd0,
+   },
+   desert: {
+      grassTip: 0xffe1b254,
+      grassBase: 0xff7e473a,
+      sky0: 0xff762902,
+      sky1: 0xffc5b267,
+   },
+   rainy: {
+      grassTip: 0xff154e61,
+      grassBase: 0xff123147,
+      sky0: 0xff1f3130,
+      sky1: 0xff1c3d4b,
    },
 };
 
@@ -80,6 +98,7 @@ export const ColorManager = () => {
             },
          );
 
+         // biome-ignore lint/correctness/noSelfAssign: We need to trigger event here
          THEME_VALUE.value = THEME_VALUE.value;
       },
       0.01,
