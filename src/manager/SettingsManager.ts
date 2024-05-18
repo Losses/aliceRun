@@ -100,14 +100,13 @@ export const SettingsManager = () => {
 
       if (isP1()) {
          P1_BOT_MODE_ENABLED.value = value;
-         p1.botMode = value;
       } else {
          P2_BOT_MODE_ENABLED.value = value;
-         p2.botMode = value;
       }
    });
 
    P1_BOT_MODE_ENABLED.subscribe((x) => {
+      p1.botMode = x;
       if (x) {
          document.body.classList.add('p1-bot');
       } else {
@@ -116,6 +115,7 @@ export const SettingsManager = () => {
    });
 
    P2_BOT_MODE_ENABLED.subscribe((x) => {
+      p2.botMode = x;
       if (x) {
          document.body.classList.add('p2-bot');
       } else {

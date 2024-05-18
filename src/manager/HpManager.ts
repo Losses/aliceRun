@@ -7,6 +7,7 @@ import { ROUTER_ID } from '../stores/router';
 import { P1_SPM } from '../stores/runStat';
 import { useLerp } from '../utils/lerp';
 import { TRUE_HIGH_LIMIT, TRUE_LOW_LIMIT } from './RunStatManager';
+import { forceSelect } from '../utils/forceSelect';
 
 export const HpManager = (effects: Effects) => {
    let lastCalculateTime = 0;
@@ -19,16 +20,8 @@ export const HpManager = (effects: Effects) => {
       },
    );
 
-   const $hpBar = document.querySelector('.hp-bar');
-   const $hpVal = document.querySelector('.hp-bar-val');
-
-   if (!$hpBar) {
-      throw new Error('HP not found');
-   }
-
-   if (!$hpVal) {
-      throw new Error('HP not found');
-   }
+   const $hpBar = forceSelect<HTMLDivElement>('.hp-bar');
+   const $hpVal = forceSelect<HTMLDivElement>('.hp-bar-val');
 
    HP.subscribe((x) => {
       if (x === trueHp || trueHp > HP.value) {

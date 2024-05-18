@@ -41,7 +41,9 @@ export class AtomStore {
    > = new Map();
 
    private readonly SubScribeToWrapMap: WeakMap<
+      // biome-ignore lint/suspicious/noExplicitAny: This is safe
       Subscriber<any>,
+      // biome-ignore lint/suspicious/noExplicitAny: This is safe
       SubscriberWrap<any>
    > = new WeakMap();
 

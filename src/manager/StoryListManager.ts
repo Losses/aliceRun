@@ -1,9 +1,8 @@
 import { ROUTER_ID } from '../stores/router';
+import { forceSelect } from '../utils/forceSelect';
 
 export const StoryListManager = () => {
-   const $list = document.querySelector('.story-list') as HTMLDivElement | null;
-
-   if (!$list) throw new Error('Story list not found');
+   const $list = forceSelect<HTMLDivElement>('.story-list');
 
    window.addEventListener('pointermove', (event) => {
       if (ROUTER_ID.value !== '/single/list') return;

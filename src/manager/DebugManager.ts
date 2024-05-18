@@ -14,8 +14,8 @@ export const DebugManager = (
    // camera.position.set(-1200, 0, 0);
    // camera.lookAt(60, 0, 0);
 
-   const controls = new OrbitControls(camera, document.querySelector("#app") as HTMLDivElement);
-   controls.update();
+   // const controls = new OrbitControls(camera, document.querySelector("#app") as HTMLDivElement);
+   // controls.update();
 
    // const axesHelper = new THREE.AxesHelper(5);
    // scene.add(axesHelper);

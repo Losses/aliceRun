@@ -5,6 +5,7 @@ import { RateEstimator } from '../utils/RateEstimator';
 import { SpmStatPainter } from '../utils/SpmStatPainter';
 import { STEP_EVENT } from '../utils/StepCounter';
 import { FrameRateLevel } from '../utils/TimeMagic';
+import { forceSelect } from '../utils/forceSelect';
 import { useLerp } from '../utils/lerp';
 import { store } from './DataManager';
 import { p1, p2 } from './JoyConManager';
@@ -145,16 +146,10 @@ export const RunStatManager = () => {
    let lastStepsCount = 0;
    let stopTiming = false;
 
-   const $time = document.querySelector('.time-value');
-   if (!$time) throw new Error('Time element not found');
-
-   const $steps = document.querySelector('.steps-value');
-   if (!$steps) throw new Error('Steps element not found');
-
-   const $spm = document.querySelector('.spm-value');
-   if (!$spm) throw new Error('SPM element not found');
-
-   const $type = document.querySelector('.type-value');
+   const $time = forceSelect<HTMLDivElement>('.time-value');
+   const $steps = forceSelect<HTMLDivElement>('.steps-value');
+   const $spm = forceSelect<HTMLDivElement>('.spm-value');
+   const $type = forceSelect<HTMLDivElement>('.type-value');
 
    const p1RateEstimator = new RateEstimator();
    const p1StrideRateFilter = new LowPassFilter(0.2);
@@ -265,29 +260,15 @@ export const RunStatManager = () => {
       },
    );
 
-   const $finishTraining = document.querySelector('.finish-training');
-   const $spmStat = document.querySelector('.spm-stat');
-   const $statChartBackButton = document.querySelector('.stat-chart-back');
-
-   if (!$finishTraining) {
-      throw new Error('Training not finished');
-   }
-   if (!$spmStat) {
-      throw new Error('Spm stat not finished');
-   }
-   if (!$statChartBackButton) {
-      throw new Error('statChartBackButton not finished');
-   }
+   const $finishTraining = forceSelect<HTMLDivElement>('.finish-training');
+   const $spmStat = forceSelect<HTMLDivElement>('.spm-stat');
+   const $statChartBackButton = forceSelect<HTMLDivElement>('.stat-chart-back');
 
    let lineChartProgress = 0;
 
-   const $finalSteps = document.querySelector('.spm-stat .steps-value');
-   const $finalTime = document.querySelector('.spm-stat .time-value');
-   const $finalSpm = document.querySelector('.spm-stat .spm-value');
-
-   if (!$finalSteps) throw new Error('Final steps element not found');
-   if (!$finalTime) throw new Error('Final time element not found');
-   if (!$finalSpm) throw new Error('Final SPM element not found');
+   const $finalSteps = forceSelect<HTMLDivElement>('.spm-stat .steps-value');
+   const $finalTime = forceSelect<HTMLDivElement>('.spm-stat .time-value');
+   const $finalSpm = forceSelect<HTMLDivElement>('.spm-stat .spm-value');
 
    let finalSteps = 0;
    let finalTime = 0;

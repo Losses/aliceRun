@@ -11,6 +11,9 @@ import {
    connectToNintendoSwitchJoycon,
 } from '../utils/joyCon/nintendoSwitch/connect';
 import { timeManager } from './TimeManager';
+import { P1_BOT_MODE_ENABLED, P2_BOT_MODE_ENABLED } from '../stores/settings';
+import { isP1 } from '../utils/isP1';
+import { forceSelect } from '../utils/forceSelect';
 
 export const p1 = new StepCounter();
 export const p2 = new StepCounter();
@@ -25,10 +28,23 @@ const HandleJoyConInput = (p: StepCounter) => (event: CustomEvent<IPacket>) => {
 const handleP1HidInput = HandleJoyConInput(p1);
 const handleP2HidInput = HandleJoyConInput(p2);
 
+const HandleConnectButtonContextMenu = (P: typeof P1_BOT_MODE_ENABLED | typeof P2_BOT_MODE_ENABLED) => (x: MouseEvent) => {
+   x.preventDefault();
+   P.value = !P.value;
+}
+
+const handleP1ConnectButtonContextMenu = HandleConnectButtonContextMenu(P1_BOT_MODE_ENABLED);
+const handleP2ConnectButtonContextMenu = HandleConnectButtonContextMenu(P2_BOT_MODE_ENABLED);
+
 const ConnectJoyCon =
    (store: typeof P1_JOYCON | typeof P2_JOYCON, handler: HIDPacketHandler) =>
    async () => {
-      if (store.value) return;
+      if (store.value) {
+         store.value.removeEventListener(
+            'hidinput',
+            handler as unknown as EventListener,
+         );
+      }
 
       const joyCon = await connectToNintendoSwitchJoycon();
 
@@ -43,30 +59,27 @@ const connectP1 = ConnectJoyCon(P1_JOYCON, handleP1HidInput);
 const connectP2 = ConnectJoyCon(P2_JOYCON, handleP2HidInput);
 
 export const JoyConManager = () => {
-   const $connectJoyconScreen = document.querySelector('.connect_section');
-   const $connectedContent = document.querySelector('.connected');
-   const $reconnect = document.querySelector('.reconnect');
+   const $connectJoyconScreen = forceSelect<HTMLDivElement>('.connect_section');
+   const $connectedContent = forceSelect<HTMLDivElement>('.connected');
+   const $reconnect = forceSelect<HTMLDivElement>('.reconnect');
+   const $connectBt = forceSelect<HTMLButtonElement>('.connect_bt');
 
-   if (!$connectJoyconScreen) {
-      throw new Error('Connect section not found');
-   }
+   $connectBt.addEventListener('click', async () => {
+      await connectP1();
 
-   if (!$connectedContent) {
-      throw new Error('Connected section not found');
-   }
+      if (!P1_JOYCON.value) return;
 
-   if (!$reconnect) {
-      throw new Error('Reconnect section not found');
-   }
+      $connectJoyconScreen.classList.add('hidden');
+      $connectedContent.classList.remove('hidden');
+   });
 
-   document
-      .querySelector('.connect_bt')
-      ?.addEventListener('click', async () => {
-         await connectP1();
+   $connectBt.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
 
-         $connectJoyconScreen.classList.add('hidden');
-         $connectedContent.classList.remove('hidden');
-      });
+      P1_BOT_MODE_ENABLED.value = true;
+      $connectJoyconScreen.classList.add('hidden');
+      $connectedContent.classList.remove('hidden');
+   });
 
    window.setInterval(() => {
       CONNECTED_JOY_CON.forEach(async (joyCon) => {
@@ -75,7 +88,7 @@ export const JoyConManager = () => {
          await joyCon.enableIMUMode();
          await joyCon.enableVibration();
       });
-   }, 2000);
+   }, 1000);
 
    P1_JOYCON.subscribe(async (x) => {
       if (x) {
@@ -133,13 +146,20 @@ export const JoyConManager = () => {
 
    $reconnect.addEventListener('click', waitForP1);
 
-   const $connectP2 = document.querySelector('.connect-p2');
+   const $settingsP1 = forceSelect<HTMLButtonElement>('.settings-p1-button');
+   const $settingsP2 = forceSelect<HTMLButtonElement>('.settings-p2-button');
+   const $connectP2 = forceSelect<HTMLButtonElement>('.connect-p2-button');
+   const $changeController = forceSelect<HTMLButtonElement>('.change-controller');
 
-   if (!$connectP2) {
-      throw new Error('Connect P2 button not found');
-   }
-
+   $settingsP1.addEventListener('contextmenu', handleP1ConnectButtonContextMenu);
+   $settingsP2.addEventListener('contextmenu', handleP2ConnectButtonContextMenu);
+   $connectP2.addEventListener('contextmenu', handleP2ConnectButtonContextMenu);
    $connectP2.addEventListener('click', connectP2);
+
+   $changeController.addEventListener('click', () => {
+      if (isP1()) connectP1();
+      else connectP2();
+   });
 
    navigator.hid.addEventListener('disconnect', onDisconnect);
 };

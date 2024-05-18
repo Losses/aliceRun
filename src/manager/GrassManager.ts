@@ -14,6 +14,7 @@ import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
 import { THEME_VALUE } from './ColorManager';
 import { p1 } from './JoyConManager';
+import { forceSelect } from '../utils/forceSelect';
 
 export const GrassManager = (
    camera: THREE.Camera,
@@ -55,9 +56,6 @@ export const GrassManager = (
 
       material.uniformsNeedUpdate = true;
    });
-
-   const $three = document.querySelector('#three_canvas');
-   if (!$three) throw new Error('Three canvas not found');
 
    THEME_VALUE.subscribe((theme) => {
       (material.uniforms.grassBaseColor.value as THREE.Color).setHex(

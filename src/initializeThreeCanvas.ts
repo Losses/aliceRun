@@ -36,10 +36,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    renderer.localClippingEnabled = true;
    tracker.track(renderer);
 
-   const controls = new PointerLockControls(camera, document.body);
-   scene.add(controls.getObject());
-   tracker.track(controls);
-
    const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
 
    const renderScene = new RenderPass(scene, camera);
@@ -85,7 +81,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    return {
       scene,
       camera,
-      controls,
       renderer,
       composer: finalComposer,
       effects,
