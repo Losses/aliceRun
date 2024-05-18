@@ -42,6 +42,11 @@ const themeArgb: Record<string, ITheme<number>> = {
    },
 };
 
+
+const THEME_IDS = Object.keys(themeArgb).filter((x) => x !== 'clear');
+const pickRandom = <T>(items: T[]) => items[Math.floor(Math.random()*items.length)];
+
+
 const themeHct: Record<string, ITheme<Hct>> = {};
 
 Object.entries(themeArgb).forEach(([key, value]) => {
@@ -65,9 +70,29 @@ const argbToTheme = (x: ITheme<number>): ITheme<number> => {
 
 export const THEME_ID = store.createStore('clear');
 export const THEME_VALUE = store.createStore(argbToTheme(themeArgb.clear));
+export const MULTIPLE_PLAYER_THEME_ID = store.createStore(pickRandom(THEME_IDS)); 
+export const MULTIPLE_PLAYER_COLOR_PROGRESS = store.createStore(0);
 
 // @ts-ignore
 window.themeId = THEME_ID;
+
+const interpolate = (from: number, to: number, progress: number) => {
+   return from + (to - from) * progress;
+}
+
+const interpolateTheme = (to: string, progress: number) => {
+   const fromTheme = themeHct.clear;
+   if (!fromTheme) throw new Error('From theme not found');
+   
+   const toTheme = themeHct[to];
+   if (!toTheme) throw new Error('From theme not found');
+
+   return (Object.entries(toTheme) as [keyof ITheme<Hct>, Hct][]).flatMap(([key, x]) => [
+      interpolate(fromTheme[key].hue, x.hue, progress),
+      interpolate(fromTheme[key].chroma, x.chroma, progress),
+      interpolate(fromTheme[key].tone, x.tone, progress),
+   ]);
+}
 
 export const ColorManager = () => {
    const initialThemeNumber = Object.values(themeHct[THEME_ID.value]).flatMap(
@@ -117,4 +142,8 @@ export const ColorManager = () => {
          ]),
       );
    });
+
+   MULTIPLE_PLAYER_COLOR_PROGRESS.subscribe((x) => {
+      lerpTheme(interpolateTheme(MULTIPLE_PLAYER_THEME_ID.value, x));
+   })
 };

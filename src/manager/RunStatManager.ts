@@ -1,3 +1,4 @@
+import { P2_JOYCON } from '../stores/connection';
 import { ROUTER_ID } from '../stores/router';
 import { HIGH_LIMIT, LOW_LIMIT, P1_SPM, P2_SPM } from '../stores/runStat';
 import { LowPassFilter } from '../utils/LowPassFilter';
@@ -7,6 +8,7 @@ import { STEP_EVENT } from '../utils/StepCounter';
 import { FrameRateLevel } from '../utils/TimeMagic';
 import { forceSelect } from '../utils/forceSelect';
 import { useLerp } from '../utils/lerp';
+import { MULTIPLE_PLAYER_COLOR_PROGRESS } from './ColorManager';
 import { store } from './DataManager';
 import { p1, p2 } from './JoyConManager';
 import { timeLine } from './StoryManager';
@@ -195,15 +197,20 @@ export const RunStatManager = () => {
    };
 
    const tickP2 = () => {
+      if (!P2_JOYCON.value) return;
+
       const p2Spm = p2StrideRateFilter.filter(p2RateEstimator.estimateRate());
       P2_SPM.value = p2Spm;
       p2SpmStat.addData(p2Spm);
+      MULTIPLE_PLAYER_COLOR_PROGRESS.value = Math.max(0, Math.min((p2Spm - 180) / (320 - 180), 1));
    }
 
    ROUTER_ID.subscribe((id) => {
       if (id.includes('/single/play/')) {
          p1RateEstimator.reset();
+         p2RateEstimator.reset();
          p1.reset();
+         p2.reset();
          acturalStartTime = Date.now();
          logicStartTime = Date.now();
          stopTiming = false;
@@ -213,23 +220,26 @@ export const RunStatManager = () => {
          TRUE_LOW_LIMIT.reset(true);
          TRUE_HIGH_LIMIT.reset(true);
          p1SpmStat.reset();
-
-         if (id === '/single/play/infinite') {
-            p1.stepCount = safeParseInt(
-               localStorage.getItem(INFINITE_STEP_KEY),
-            );
-            $steps.textContent = p1.stepCount.toString().padStart(4, '0');
-            logicStartTime =
-               Date.now() -
-               safeParseInt(localStorage.getItem(INFINITE_TIME_KEY));
-            lastStepsCount = p1.stepCount;
-         }
+         p2SpmStat.reset();
 
          timeManager.addFn(tickP1, FrameRateLevel.D3);
+         timeManager.removeFn(tickP2);
       } else {
+         timeManager.addFn(tickP2, FrameRateLevel.D3);
          timeManager.removeFn(tickP1);
       }
-   });
+
+      if (id === '/single/play/infinite') {
+         p1.stepCount = safeParseInt(
+            localStorage.getItem(INFINITE_STEP_KEY),
+         );
+         $steps.textContent = p1.stepCount.toString().padStart(4, '0');
+         logicStartTime =
+            Date.now() -
+            safeParseInt(localStorage.getItem(INFINITE_TIME_KEY));
+         lastStepsCount = p1.stepCount;
+      }
+   }, true);
 
    p2.addEventListener(
       STEP_EVENT,
