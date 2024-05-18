@@ -7,14 +7,16 @@ const TIP_SIZE = 50;
 export class SpmStatPainter extends WindowAverageRecord {
    private context: CanvasRenderingContext2D;
 
-   public $canvas = document.getElementById('spm-chart') as HTMLCanvasElement;
+   public $canvas: HTMLCanvasElement;
 
    private closed = false;
    private normalized: SplineCurve | null = null;
    private interpolated: Vector2[] | null = null;
 
-   constructor(windowSize: number) {
+   constructor(windowSize: number, id: string, private color = '255, 255, 255') {
       super(windowSize);
+
+      this.$canvas = document.getElementById(id) as HTMLCanvasElement;
 
       const context = this.$canvas.getContext('2d');
       if (!context) {
@@ -117,13 +119,13 @@ export class SpmStatPainter extends WindowAverageRecord {
               (1 - BODY_ALPHA) * (1 - (totalPoints - drawPoints) / TIP_SIZE)
             : BODY_ALPHA;
 
-      gradient.addColorStop(0, `rgba(255, 255, 255, ${bodyAlpha})`);
+      gradient.addColorStop(0, `rgba(${this.color}, ${bodyAlpha})`);
       if (drawPoints < TIP_SIZE) {
          gradient.addColorStop(1, 'white');
       } else {
          gradient.addColorStop(
             (drawPoints - TIP_SIZE) / drawPoints,
-            `rgba(255, 255, 255, ${bodyAlpha})`,
+            `rgba(${this.color}, ${bodyAlpha})`,
          );
          gradient.addColorStop(1, 'white');
       }

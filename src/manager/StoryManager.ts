@@ -2,7 +2,7 @@ import { Clip, Mp3DeMuxAdapter } from '@web-media/phonograph';
 
 import { THEME_ID } from './ColorManager';
 
-import { QUERY_PARAMETER, ROUTER_ID } from '../stores/router';
+import { QUERY_PARAMETER, ROUTER_ID, isSingle } from '../stores/router';
 import { LOW_LIMIT } from '../stores/runStat';
 import { timeManager } from './TimeManager';
 import { FrameRateLevel } from '../utils/TimeMagic';
@@ -67,8 +67,8 @@ export const timeLine = new TimelineManager(
 );
 
 export const StoryManager = () => {
-   ROUTER_ID.subscribe((id) => {      
-      if (id.includes('/single/play/story')) {
+   ROUTER_ID.subscribe(() => {      
+      if (isSingle()) {
          const episode = Math.floor(Number.parseFloat(QUERY_PARAMETER.value.get('episode') ?? '0'));
 
          timeLine.storyId = episode;

@@ -1,5 +1,5 @@
 import { P2_JOYCON } from '../stores/connection';
-import { ROUTER_ID } from '../stores/router';
+import { ROUTER_ID, isInfinite, isMultiple, isSingle } from '../stores/router';
 import { HIGH_LIMIT, LOW_LIMIT, P1_SPM, P2_SPM } from '../stores/runStat';
 import { LowPassFilter } from '../utils/LowPassFilter';
 import { RateEstimator } from '../utils/RateEstimator';
@@ -16,8 +16,6 @@ import { timeManager } from './TimeManager';
 
 export const INFINITE_TIME_KEY = 'alice-run-inf-time';
 export const INFINITE_STEP_KEY = 'alice-run-inf-step';
-
-const isInfiniteMode = () => ROUTER_ID.value === '/single/play/infinite';
 
 const A = '255,255,255,';
 const B = '255,0,0,';
@@ -139,8 +137,12 @@ const safeParseInt = (x: string | null | undefined) => {
    return Math.floor(number);
 };
 
-export const p1SpmStat = new SpmStatPainter(60 * 2);
-export const p2SpmStat = new SpmStatPainter(60 * 2);
+export const p1SpmStat = new SpmStatPainter(60 * 2, 'spm-chart-p1');
+export const p2SpmStat = new SpmStatPainter(
+   60 * 2,
+   'spm-chart-p2',
+   '255, 0, 0',
+);
 
 export const RunStatManager = () => {
    let logicStartTime = 0;
@@ -148,10 +150,10 @@ export const RunStatManager = () => {
    let lastStepsCount = 0;
    let stopTiming = false;
 
-   const $time = forceSelect<HTMLDivElement>('.time-value');
-   const $steps = forceSelect<HTMLDivElement>('.steps-value');
-   const $spm = forceSelect<HTMLDivElement>('.spm-value');
-   const $type = forceSelect<HTMLDivElement>('.type-value');
+   const $time = forceSelect<HTMLDivElement>('.stat .time-value');
+   const $steps = forceSelect<HTMLDivElement>('.stat .steps-value');
+   const $spm = forceSelect<HTMLDivElement>('.stat .spm-value');
+   const $type = forceSelect<HTMLDivElement>('.stat .type-value');
 
    const p1RateEstimator = new RateEstimator();
    const p1StrideRateFilter = new LowPassFilter(0.2);
@@ -179,9 +181,8 @@ export const RunStatManager = () => {
 
    let lastSyncTime = 0;
 
-   // TODO: Split this to Tick System and Tick P1
-   const tickP1 = () => {
-      const deltaTime = isInfiniteMode()
+   const tickSystem = () => {
+      const deltaTime = isInfinite() || isMultiple()
          ? Date.now() - logicStartTime
          : timeLine.timeLeft;
 
@@ -189,11 +190,14 @@ export const RunStatManager = () => {
          $time.textContent = formatTime(deltaTime);
       }
 
+      updateBar(P1_SPM.value);
+   };
+
+   const tickP1 = () => {
       const p1Spm = p1StrideRateFilter.filter(p1RateEstimator.estimateRate());
       $spm.textContent = Math.floor(p1Spm).toString().padStart(3, '0');
       P1_SPM.value = p1Spm;
       p1SpmStat.addData(p1Spm);
-      updateBar(p1Spm);
    };
 
    const tickP2 = () => {
@@ -202,15 +206,24 @@ export const RunStatManager = () => {
       const p2Spm = p2StrideRateFilter.filter(p2RateEstimator.estimateRate());
       P2_SPM.value = p2Spm;
       p2SpmStat.addData(p2Spm);
-      MULTIPLE_PLAYER_COLOR_PROGRESS.value = Math.max(0, Math.min((p2Spm - 180) / (320 - 180), 1));
-   }
+      MULTIPLE_PLAYER_COLOR_PROGRESS.value = Math.max(
+         0,
+         Math.min((p2Spm - 180) / (320 - 180), 1),
+      );
 
-   ROUTER_ID.subscribe((id) => {
-      if (id.includes('/single/play/')) {
+      if (!isMultiple()) return;
+      updateLow(P2_SPM.value);
+   };
+
+   ROUTER_ID.subscribe(() => {
+      console.log({
+         isSingle: isSingle(),
+         isMultiple: isMultiple(),
+      });
+
+      if (isSingle() || isMultiple()) {
          p1RateEstimator.reset();
-         p2RateEstimator.reset();
          p1.reset();
-         p2.reset();
          acturalStartTime = Date.now();
          logicStartTime = Date.now();
          stopTiming = false;
@@ -220,55 +233,63 @@ export const RunStatManager = () => {
          TRUE_LOW_LIMIT.reset(true);
          TRUE_HIGH_LIMIT.reset(true);
          p1SpmStat.reset();
-         p2SpmStat.reset();
 
+         console.log('will tick p1 and system');
+         timeManager.addFn(tickSystem, FrameRateLevel.D3);
          timeManager.addFn(tickP1, FrameRateLevel.D3);
-         timeManager.removeFn(tickP2);
       } else {
+         timeManager.removeFn(tickSystem);
+      }
+
+      if (isSingle()) {
+         timeManager.removeFn(tickP2);
+      }
+
+      if (isMultiple()) {
+         console.log('will tick p2 and system');
+
+         p2RateEstimator.reset();
+         p2.reset();
+         p2SpmStat.reset();
+         timeManager.addFn(tickP2, FrameRateLevel.D3);
+      }
+
+      // `!isSingle()` means we can cover the case when user is in menu router.
+      if (!isSingle() && !isMultiple()) {
          timeManager.addFn(tickP2, FrameRateLevel.D3);
          timeManager.removeFn(tickP1);
       }
 
-      if (id === '/single/play/infinite') {
-         p1.stepCount = safeParseInt(
-            localStorage.getItem(INFINITE_STEP_KEY),
-         );
+      if (isInfinite()) {
+         p1.stepCount = safeParseInt(localStorage.getItem(INFINITE_STEP_KEY));
          $steps.textContent = p1.stepCount.toString().padStart(4, '0');
          logicStartTime =
-            Date.now() -
-            safeParseInt(localStorage.getItem(INFINITE_TIME_KEY));
+            Date.now() - safeParseInt(localStorage.getItem(INFINITE_TIME_KEY));
          lastStepsCount = p1.stepCount;
       }
    }, true);
 
-   p2.addEventListener(
-      STEP_EVENT,
-      () => {
-         p2RateEstimator.record();
+   p2.addEventListener(STEP_EVENT, () => {
+      p2RateEstimator.record();
+   });
+
+   p1.addEventListener(STEP_EVENT, ({ detail: { total, type } }) => {
+      if (!isSingle() && !isMultiple()) return;
+
+      p1RateEstimator.record();
+      $steps.textContent = total.toString().padStart(4, '0');
+
+      if ($type) {
+         $type.textContent = type;
       }
-   );
-   
 
-   p1.addEventListener(
-      STEP_EVENT,
-      ({ detail: { total, type } }) => {
-         if (!ROUTER_ID.value.includes('/single/play/')) return;
-
-         p1RateEstimator.record();
-         $steps.textContent = total.toString().padStart(4, '0');
-
-         if ($type) {
-            $type.textContent = type;
-         }
-
-         if (isInfiniteMode() && Date.now() - lastSyncTime > 600) {
-            const deltaTime = Date.now() - logicStartTime;
-            localStorage.setItem(INFINITE_TIME_KEY, deltaTime.toString());
-            localStorage.setItem(INFINITE_STEP_KEY, p1.stepCount.toString());
-            lastSyncTime = Date.now();
-         }
-      },
-   );
+      if (isInfinite() && Date.now() - lastSyncTime > 600) {
+         const deltaTime = Date.now() - logicStartTime;
+         localStorage.setItem(INFINITE_TIME_KEY, deltaTime.toString());
+         localStorage.setItem(INFINITE_STEP_KEY, p1.stepCount.toString());
+         lastSyncTime = Date.now();
+      }
+   });
 
    const $finishTraining = forceSelect<HTMLDivElement>('.finish-training');
    const $spmStat = forceSelect<HTMLDivElement>('.spm-stat');
@@ -315,6 +336,10 @@ export const RunStatManager = () => {
       finalSteps = Math.floor(p1.stepCount - lastStepsCount);
       finalTime = Date.now() - acturalStartTime;
       finalSpm = p1SpmStat.getAverageValue();
+
+      if (isMultiple()) {
+         p2SpmStat.resizeToParent();
+      }
    });
 
    $statChartBackButton.addEventListener('click', () => {

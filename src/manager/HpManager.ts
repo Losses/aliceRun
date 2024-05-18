@@ -3,7 +3,7 @@ import { timeManager } from './TimeManager';
 import type { Effects } from '../initializeThreeCanvas';
 import { P1_JOYCON } from '../stores/connection';
 import { HP } from '../stores/hp';
-import { ROUTER_ID } from '../stores/router';
+import { ROUTER_ID, isMultiple, isSingle, isStory } from '../stores/router';
 import { P1_SPM } from '../stores/runStat';
 import { useLerp } from '../utils/lerp';
 import { TRUE_HIGH_LIMIT, TRUE_LOW_LIMIT } from './RunStatManager';
@@ -37,6 +37,7 @@ export const HpManager = (effects: Effects) => {
       }
    });
 
+   // This calculates visual effects and Joy-Con rumbles
    const tick = (time: number) => {
       if (!lastCalculateTime) {
          lastCalculateTime = time;
@@ -55,18 +56,18 @@ export const HpManager = (effects: Effects) => {
          1,
          1 * effectFactor * 2,
       );
-      (effects.filmPass.uniforms as { nIntensity: { value: number } }).nIntensity.value =
-         0.8 * effectFactor;
+      (
+         effects.filmPass.uniforms as { nIntensity: { value: number } }
+      ).nIntensity.value = 0.8 * effectFactor;
       effects.vignettePass.uniforms.offset.value = 3 * effectFactor;
       effects.vignettePass.uniforms.darkness.value = 4 * effectFactor;
 
+      const bleeding =
+         P1_SPM.value < TRUE_LOW_LIMIT.value ||
+         P1_SPM.value > TRUE_HIGH_LIMIT.value;
+      effects.glitchPass.enabled = bleeding;
+
       if (time - lastCalculateTime > 400) {
-         const bleeding =
-            P1_SPM.value < TRUE_LOW_LIMIT.value ||
-            P1_SPM.value > TRUE_HIGH_LIMIT.value;
-
-         effects.glitchPass.enabled = bleeding;
-
          if (bleeding) {
             trueHp = Math.max(0, trueHp - 0.5);
             P1_JOYCON.value?.rumble(600, 600, 0.5);
@@ -79,8 +80,8 @@ export const HpManager = (effects: Effects) => {
       }
    };
 
-   ROUTER_ID.subscribe((id) => {
-      if (!id.includes('/single/play/')) {
+   ROUTER_ID.subscribe(() => {
+      if (!isSingle()) {
          trueHp = 100;
          HP.reset();
          effects.filmPass.enabled = false;
@@ -89,7 +90,7 @@ export const HpManager = (effects: Effects) => {
          effects.vignettePass.enabled = false;
       }
 
-      if (id === '/single/play/story') {
+      if (isStory() || isMultiple()) {
          timeManager.addFn(tick);
          $hpBar.classList.remove('hidden');
       } else {

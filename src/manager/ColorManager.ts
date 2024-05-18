@@ -145,5 +145,5 @@ export const ColorManager = () => {
 
    MULTIPLE_PLAYER_COLOR_PROGRESS.subscribe((x) => {
       lerpTheme(interpolateTheme(MULTIPLE_PLAYER_THEME_ID.value, x));
-   })
+   });
 };
