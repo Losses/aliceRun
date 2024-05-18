@@ -9,15 +9,21 @@ export const VISUAL_LOAD = store.createMemorizedStore(
    'alice-run-visual-load',
 );
 
-export const SENSITIVITY = store.createMemorizedStore(
+export const P1_SENSITIVITY = store.createMemorizedStore(
    1,
-   'alice-run-sensitivity',
+   'alice-run-p1-sensitivity',
 );
 
-export const DIFFICULTY = store.createMemorizedStore(
-   0,
-   'alice-run-difficulty',
+export const P2_SENSITIVITY = store.createMemorizedStore(
+   1,
+   'alice-run-p2-sensitivity',
 );
+
+export const P1_BOT_MODE_ENABLED = store.createStore(false);
+
+export const P2_BOT_MODE_ENABLED = store.createStore(false);
+
+export const DIFFICULTY = store.createMemorizedStore(0, 'alice-run-difficulty');
 
 export const calculateWindowSize = () => ({
    width: Math.ceil(window.innerWidth * RENDERING_DETAIL.value),

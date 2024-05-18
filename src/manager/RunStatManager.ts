@@ -1,5 +1,5 @@
 import { ROUTER_ID } from '../stores/router';
-import { HIGH_LIMIT, LOW_LIMIT, SPM } from '../stores/runStat';
+import { HIGH_LIMIT, LOW_LIMIT, P1_SPM, P2_SPM } from '../stores/runStat';
 import { LowPassFilter } from '../utils/LowPassFilter';
 import { RateEstimator } from '../utils/RateEstimator';
 import { SpmStatPainter } from '../utils/SpmStatPainter';
@@ -7,8 +7,7 @@ import { STEP_EVENT } from '../utils/StepCounter';
 import { FrameRateLevel } from '../utils/TimeMagic';
 import { useLerp } from '../utils/lerp';
 import { store } from './DataManager';
-import { eventTarget } from './EventManager';
-import { p1 } from './JoyConManager';
+import { p1, p2 } from './JoyConManager';
 import { timeLine } from './StoryManager';
 import { timeManager } from './TimeManager';
 
@@ -137,7 +136,8 @@ const safeParseInt = (x: string | null | undefined) => {
    return Math.floor(number);
 };
 
-export const spmStat = new SpmStatPainter(60 * 2);
+export const p1SpmStat = new SpmStatPainter(60 * 2);
+export const p2SpmStat = new SpmStatPainter(60 * 2);
 
 export const RunStatManager = () => {
    let logicStartTime = 0;
@@ -156,8 +156,10 @@ export const RunStatManager = () => {
 
    const $type = document.querySelector('.type-value');
 
-   const rateEstimator = new RateEstimator();
-   const strideRateFilter = new LowPassFilter(0.2);
+   const p1RateEstimator = new RateEstimator();
+   const p1StrideRateFilter = new LowPassFilter(0.2);
+   const p2RateEstimator = new RateEstimator();
+   const p2StrideRateFilter = new LowPassFilter(0.2);
 
    const [updateLow] = useLerp(
       () => TRUE_LOW_LIMIT.value,
@@ -179,7 +181,9 @@ export const RunStatManager = () => {
    HIGH_LIMIT.subscribe(updateHigh);
 
    let lastSyncTime = 0;
-   const tick = () => {
+
+   // TODO: Split this to Tick System and Tick P1
+   const tickP1 = () => {
       const deltaTime = isInfiniteMode()
          ? Date.now() - logicStartTime
          : timeLine.timeLeft;
@@ -188,16 +192,22 @@ export const RunStatManager = () => {
          $time.textContent = formatTime(deltaTime);
       }
 
-      const spm = strideRateFilter.filter(rateEstimator.estimateRate());
-      $spm.textContent = Math.floor(spm).toString().padStart(3, '0');
-      SPM.value = spm;
-      spmStat.addData(spm);
-      updateBar(spm);
+      const p1Spm = p1StrideRateFilter.filter(p1RateEstimator.estimateRate());
+      $spm.textContent = Math.floor(p1Spm).toString().padStart(3, '0');
+      P1_SPM.value = p1Spm;
+      p1SpmStat.addData(p1Spm);
+      updateBar(p1Spm);
    };
+
+   const tickP2 = () => {
+      const p2Spm = p2StrideRateFilter.filter(p2RateEstimator.estimateRate());
+      P2_SPM.value = p2Spm;
+      p2SpmStat.addData(p2Spm);
+   }
 
    ROUTER_ID.subscribe((id) => {
       if (id.includes('/single/play/')) {
-         rateEstimator.reset();
+         p1RateEstimator.reset();
          p1.reset();
          acturalStartTime = Date.now();
          logicStartTime = Date.now();
@@ -207,7 +217,7 @@ export const RunStatManager = () => {
          HIGH_LIMIT.reset(true);
          TRUE_LOW_LIMIT.reset(true);
          TRUE_HIGH_LIMIT.reset(true);
-         spmStat.reset();
+         p1SpmStat.reset();
 
          if (id === '/single/play/infinite') {
             p1.stepCount = safeParseInt(
@@ -220,18 +230,26 @@ export const RunStatManager = () => {
             lastStepsCount = p1.stepCount;
          }
 
-         timeManager.addFn(tick, FrameRateLevel.D3);
+         timeManager.addFn(tickP1, FrameRateLevel.D3);
       } else {
-         timeManager.removeFn(tick);
+         timeManager.removeFn(tickP1);
       }
    });
+
+   p2.addEventListener(
+      STEP_EVENT,
+      () => {
+         p2RateEstimator.record();
+      }
+   );
+   
 
    p1.addEventListener(
       STEP_EVENT,
       ({ detail: { total, type } }) => {
          if (!ROUTER_ID.value.includes('/single/play/')) return;
 
-         rateEstimator.record();
+         p1RateEstimator.record();
          $steps.textContent = total.toString().padStart(4, '0');
 
          if ($type) {
@@ -279,7 +297,7 @@ export const RunStatManager = () => {
       () => lineChartProgress,
       (x) => {
          lineChartProgress = x;
-         spmStat.draw(x);
+         p1SpmStat.draw(x);
 
          $finalSteps.textContent = Math.floor(finalSteps * x)
             .toString()
@@ -295,9 +313,9 @@ export const RunStatManager = () => {
 
    $finishTraining.addEventListener('click', () => {
       stopTiming = true;
-      spmStat.close();
+      p1SpmStat.close();
       updateLineChartProgress(0, true);
-      spmStat.resizeToParent();
+      p1SpmStat.resizeToParent();
       $spmStat.classList.add('shown');
       window.setTimeout(() => {
          updateLineChartProgress(1);
@@ -305,7 +323,7 @@ export const RunStatManager = () => {
 
       finalSteps = Math.floor(p1.stepCount - lastStepsCount);
       finalTime = Date.now() - acturalStartTime;
-      finalSpm = spmStat.getAverageValue();
+      finalSpm = p1SpmStat.getAverageValue();
    });
 
    $statChartBackButton.addEventListener('click', () => {

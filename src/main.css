@@ -255,7 +255,15 @@ button {
 }
 
 .connections img {
-  width: 24px;
+  width: 20px;
+  display: block;
+}
+
+.player-tag {
+  margin-top: 6px;
+  margin-bottom: -2px;
+  font-size: 12px;
+  font-weight: 500;
   display: block;
 }
 
@@ -289,6 +297,54 @@ button {
   position: absolute;
   font-weight: 600;
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.p2-connected .connect-p2-button {
+  display: none;
+}
+
+.settings-p2-button {
+  display: none;
+}
+
+.p2-connected .settings-p2-button {
+  display: inline;
+}
+
+.p1 .diagnosis-p2 {
+  display: none;
+}
+
+.p2 .diagnosis-p1 {
+  display: none;
+}
+
+.settings-bot-p1 {
+  display: none !important;
+}
+
+.settings-bot-p2 {
+  display: none !important;
+}
+
+.p1-bot .settings-p1 {
+  display: none;
+}
+
+.p1-bot .settings-bot-p1 {
+  display: block !important;
+}
+
+.p2-bot .connect-p2 {
+  display: none;
+}
+
+.p2-bot .settings-p2 {
+  display: none;
+}
+
+.p2-bot .settings-bot-p2 {
+  display: block !important;
 }
 
 /** Single Player **/

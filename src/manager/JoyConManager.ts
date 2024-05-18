@@ -25,20 +25,19 @@ const HandleJoyConInput = (p: StepCounter) => (event: CustomEvent<IPacket>) => {
 const handleP1HidInput = HandleJoyConInput(p1);
 const handleP2HidInput = HandleJoyConInput(p2);
 
-const ConnectJoyCon = (store: typeof P1_JOYCON | typeof P2_JOYCON, handler: HIDPacketHandler ) => async () => {
-   if (store.value) return;
+const ConnectJoyCon =
+   (store: typeof P1_JOYCON | typeof P2_JOYCON, handler: HIDPacketHandler) =>
+   async () => {
+      if (store.value) return;
 
-   const joyCon = await connectToNintendoSwitchJoycon();
+      const joyCon = await connectToNintendoSwitchJoycon();
 
-   if (!joyCon) return;
+      if (!joyCon) return;
 
-   store.value = joyCon;
+      store.value = joyCon;
 
-   joyCon.addEventListener(
-      'hidinput',
-      handler as unknown as EventListener,
-   );
-}
+      joyCon.addEventListener('hidinput', handler as unknown as EventListener);
+   };
 
 const connectP1 = ConnectJoyCon(P1_JOYCON, handleP1HidInput);
 const connectP2 = ConnectJoyCon(P2_JOYCON, handleP2HidInput);
@@ -67,7 +66,6 @@ export const JoyConManager = () => {
 
          $connectJoyconScreen.classList.add('hidden');
          $connectedContent.classList.remove('hidden');
-
       });
 
    window.setInterval(() => {
@@ -78,6 +76,28 @@ export const JoyConManager = () => {
          await joyCon.enableVibration();
       });
    }, 2000);
+
+   P1_JOYCON.subscribe(async (x) => {
+      if (x) {
+         document.body.classList.add('p1-connected');
+         return;
+      }
+
+      document.body.classList.remove('p1-connected');
+
+      timeManager.pause();
+      eventTarget.dispatchEvent(new Event(PLAY_SOUND, 'disconnect.m4a'));
+      $reconnect.classList.remove('hidden');
+      waitForP1();
+   });
+
+   P2_JOYCON.subscribe((x) => {
+      if (x) {
+         document.body.classList.add('p2-connected');
+      } else {
+         document.body.classList.remove('p2-connected');
+      }
+   });
 
    const onDisconnect = (event: HIDConnectionEvent) => {
       if (event.device === P1_JOYCON.value?.device) {
@@ -113,17 +133,7 @@ export const JoyConManager = () => {
 
    $reconnect.addEventListener('click', waitForP1);
 
-   P1_JOYCON.subscribe(async (x) => {
-      if (x) return;
-
-      timeManager.pause();
-      eventTarget.dispatchEvent(new Event(PLAY_SOUND, 'disconnect.m4a'));
-      $reconnect.classList.remove('hidden');
-      waitForP1();
-   });
-
-   
-   const $connectP2 = document.querySelector('.reconnect');
+   const $connectP2 = document.querySelector('.connect-p2');
 
    if (!$connectP2) {
       throw new Error('Connect P2 button not found');

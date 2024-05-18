@@ -1,34 +1,52 @@
-import { ROUTER_ID } from '../stores/router';
+import { QUERY_PARAMETER, ROUTER_ID } from '../stores/router';
+import type { Sparkline } from '../utils/Sparkline';
 import { FrameRateLevel } from '../utils/TimeMagic';
-import { p1 } from './JoyConManager';
+import { isP1 } from '../utils/isP1';
+import { p1, p2 } from './JoyConManager';
 import { timeManager } from './TimeManager';
 
 const WAIT_TIME = 5000;
+
+const InsertSparklines = (className: string, $main: Element) => ([key, sparkline]: [string, Sparkline]) => {
+   const $container = document.createElement('div');
+   $container.classList.add(className);
+   $container.classList.add('diagnosis-sparkline-container');
+   const $label = document.createElement('span');
+   $label.classList.add('label');
+   $label.textContent = key;
+   $container.appendChild(sparkline.$canvas);
+   $container.appendChild($label);
+
+   $main.appendChild($container);
+}
 
 export const DiagnosisManager = () => {
    const $main = document.querySelector('.diagnosis-charts');
    if (!$main) return;
 
-   Object.entries(p1.data).forEach(([key, sparkline]) => {
-      const $container = document.createElement('div');
-      $container.classList.add('diagnosis-sparkline-container');
-      const $label = document.createElement('span');
-      $label.classList.add('label');
-      $label.textContent = key;
-      $container.appendChild(sparkline.$canvas);
-      $container.appendChild($label);
-
-      $main.appendChild($container);
-   });
+   Object.entries(p1.data).forEach(InsertSparklines('diagnosis-p1', $main));
+   Object.entries(p2.data).forEach(InsertSparklines('diagnosis-p2', $main));
 
    ROUTER_ID.subscribe((id) => {
       const routerMatch = id === '/settings/diagnosis-hid';
-      p1.monitoring = routerMatch;
+      
+      const p = isP1() ? p1 : p2;
+
+      p.monitoring = routerMatch;
+
+      if (p === p1) {
+         $main.classList.add('p1');
+         $main.classList.remove('p2');
+      } else {
+         $main.classList.remove('p1');
+         $main.classList.add('p2');         
+      }
 
       if (routerMatch) {
-         timeManager.addFn(p1.updateSparklines, FrameRateLevel.D0);
+         timeManager.addFn(p.updateSparklines, FrameRateLevel.D0);
       } else {
          timeManager.removeFn(p1.updateSparklines);
+         timeManager.removeFn(p2.updateSparklines);
       }
    });
 

@@ -40,7 +40,7 @@ export const GrassManager = (
       updateValue(rotation + STEP_ANGLE);
    };
 
-   p1.addEventListener(STEP_EVENT, ({ detail }) => {
+   p1.addEventListener(STEP_EVENT, () => {
       step();
    });
 

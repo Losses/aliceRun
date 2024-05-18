@@ -1,7 +1,7 @@
 import { Event, Target, createEventName } from '@web-media/event-target';
 
 import { Sparkline } from './Sparkline';
-import { SENSITIVITY } from '../stores/settings';
+import { P1_SENSITIVITY } from '../stores/settings';
 import type { IPacket } from './joyCon/nintendoSwitch/JoyCon';
 
 enum StepState {
@@ -12,7 +12,6 @@ enum StepState {
 interface IStepEventDetail {
    magnitude: number;
    total: number;
-   strideRate: number;
    type: 'UP' | 'DN';
 }
 
@@ -36,10 +35,7 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
       oriX: new Sparkline(),
       oriY: new Sparkline(),
       oriZ: new Sparkline(),
-      oriH: new Sparkline(),
-      oriV: new Sparkline(),
       magnitude: new Sparkline(),
-      strideRate: new Sparkline(),
       guide: new Sparkline(),
       time: new Sparkline(),
    } as const;
@@ -101,7 +97,6 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
             new Event(STEP_EVENT, {
                magnitude: this.maxMagnitude,
                total: this.stepCount,
-               strideRate: this.data.strideRate.value,
                type,
             }),
          );
@@ -141,9 +136,6 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
       this.data.oriY.value = ori.beta;
       this.data.oriZ.value = ori.gamma;
 
-      this.data.oriH.value = -ori0.horizontal;
-      this.data.oriV.value = -ori0.vertical;
-
       // Calculating acceleration after filtering
       this.data.magnitude.value = this.calculateMagnitude(
          this.data.gyoX.value,
@@ -163,7 +155,7 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
          case StepState.WAITING_FOR_PEAK:
             if (
                this.data.gyoY.value >
-               StepCounter.STEP_THRESHOLD_HIGH * SENSITIVITY.value
+               StepCounter.STEP_THRESHOLD_HIGH * P1_SENSITIVITY.value
             ) {
                if (
                   now - this.lastStepTimestamp >
@@ -178,7 +170,7 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
          case StepState.WAITING_FOR_TROUGH:
             if (
                this.data.gyoY.value <
-               StepCounter.STEP_THRESHOLD_LOW * SENSITIVITY.value
+               StepCounter.STEP_THRESHOLD_LOW * P1_SENSITIVITY.value
             ) {
                this.step('DN');
                this.state = StepState.WAITING_FOR_PEAK;
@@ -193,13 +185,33 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
       }
    };
 
+   private _botMode = false;
+   private _botHandler: (() => void) | null = null;
+
+   get botMode() {
+      return this._botMode;
+   }
+
+   set botMode(x) {
+      if (x && this._botHandler) return;
+      if (!x && !this._botHandler) return;
+      this._botMode = x;
+
+      if (x) {
+         this._botHandler = setRandomInterval(this.mockStep, 200, 200);
+      } else {
+         if (!this._botHandler) throw new Error('Bot handler lost');
+         this._botHandler();
+         this._botHandler = null;
+      }
+   }
+
    mockStep = () => {
       this.stepCount++;
       this.dispatchEvent(
          new Event(STEP_EVENT, {
             magnitude: 2,
             total: this.stepCount,
-            strideRate: 1,
             type: 'UP',
          }),
       );
@@ -215,7 +227,7 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
 
    public dumpRecord = () => {
       let result =
-         'aX, aY, aZ, oX, oY, oZ, oH, oV, gX, gY, gZ, Add, guide, time\n';
+         'aX, aY, aZ, oX, oY, oZ, gX, gY, gZ, Add, guide, time\n';
       for (let i = 0; i < this.data.accX.history.length; i += 1) {
          result += `${this.data.accX.history[i]},`;
          result += `${this.data.accY.history[i]},`;
@@ -223,8 +235,6 @@ export class StepCounter extends Target<[typeof STEP_EVENT]> {
          result += `${this.data.oriX.history[i]},`;
          result += `${this.data.oriY.history[i]},`;
          result += `${this.data.oriZ.history[i]},`;
-         result += `${this.data.oriH.history[i]},`;
-         result += `${this.data.oriV.history[i]},`;
          result += `${this.data.gyoX.history[i]},`;
          result += `${this.data.gyoY.history[i]},`;
          result += `${this.data.gyoZ.history[i]},`;

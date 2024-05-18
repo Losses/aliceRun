@@ -34,14 +34,52 @@
     </section>
     <div>
       <div class="connections" data-router="/">
-        <button class="glass" data-to-router="/">
-          <img class="connection connection-p1" alt="Player 1" src="src/assets/images/miniJoyCon.svg" />
+        <button class="glass"  data-to-router="/settings/joycon?id=p1">
+          <img class="connection settings-p1" alt="Player 1" src="src/assets/images/miniJoyCon.svg" />
+          <img class="connection settings-bot-p1" alt="Player 1" src="src/assets/images/robot.svg" />
+          <span class="player-tag">P1</span>
         </button>
-        <button class="glass" data-to-router="/">
-          <img class="connection connection-p2" alt="Player 2" src="src/assets/images/offline.svg" />
+        <button class="connect-p2-button glass" data-to-router="/">
+          <img class="connection connect-p2" alt="Player 2" src="src/assets/images/offline.svg" />
+          <img class="connection settings-bot-p2" alt="Player 2" src="src/assets/images/robot.svg" />
+          <span class="player-tag">P2</span>
+        </button>
+        <button class="settings-p2-button glass" data-to-router="/settings/joycon?id=p2">
+          <img class="connection settings-p2" alt="Player 2" src="src/assets/images/miniJoyCon.svg" />
+          <img class="connection settings-bot-p2" alt="Player 2" src="src/assets/images/robot.svg" />
+          <span class="player-tag">P2</span>
         </button>
       </div>
     </div>
+    <section class="settings_section centered_section screen" data-router="/settings/joycon">
+      <div class="menu-title">Controller</div>
+      <div class="glass glass-checkbox">
+        <input type="checkbox" class="bot-mode" id="bot-mode" />
+        <label for="bot-mode">Bot Mode</label>
+      </div>
+      <div class="glass glass-slide">
+        <input type="range" min="0.1" max="1" value="1" step="0.01" class="sensitivity" />
+        <span>Sensitivity</span>
+      </div>
+      <button class="menu-button glass" data-to-router="/settings/diagnosis-hid?id=@">Diagnoses HID</button>
+      <button class="menu-button glass" data-to-router="/">Back</button>
+    </section>
+    <section class="recording centered_section screen" data-router="/settings/diagnosis-hid">
+      <div class="menu-title">Diagnoses HID</div>
+      <div class="menu-hint glass">
+        <p>
+          Press the record button, to recird data after three seconds, for one minute.
+        </p>
+        <p>
+          If you are willing to help us collect debugging data for the sensor, please follow the flashing prompts to run
+          in place.
+        </p>
+      </div>
+      <div class="diagnosis-charts">
+      </div>
+      <button class="menu-button glass start_record">Record</button>
+      <button class="menu-button glass" data-to-router="/settings/joycon?id=@">Back</button>
+    </section>
     <section class="centered_section screen" data-router="/single">
       <div class="menu-title">Single Player</div>
       <button class="menu-button glass" data-to-router="/single/list">Story Mode</button>
@@ -133,32 +171,10 @@
         <span>Visual Load</span>
       </div>
       <div class="glass glass-slide">
-        <input type="range" min="0.1" max="1" value="1" step="0.01" class="sensitivity" />
-        <span>Sensitivity</span>
-      </div>
-      <div class="glass glass-slide">
         <input type="range" min="-30" max="30" value="0" step="1" class="difficulty" />
         <span>Difficulty</span>
       </div>
-      <button class="menu-button glass" data-to-router="/settings/diagnosis-hid">Diagnoses HID</button>
       <button class="menu-button glass" data-to-router="/">Back</button>
-    </section>
-    <section class="recording centered_section screen" data-router="/settings/diagnosis-hid">
-      <div class="menu-title">Diagnoses HID</div>
-      <div class="menu-hint glass">
-        <p>
-          Press the record button, and the system will automatically start recording after three seconds, continuing for
-          one minute.
-        </p>
-        <p>
-          If you are willing to help us collect debugging data for the sensor, please follow the flashing prompts to run
-          in place.
-        </p>
-      </div>
-      <div class="diagnosis-charts">
-      </div>
-      <button class="menu-button glass start_record">Record</button>
-      <button class="menu-button glass" data-to-router="/settings">Back</button>
     </section>
     <div class="reconnect hidden">
       <img class="joycon" alt="Joycon" src="src/assets/images/joyconDisconnected.svg" />

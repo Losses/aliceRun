@@ -5,7 +5,14 @@ export const RouterManager = () => {
       x.addEventListener('click', () => {
          const trueValue = (x as HTMLElement).dataset.toRouter ?? '';
          const [routerId, queryParameter] = trueValue.split('?');
-         QUERY_PARAMETER.value = new URLSearchParams(queryParameter);
+         const parameters = new URLSearchParams(queryParameter);
+         
+         parameters.forEach((value, key) => {
+            if (value === '@') {
+               parameters.set(key, QUERY_PARAMETER.value.get(key) || '');
+            }
+         })
+         QUERY_PARAMETER.value = parameters;
          ROUTER_ID.value = routerId;
       }),
    );

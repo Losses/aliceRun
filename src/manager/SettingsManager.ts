@@ -1,10 +1,16 @@
+import { QUERY_PARAMETER, ROUTER_ID } from '../stores/router';
 import {
    DIFFICULTY,
    RENDERING_DETAIL,
    RENDERING_PIXELATED,
-   SENSITIVITY,
+   P1_SENSITIVITY,
    VISUAL_LOAD,
+   P2_SENSITIVITY,
+   P1_BOT_MODE_ENABLED,
+   P2_BOT_MODE_ENABLED,
 } from '../stores/settings';
+import { isP1 } from '../utils/isP1';
+import { p1, p2 } from './JoyConManager';
 
 export const SettingsManager = () => {
    const $visualLoad = document.querySelector(
@@ -60,11 +66,61 @@ export const SettingsManager = () => {
 
    if (!$joyConSensitivity) return;
 
-   $joyConSensitivity.value = SENSITIVITY.value.toString();
-
+   
    $joyConSensitivity.addEventListener('change', (event: Event) => {
       const value = Number.parseFloat((event.target as HTMLInputElement).value);
-      SENSITIVITY.value = value;
+
+      if (isP1()) {
+         P1_SENSITIVITY.value = value;
+      } else {
+         P2_SENSITIVITY.value = value;
+      }
+   });
+
+   const $botModeEnabled = document.querySelector(
+      '.bot-mode',
+   ) as HTMLInputElement | null;
+
+   if (!$botModeEnabled) return;
+
+   ROUTER_ID.subscribe((x) => {
+      if (x !== '/settings/joycon') return;
+      
+      if (isP1()) {
+         $joyConSensitivity.value = P1_SENSITIVITY.value.toString();
+         $botModeEnabled.checked = P1_BOT_MODE_ENABLED.value;
+      } else {
+         $joyConSensitivity.value = P2_SENSITIVITY.value.toString();
+         $botModeEnabled.checked = P2_BOT_MODE_ENABLED.value;
+      }
+   })
+
+   $botModeEnabled.addEventListener('change', (event: Event) => {
+      const value = $botModeEnabled.checked;
+
+      if (isP1()) {
+         P1_BOT_MODE_ENABLED.value = value;
+         p1.botMode = value;
+      } else {
+         P2_BOT_MODE_ENABLED.value = value;
+         p2.botMode = value;
+      }
+   });
+
+   P1_BOT_MODE_ENABLED.subscribe((x) => {
+      if (x) {
+         document.body.classList.add('p1-bot');
+      } else {
+         document.body.classList.remove('p1-bot');
+      }
+   });
+
+   P2_BOT_MODE_ENABLED.subscribe((x) => {
+      if (x) {
+         document.body.classList.add('p2-bot');
+      } else {
+         document.body.classList.remove('p2-bot');
+      }
    });
 
    const $difficulty = document.querySelector(
