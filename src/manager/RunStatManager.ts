@@ -197,7 +197,7 @@ export const RunStatManager = () => {
    };
 
    const tickP2 = () => {
-      if (!P2_JOYCON.value) return;
+      if (!P2_JOYCON.value && !p2.botMode) return;
 
       const p2Spm = p2StrideRateFilter.filter(p2RateEstimator.estimateRate());
       P2_SPM.value = p2Spm;

@@ -244,7 +244,7 @@ button {
 }
 
 .connections {
-  top: 28px;
+  bottom: 28px;
   right: 18px;
   position: fixed;
 }
