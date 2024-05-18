@@ -1,7 +1,5 @@
 precision highp float;
 
-uniform float sineTime;
-
 uniform float time;
 uniform float windSpeedFactor;
 uniform float groundRadius;
@@ -11,8 +9,6 @@ uniform float groundDeltaTheta;
 uniform vec3 grassBaseColor;
 uniform vec3 grassTipColor;
 uniform float grassLeanFactor;
-uniform float grassSegments;
-uniform uint grassVectors;
 uniform float grassHeight;
 uniform float grassHeightFactor;
 uniform float grassDistanceFactor;
@@ -20,7 +16,6 @@ uniform uint gridSegmentsX;
 uniform uint gridSegmentsY;
 uniform float gridSegmentWidth;
 uniform float gridSegmentHeight;
-uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
@@ -145,9 +140,15 @@ void main() {
     );
     vec3 offset = vec3(x, basicOffset.y, basicOffset.z);
 
+    vec3 stableTheta = groundCoord(
+      groundBeginTheta + mod(theta, (gridSegmentHeight * float(gridSegmentsY))), 
+      x
+    );
+    vec3 stableOffset = vec3(x, stableTheta.y, stableTheta.z);
+
 
     // Wind here
-    float windNoiseSample = noise12(offset.xz * 0.25 + time);
+    float windNoiseSample = noise12(stableOffset.xz * 0.25 + time);
     float curveAmount = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
     curveAmount = easeIn(curveAmount, 1.5) * grassLeanFactor;
     curveAmount *= heightPercent;
