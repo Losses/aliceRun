@@ -68,6 +68,13 @@ export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
       this.disposers.clear();
    }
 
+   nextEvent = (skip = 0) => {
+      if (!this.events) return;
+      this.eventIndex += skip;
+      this.onEvent(this.events[this.eventIndex]);
+      this.eventIndex++;
+   }
+
    tick = (timestamp: number) => {
       if (this.isPaused) return;
       if (!this.events) return;
@@ -81,8 +88,7 @@ export class TimelineManager<T extends ITimelineEvent<string, any>[]> {
          this.eventIndex < this.events.length &&
          this.events[this.eventIndex].time + this.startTime <= timestamp
       ) {
-         this.onEvent(this.events[this.eventIndex]);
-         this.eventIndex++;
+         this.nextEvent();
       }
 
       this.timeLeft = this.totalTime - (timestamp - this.startTime);

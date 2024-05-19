@@ -9,7 +9,8 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.2.7",
     "@web-media/event-target": "^0.0.2",
-    "@web-media/phonograph": "^2.3.1",
+    "@web-media/phonograph": "2.3.2",
+    "debug": "^4.3.4",
     "standardized-audio-context": "^25.3.72",
     "stats.js": "^0.17.0",
     "three": "0.138.3",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.7.3",
     "@parcel/transformer-glsl": "2.12.0",
+    "@types/debug": "^4.1.12",
     "@types/node": "^20.12.8",
     "@types/stats.js": "^0.17.3",
     "@types/three": "0.138.0",

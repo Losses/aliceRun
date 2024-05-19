@@ -1288,6 +1288,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/debug@npm:^4.1.12":
+  version: 4.1.12
+  resolution: "@types/debug@npm:4.1.12"
+  dependencies:
+    "@types/ms": "npm:*"
+  checksum: 10/47876a852de8240bfdaf7481357af2b88cb660d30c72e73789abf00c499d6bc7cd5e52f41c915d1b9cd8ec9fef5b05688d7b7aef17f7f272c2d04679508d1053
+  languageName: node
+  linkType: hard
+
+"@types/ms@npm:*":
+  version: 0.7.34
+  resolution: "@types/ms@npm:0.7.34"
+  checksum: 10/f38d36e7b6edecd9badc9cf50474159e9da5fa6965a75186cceaf883278611b9df6669dc3a3cc122b7938d317b68a9e3d573d316fcb35d1be47ec9e468c6bd8a
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^20.12.8":
   version: 20.12.8
   resolution: "@types/node@npm:20.12.8"
@@ -1349,14 +1365,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web-media/phonograph@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "@web-media/phonograph@npm:2.3.1"
+"@web-media/phonograph@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@web-media/phonograph@npm:2.3.2"
   dependencies:
     "@web-media/event-target": "npm:^0.0.2"
     "@web-media/open-promise": "npm:^0.3.2"
     standardized-audio-context: "npm:25.3.54"
-  checksum: 10/9f5915d8c74dab37f321b8dae726fd7cd5b865b450006a0e13fc61503d5541a0d7800099d410ddf3f380afb610d56dcc2a14d4f41108ce963ecd415ce0cd323a
+  checksum: 10/67fa7d625b1e96a6504476584a5421634aed40842e18ecc78eb69dd631594760a10aa3b541ee2379f8ce9b8a9e3110e940adb993a2182dd48ede127bd79edbbd
   languageName: node
   linkType: hard
 
@@ -3480,12 +3496,14 @@ __metadata:
     "@biomejs/biome": "npm:1.7.3"
     "@material/material-color-utilities": "npm:^0.2.7"
     "@parcel/transformer-glsl": "npm:2.12.0"
+    "@types/debug": "npm:^4.1.12"
     "@types/node": "npm:^20.12.8"
     "@types/stats.js": "npm:^0.17.3"
     "@types/three": "npm:0.138.0"
     "@types/w3c-web-hid": "npm:^1.0.2"
     "@web-media/event-target": "npm:^0.0.2"
-    "@web-media/phonograph": "npm:^2.3.1"
+    "@web-media/phonograph": "npm:2.3.2"
+    debug: "npm:^4.3.4"
     parcel: "npm:2.12.0"
     parcel-reporter-static-files-copy: "npm:^1.5.3"
     process: "npm:^0.11.10"

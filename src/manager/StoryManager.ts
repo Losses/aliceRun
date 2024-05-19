@@ -1,3 +1,4 @@
+import debug from 'debug';
 import { Clip, Mp3DeMuxAdapter } from '@web-media/phonograph';
 
 import { THEME_ID } from './ColorManager';
@@ -8,12 +9,18 @@ import { DIFFICULTY } from '../stores/settings';
 import { FrameRateLevel } from '../utils/TimeMagic';
 import { globalAudioContext } from '../manager/AudioManager';
 import type { IPlayAudioStoryEvent } from '../stories/utils';
-import { QUERY_PARAMETER, ROUTER_ID, isSingle, isStory } from '../stores/router';
+import { QUERY_PARAMETER, ROUTER_ID, isStory } from '../stores/router';
 import { type ITimelineEvent, TimelineManager } from '../utils/TimeLine';
 
 import { timeManager } from './TimeManager';
 
 export const STORY_AUDIO_URL_BASE = 'https://resource.alice.is.not.ci/';
+
+const log = debug('story');
+const logAudio = log.extend('advanced-audio');
+const logEnd = log.extend('end');
+const logTheme = log.extend('theme');
+const logLowRpm = log.extend('low-rpm');
 
 export const timeLine = new TimelineManager(
    stories,
@@ -27,39 +34,35 @@ export const timeLine = new TimelineManager(
 
          const id = x.detail.url;
 
-         performance.mark(`advancedAudio-${id}:load:start`);
-         clip.buffer().then(async () => {
-            performance.mark(`advancedAudio-${id}:play:start`);
+         logAudio(`[load] [start] ${id}`);
+         clip.canPlayThough.then((x) => {
+            logAudio(`[play] [start] ${id}`);
             clip.play().then((x) => {
-               performance.mark(`advancedAudio-${id}:play:end`);
-               performance.measure(
-                  `advancedAudio-${id}:play`,
-                  `advancedAudio-${id}:play:start`,
-                  `advancedAudio-${id}:play:end`,
-               );
+               logAudio(`[play] [ end ] ${id}`);
             });
          });
-         performance.mark(`advancedAudio-${id}:load:end`);
-         performance.measure(
-            `advancedAudio-${id}:load`,
-            `advancedAudio-${id}:load:start`,
-            `advancedAudio-${id}:load:end`,
-         );
+
+         clip.buffer().then(async () => {
+            logAudio(`[load] [ end ] ${id}`);
+         });
 
          return () => {
             clip.dispose();
          };
       },
       end: (x: ITimelineEvent<'end', null>) => {
+         logEnd('Session finished');
          const $finishTraining = document.querySelector('.finish-training') as HTMLDivElement | null;
          if ($finishTraining) {
             $finishTraining.click();
          }
       },
       theme: (x: ITimelineEvent<'theme', string>) => {
+         logTheme(x.detail);
          THEME_ID.value = x.detail;
       },
       lowRpm: (x: ITimelineEvent<'lowRpm', number>) => {
+         logLowRpm(x.detail);
          const d = DIFFICULTY.value;
          LOW_LIMIT.value = x.detail + ((d > 0) ? (d * (-1/120 * d + 5 / 2)) : d);
       },
@@ -68,6 +71,9 @@ export const timeLine = new TimelineManager(
       },
    },
 );
+
+// @ts-ignore
+window.nextEvent = timeLine.nextEvent;
 
 export const StoryManager = () => {
    ROUTER_ID.subscribe(() => {      

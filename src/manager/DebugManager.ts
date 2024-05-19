@@ -1,10 +1,6 @@
-import type * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import type * as THREE from 'three'; 
 
 import type { ResourceTracker } from '../ResourceTracker';
-import { FrameRateLevel } from '../utils/TimeMagic';
-import { p1 } from './JoyConManager';
-import { timeManager } from './TimeManager';
 
 export const DebugManager = (
    camera: THREE.Camera,
@@ -26,13 +22,5 @@ export const DebugManager = (
    //     controls.update();
    // }, FrameRateLevel.D0);
 
-   const vJoyCon = new URLSearchParams(location.search).get('virtualJoyCon');
-   if (vJoyCon !== null) {
-      document.querySelector('.connect_section')?.classList.add('hidden');
-      document.querySelector('.connected')?.classList.remove('hidden');
-   }
-
-   //@ts-ignore
-   window.step = p1.mockStep;
    return {};
 };

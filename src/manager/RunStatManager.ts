@@ -1,24 +1,24 @@
-import { P2_JOYCON } from '../stores/connection';
 import {
-   QUERY_PARAMETER,
    ROUTER_ID,
    isInfinite,
    isMultiple,
    isSingle,
 } from '../stores/router';
-import { HIGH_LIMIT, LOW_LIMIT, P1_SPM, P2_SPM } from '../stores/runStat';
+import { useLerp } from '../utils/lerp';
+import { P2_JOYCON } from '../stores/connection';
+import { STEP_EVENT } from '../utils/StepCounter';
+import { forceSelect } from '../utils/forceSelect';
 import { LowPassFilter } from '../utils/LowPassFilter';
 import { RateEstimator } from '../utils/RateEstimator';
 import { SpmStatPainter } from '../utils/SpmStatPainter';
-import { STEP_EVENT } from '../utils/StepCounter';
 import { FrameRateLevel } from '../utils/TimeMagic';
-import { forceSelect } from '../utils/forceSelect';
-import { useLerp } from '../utils/lerp';
-import { MULTIPLE_PLAYER_COLOR_PROGRESS, THEME_ID } from './ColorManager';
+import { HIGH_LIMIT, LOW_LIMIT, P1_SPM, P2_SPM } from '../stores/runStat';
+
 import { store } from './DataManager';
 import { p1, p2 } from './JoyConManager';
 import { timeLine } from './StoryManager';
 import { timeManager } from './TimeManager';
+import { MULTIPLE_PLAYER_COLOR_PROGRESS, THEME_ID } from './ColorManager';
 
 export const INFINITE_TIME_KEY = 'alice-run-inf-time';
 export const INFINITE_STEP_KEY = 'alice-run-inf-step';
