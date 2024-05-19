@@ -155,6 +155,14 @@ export const JoyConManager = () => {
    $settingsP2.addEventListener('contextmenu', handleP2ConnectButtonContextMenu);
    $connectP2.addEventListener('contextmenu', handleP2ConnectButtonContextMenu);
    $connectP2.addEventListener('click', connectP2);
+   
+   const $multiplePlayer = forceSelect<HTMLButtonElement>('.title_section .multiple');
+   const updateMultiplePlayerButton = () => {
+      $multiplePlayer.disabled = !P2_BOT_MODE_ENABLED.value && !P2_JOYCON.value;
+   }
+
+   P2_BOT_MODE_ENABLED.subscribe(updateMultiplePlayerButton, true);
+   P2_JOYCON.subscribe(updateMultiplePlayerButton, true);
 
    $changeController.addEventListener('click', () => {
       if (isP1()) connectP1();

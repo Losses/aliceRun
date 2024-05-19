@@ -1,4 +1,4 @@
-import { QUERY_PARAMETER, ROUTER_ID } from '../stores/router';
+import { ROUTER_ID } from '../stores/router';
 import {
    DIFFICULTY,
    RENDERING_DETAIL,
@@ -9,15 +9,12 @@ import {
    P1_BOT_MODE_ENABLED,
    P2_BOT_MODE_ENABLED,
 } from '../stores/settings';
+import { forceSelect } from '../utils/forceSelect';
 import { isP1 } from '../utils/isP1';
 import { p1, p2 } from './JoyConManager';
 
 export const SettingsManager = () => {
-   const $visualLoad = document.querySelector(
-      '.visual-load',
-   ) as HTMLInputElement | null;
-
-   if (!$visualLoad) return;
+   const $visualLoad = forceSelect<HTMLInputElement>('.visual-load');
 
    $visualLoad.value = VISUAL_LOAD.value.toString();
 
@@ -26,11 +23,7 @@ export const SettingsManager = () => {
       VISUAL_LOAD.value = value;
    });
 
-   const $renderingDetail = document.querySelector(
-      '.rendering-detail',
-   ) as HTMLInputElement | null;
-
-   if (!$renderingDetail) return;
+   const $renderingDetail = forceSelect<HTMLInputElement>('.rendering-detail');
 
    $renderingDetail.value = RENDERING_DETAIL.value.toString();
 
@@ -39,11 +32,7 @@ export const SettingsManager = () => {
       RENDERING_DETAIL.value = value;
    });
 
-   const $pixelated = document.querySelector(
-      '.rendering-pixelated',
-   ) as HTMLInputElement | null;
-
-   if (!$pixelated) return;
+   const $pixelated = forceSelect<HTMLInputElement>('.rendering-pixelated');
 
    $pixelated.checked = RENDERING_PIXELATED.value;
 
@@ -60,13 +49,8 @@ export const SettingsManager = () => {
       }
    }, true);
 
-   const $joyConSensitivity = document.querySelector(
-      '.sensitivity',
-   ) as HTMLInputElement | null;
+   const $joyConSensitivity = forceSelect<HTMLInputElement>('.sensitivity');
 
-   if (!$joyConSensitivity) return;
-
-   
    $joyConSensitivity.addEventListener('change', (event: Event) => {
       const value = Number.parseFloat((event.target as HTMLInputElement).value);
 
@@ -77,15 +61,11 @@ export const SettingsManager = () => {
       }
    });
 
-   const $botModeEnabled = document.querySelector(
-      '.bot-mode',
-   ) as HTMLInputElement | null;
-
-   if (!$botModeEnabled) return;
+   const $botModeEnabled = forceSelect<HTMLInputElement>('.bot-mode');
 
    ROUTER_ID.subscribe((x) => {
       if (x !== '/settings/joycon') return;
-      
+
       if (isP1()) {
          $joyConSensitivity.value = P1_SENSITIVITY.value.toString();
          $botModeEnabled.checked = P1_BOT_MODE_ENABLED.value;
@@ -93,7 +73,7 @@ export const SettingsManager = () => {
          $joyConSensitivity.value = P2_SENSITIVITY.value.toString();
          $botModeEnabled.checked = P2_BOT_MODE_ENABLED.value;
       }
-   })
+   });
 
    $botModeEnabled.addEventListener('change', (event: Event) => {
       const value = $botModeEnabled.checked;
@@ -123,11 +103,7 @@ export const SettingsManager = () => {
       }
    });
 
-   const $difficulty = document.querySelector(
-      '.difficulty',
-   ) as HTMLInputElement | null;
-
-   if (!$difficulty) return;
+   const $difficulty = forceSelect<HTMLInputElement>('.difficulty');
 
    $difficulty.value = DIFFICULTY.value.toString();
 

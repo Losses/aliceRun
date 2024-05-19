@@ -58,6 +58,20 @@ body {
   backdrop-filter: blur(20px);
 }
 
+.glass:disabled {
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 300;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-image: linear-gradient(60deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.6)) 10%;
+}
+
+.glass:disabled:hover {
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 300;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-image: linear-gradient(60deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 1)) 10%;
+}
+
 .glass-slide,
 .glass-checkbox {
   width: 100%;
