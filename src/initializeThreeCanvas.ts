@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -39,10 +38,10 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
 
    const renderScene = new RenderPass(scene, camera);
-   const glitchPass = new ShaderPass(GlitchShader);
    const sepiaPass = new ShaderPass(SepiaShader);
-   const vignettePass = new ShaderPass(VignetteShader);
    const filmPass = new FilmPass(0, 0, 0, 0);
+   const glitchPass = new ShaderPass(GlitchShader);
+   const vignettePass = new ShaderPass(VignetteShader);
 
    const effects = { glitchPass, sepiaPass, vignettePass, filmPass } as const;
 
@@ -54,9 +53,9 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    finalComposer.addPass(renderScene);
    finalComposer.addPass(smaaPass);
    finalComposer.addPass(vignettePass);
-   finalComposer.addPass(glitchPass);
    finalComposer.addPass(filmPass);
    finalComposer.addPass(sepiaPass);
+   finalComposer.addPass(glitchPass);
 
    glitchPass.enabled = false;
    filmPass.enabled = false;

@@ -6,7 +6,7 @@ import { HP } from '../stores/hp';
 import { ROUTER_ID, isMultiple, isSingle, isStory } from '../stores/router';
 import { P1_SPM } from '../stores/runStat';
 import { useLerp } from '../utils/lerp';
-import { TRUE_HIGH_LIMIT, TRUE_LOW_LIMIT } from './RunStatManager';
+import { SMOOTHED_HIGH_LIMIT, SMOOTHED_LOW_LIMIT } from './RunStatManager';
 import { forceSelect } from '../utils/forceSelect';
 
 export const HpManager = (effects: Effects) => {
@@ -63,8 +63,8 @@ export const HpManager = (effects: Effects) => {
       effects.vignettePass.uniforms.darkness.value = 4 * effectFactor;
 
       const bleeding =
-         P1_SPM.value < TRUE_LOW_LIMIT.value ||
-         P1_SPM.value > TRUE_HIGH_LIMIT.value;
+         P1_SPM.value < SMOOTHED_LOW_LIMIT.value ||
+         P1_SPM.value > SMOOTHED_HIGH_LIMIT.value;
       effects.glitchPass.enabled = bleeding;
 
       if (time - lastCalculateTime > 400) {

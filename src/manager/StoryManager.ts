@@ -47,7 +47,6 @@ export const timeLine = new TimelineManager(
          );
 
          return () => {
-            console.log('disposing audio');
             clip.dispose();
          };
       },

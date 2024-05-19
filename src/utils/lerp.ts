@@ -42,10 +42,11 @@ export const useLerp = (
    }, frameRateLevel);
 
    const updateValue = (x: number, instantly = false) => {
-      if (x === getCurrentValFn()) return;
+      if (x === getCurrentValFn() && !instantly) return;
       targetValue = x;
 
       if (instantly) {
+         stopLerp();
          updateFn(targetValue);
       } else {
          startLerp();

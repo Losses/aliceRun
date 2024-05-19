@@ -29,8 +29,8 @@ const B = '255,0,0,';
 const HIGHEST_POSSIBLE_SPM = 350;
 const LOWEST_POSSIBLE_SPM = 80;
 
-export const TRUE_LOW_LIMIT = store.createStore(0);
-export const TRUE_HIGH_LIMIT = store.createStore(350);
+export const SMOOTHED_LOW_LIMIT = store.createStore(0, false);
+export const SMOOTHED_HIGH_LIMIT = store.createStore(350);
 
 const normalizeSpeed = (spm: number) => {
    const r =
@@ -128,8 +128,8 @@ const $val = document.querySelector(
 ) as HTMLDivElement;
 
 const updateBar = (spm: number) => {
-   const lowLimit = normalizeSpeed(TRUE_LOW_LIMIT.value);
-   const highLimit = normalizeSpeed(TRUE_HIGH_LIMIT.value);
+   const lowLimit = normalizeSpeed(SMOOTHED_LOW_LIMIT.value);
+   const highLimit = normalizeSpeed(SMOOTHED_HIGH_LIMIT.value);
    const _spm = normalizeSpeed(spm);
 
    $bar.setAttribute('style', getBarGradient(lowLimit, highLimit));
@@ -151,7 +151,7 @@ export const p1SpmStat = new SpmStatPainter(60 * 2, 'spm-chart-p1');
 export const p2SpmStat = new SpmStatPainter(
    60 * 2,
    'spm-chart-p2',
-   '255, 0, 0',
+   '244, 67, 54',
 );
 
 export const RunStatManager = () => {
@@ -161,8 +161,10 @@ export const RunStatManager = () => {
    let stopTiming = false;
 
    const $time = forceSelect<HTMLDivElement>('.stat .time-value');
-   const $steps = forceSelect<HTMLDivElement>('.stat .steps-value');
-   const $spm = forceSelect<HTMLDivElement>('.stat .spm-value');
+   const $p1Steps = forceSelect<HTMLDivElement>('.stat .p1.steps-value');
+   const $p1Spm = forceSelect<HTMLDivElement>('.stat .p1.spm-value');
+   const $p2Steps = forceSelect<HTMLDivElement>('.stat .p2.steps-value');
+   const $p2Spm = forceSelect<HTMLDivElement>('.stat .p2.spm-value');
    const $type = forceSelect<HTMLDivElement>('.stat .type-value');
 
    const p1RateEstimator = new RateEstimator();
@@ -170,18 +172,18 @@ export const RunStatManager = () => {
    const p2RateEstimator = new RateEstimator();
    const p2StrideRateFilter = new LowPassFilter(0.2);
 
-   const [updateLow] = useLerp(
-      () => TRUE_LOW_LIMIT.value,
+   const [updateLow,,stopSmoothLow] = useLerp(
+      () => SMOOTHED_LOW_LIMIT.value,
       (x) => {
-         TRUE_LOW_LIMIT.value = x;
+         SMOOTHED_LOW_LIMIT.value = x;
       },
-      0.005,
+      0.005
    );
 
    const [updateHigh] = useLerp(
-      () => TRUE_HIGH_LIMIT.value,
+      () => SMOOTHED_HIGH_LIMIT.value,
       (x) => {
-         TRUE_HIGH_LIMIT.value = x;
+         SMOOTHED_HIGH_LIMIT.value = x;
       },
       0.005,
    );
@@ -206,7 +208,7 @@ export const RunStatManager = () => {
 
    const tickP1 = () => {
       const p1Spm = p1StrideRateFilter.filter(p1RateEstimator.estimateRate());
-      $spm.textContent = formatNumber(p1Spm, 3);
+      $p1Spm.textContent = formatNumber(p1Spm, 3);
       P1_SPM.value = p1Spm;
       p1SpmStat.addData(p1Spm);
    };
@@ -215,6 +217,7 @@ export const RunStatManager = () => {
       if (!P2_JOYCON.value && !p2.botMode) return;
 
       const p2Spm = p2StrideRateFilter.filter(p2RateEstimator.estimateRate());
+      $p2Spm.textContent = formatNumber(p2Spm, 3);
       P2_SPM.value = p2Spm;
       p2SpmStat.addData(p2Spm);
       MULTIPLE_PLAYER_COLOR_PROGRESS.value = Math.max(
@@ -223,7 +226,7 @@ export const RunStatManager = () => {
       );
 
       if (!isMultiple()) return;
-      updateLow(P2_SPM.value);
+      LOW_LIMIT.value = P2_SPM.value;
    };
 
    ROUTER_ID.subscribe(() => {
@@ -236,8 +239,8 @@ export const RunStatManager = () => {
 
          LOW_LIMIT.reset(true);
          HIGH_LIMIT.reset(true);
-         TRUE_LOW_LIMIT.reset(true);
-         TRUE_HIGH_LIMIT.reset(true);
+         SMOOTHED_LOW_LIMIT.reset(true);
+         SMOOTHED_HIGH_LIMIT.reset(true);
          p1SpmStat.reset();
 
          timeManager.addFn(tickSystem, FrameRateLevel.D3);
@@ -262,26 +265,23 @@ export const RunStatManager = () => {
       if (!isSingle() && !isMultiple()) {
          timeManager.addFn(tickP2, FrameRateLevel.D3);
          timeManager.removeFn(tickP1);
+         stopSmoothLow();
       }
 
       if (isInfinite()) {
          p1.stepCount = safeParseInt(localStorage.getItem(INFINITE_STEP_KEY));
-         $steps.textContent = formatNumber(p1.stepCount, 4);
+         $p1Steps.textContent = formatNumber(p1.stepCount, 4);
          logicStartTime =
             Date.now() - safeParseInt(localStorage.getItem(INFINITE_TIME_KEY));
          lastStepsCount = p1.stepCount;
       }
    }, true);
 
-   p2.addEventListener(STEP_EVENT, () => {
-      p2RateEstimator.record();
-   });
-
    p1.addEventListener(STEP_EVENT, ({ detail: { total, type } }) => {
       if (!isSingle() && !isMultiple()) return;
 
       p1RateEstimator.record();
-      $steps.textContent = formatNumber(total, 4);
+      $p1Steps.textContent = formatNumber(total, 4);
 
       if ($type) {
          $type.textContent = type;
@@ -293,6 +293,13 @@ export const RunStatManager = () => {
          localStorage.setItem(INFINITE_STEP_KEY, p1.stepCount.toString());
          lastSyncTime = Date.now();
       }
+   });
+
+   p2.addEventListener(STEP_EVENT, ({ detail: { total } }) => {
+      p2RateEstimator.record();
+
+      if (!isMultiple()) return;
+      $p2Steps.textContent = formatNumber(total, 4);
    });
 
    const $finishTraining = forceSelect<HTMLDivElement>('.finish-training');
@@ -357,6 +364,7 @@ export const RunStatManager = () => {
       p1FinalSpm = p1SpmStat.getAverageValue();
 
       if (isMultiple()) {
+         p2SpmStat.close();
          p2FinalSteps = Math.floor(p2.stepCount - lastStepsCount);
          p2FinalSpm = p2SpmStat.getAverageValue();
          p2SpmStat.resizeToParent();

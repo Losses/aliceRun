@@ -89,6 +89,8 @@ export class SpmStatPainter extends WindowAverageRecord {
    }
 
    draw(progress: number): void {
+      if (!this.points.length) return;
+
       this.normalize();
       this.intepolate();
 
