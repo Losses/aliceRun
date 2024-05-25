@@ -2,6 +2,7 @@ import { initializeThreeCanvas } from './initializeThreeCanvas';
 import { AudioManager } from './manager/AudioManager';
 import { ColorManager } from './manager/ColorManager';
 import { DebugManager } from './manager/DebugManager';
+import { PointerManager } from './manager/PointerManager';
 import { DiagnosisManager } from './manager/DiagnosisManager';
 import { GrassManager } from './manager/GrassManager';
 import { GroundManager } from './manager/GroundManager2';
@@ -23,6 +24,7 @@ const config = initializeThreeCanvas(
    document.querySelector('#app') as HTMLDivElement,
 );
 
+PointerManager();
 RouterManager();
 DiagnosisManager();
 SettingsManager();
