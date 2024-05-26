@@ -1,6 +1,6 @@
 import type * as THREE from 'three';
 
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 import { SkyBox } from '../components/SkyBox';
 import { THEME_VALUE } from './ColorManager';
 

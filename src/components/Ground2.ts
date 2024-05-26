@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 import { CylinderGeometry2 } from './CylinderGeometry2';
 
 export const RADIUS = 120;

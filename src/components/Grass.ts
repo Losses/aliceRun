@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 import { THEME_VALUE } from '../manager/ColorManager';
 import { timeManager } from '../manager/TimeManager';
 import { VISUAL_LOAD } from '../stores/settings';

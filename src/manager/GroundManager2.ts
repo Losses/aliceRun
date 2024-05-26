@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 import type { CylinderGeometry2 } from '../components/CylinderGeometry2';
 import { Ground } from '../components/Ground2';
 import { STEP_ANGLE } from '../constants/ground';

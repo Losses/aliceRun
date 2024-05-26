@@ -1,6 +1,6 @@
 import type * as THREE from 'three';
 
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 import { GroundObject } from '../components/GroundObject';
 import { STEP_ANGLE } from '../constants/ground';
 import { CompressedTexture } from '../utils/CompressedTexture';

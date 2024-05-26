@@ -608,3 +608,55 @@ button {
   font-size: 1.3em;
   font-weight: 800;
 }
+
+/** Other debugging tools **/
+.story-visualize-container {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 30vh;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(6px);
+}
+
+.story-visualize-container canvas {
+  height: 100%;
+}
+
+.vis-time-axis .vis-text {
+  color: white;
+  font-weight: 400;
+}
+
+.vis-item-content {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.vis-timeline {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.vis-time-axis .vis-grid.vis-minor {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top, .vis-panel.vis-bottom {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.vis-item {
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.24);
+  border-image: linear-gradient(60deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6)) 10%;
+  box-shadow: 0 0 0 rgba(255, 255, 255, 0.0), inset 0 0 0 rgba(255, 255, 255, 0);
+  color: white;
+}
+
+.vis-item.vis-selected {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5), inset 0 0 4px rgba(255, 255, 255, 0.5);
+  border-image: linear-gradient(60deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 1)) 10%;
+}

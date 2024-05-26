@@ -14,6 +14,7 @@ export const AudioEvent = (
 ): ITimelineEvent<"audio", IPlayAudioStoryEvent> => ({
    time,
    type: "audio",
+   label: url,
    detail: {
       url,
    },
@@ -22,6 +23,7 @@ export const AudioEvent = (
 export const EndEvent = (time: number): ITimelineEvent<"end", null> => ({
    time,
    type: "end",
+   label: "end",
    detail: null,
 });
 
@@ -31,6 +33,7 @@ export const ThemeEvent = (
 ): ITimelineEvent<"theme", string> => ({
    time,
    type: "theme",
+   label: `theme: ${theme}`,
    detail: theme,
 });
 
@@ -40,6 +43,7 @@ export const LowRpmLimitEvent = (
 ): ITimelineEvent<"lowRpm", number> => ({
    time,
    type: "lowRpm",
+   label: `low-rpm: ${rpm}`,
    detail: rpm,
 });
 
@@ -48,6 +52,7 @@ export const DebugAlertEvent = (
    text: string
 ): ITimelineEvent<"debugAlert", string> => ({
    time,
+   label: `alert: ${text}`,
    type: "debugAlert",
    detail: text,
 });

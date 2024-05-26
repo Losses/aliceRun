@@ -1,3 +1,4 @@
+// biome-ignore lint/suspicious/noExplicitAny: This is safe
 type Any = any;
 
 interface IDisposable extends Any {

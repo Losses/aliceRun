@@ -9,7 +9,7 @@ import { SepiaShader } from 'three/examples/jsm/shaders/SepiaShader';
 import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader';
 import { CANVAS_SIZE, updateCanvasSize } from './stores/settings';
 
-import { ResourceTracker } from './ResourceTracker';
+import { ResourceTracker } from './utils/ResourceTracker';
 import { timeManager } from './manager/TimeManager';
 import { FrameRateLevel } from './utils/TimeMagic';
 import { GlitchShader } from './utils/shaders/GlitchPass';

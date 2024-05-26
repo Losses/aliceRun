@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 
 export const SkyBox = (tracker: ResourceTracker) => {
    const geometry = new THREE.SphereGeometry(500, 20, 20);

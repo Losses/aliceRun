@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
-import type { ResourceTracker } from '../ResourceTracker';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 import { timeManager } from '../manager/TimeManager';
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
 

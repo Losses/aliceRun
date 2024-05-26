@@ -1,6 +1,7 @@
 export interface ITimelineEvent<Type extends string, Detail> {
    time: number;
    type: Type;
+   label: string;
    detail: Detail;
 }
 
