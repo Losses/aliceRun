@@ -113,7 +113,9 @@ const convertStory = (x: ITimelineEvent<string, unknown>[]): DataItem[] => x.map
 }));
 
 export const visualizeStory = (index = 0) => {
-   const container = forceSelect<HTMLDivElement>('#story-visualize');
+   const $container = forceSelect<HTMLDivElement>('.story-visualize-container');
+   $container.classList.remove('hidden');
+   const $story = forceSelect<HTMLDivElement>('#story-visualize');
 
    const items: DataItemCollectionType = convertStory(stories[index]);
 
@@ -124,7 +126,7 @@ export const visualizeStory = (index = 0) => {
    };
 
    // Create a Timeline
-   const timeline = new Timeline(container, items, options);
+   const timeline = new Timeline($story, items, options);
 };
 
 // @ts-ignore
