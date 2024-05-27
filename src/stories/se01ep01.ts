@@ -1,7 +1,7 @@
 import { AudioEvent, DebugAlertEvent, EndEvent, LowRpmLimitEvent, ThemeEvent, Time } from "./utils";
 
 export const SE1EP01 = [
-    ...new Array(37)
+    ...new Array(38)
        .fill(0)
        .map((_, index) =>
           AudioEvent(

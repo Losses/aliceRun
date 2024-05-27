@@ -22,7 +22,7 @@ export const SE1EP02 = [
        .map((_, index) =>
           AudioEvent(
              Time(0, 10, index + 35),
-             `S001-EP001-${(index + 33).toString().padStart(3, '0')}.mp3`,
+             `S001-EP001-${(index + 34).toString().padStart(3, '0')}.mp3`,
           ),
        ),
     LowRpmLimitEvent(Time(0, 10), 170),
