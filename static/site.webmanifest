@@ -1,0 +1,17 @@
+{
+   "theme_color": "#3595a5",
+   "background_color": "#3595a5",
+   "orientation": "landscape",
+   "display": "fullscreen",
+   "dir": "auto",
+   "lang": "en-US",
+   "name": "Alice! Run!",
+   "short_name": "alice-run",
+   "icons": [
+      {
+         "src": "/static/android-chrome-192x192.png",
+         "sizes": "192x192",
+         "type": "image/png"
+      }
+   ]
+}

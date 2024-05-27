@@ -625,6 +625,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/packager-raw-url@npm:2.12.0":
+  version: 2.12.0
+  resolution: "@parcel/packager-raw-url@npm:2.12.0"
+  dependencies:
+    "@parcel/plugin": "npm:2.12.0"
+    "@parcel/utils": "npm:2.12.0"
+  checksum: 10/9db2fdb1e43a2c9cf739dee67f338b552983868394abae4c70003f0af2335778a0181548fe95bcb707c26292a4420c1e1f434a818e2eb2d9a18f507b82ad18c5
+  languageName: node
+  linkType: hard
+
 "@parcel/packager-raw@npm:2.12.0":
   version: 2.12.0
   resolution: "@parcel/packager-raw@npm:2.12.0"
@@ -949,6 +959,18 @@ __metadata:
     posthtml-render: "npm:^3.0.0"
     semver: "npm:^7.5.2"
   checksum: 10/4a7b44566e496adfb9b85a5b889baee4fad98f8d21753f2f8df1e5abba66bafdffeb73e533b22004bc47fb1ef4b0ecb4896a526fef5739eb031c893ff5c0c53a
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-webmanifest@npm:2.12.0":
+  version: 2.12.0
+  resolution: "@parcel/transformer-webmanifest@npm:2.12.0"
+  dependencies:
+    "@mischnic/json-sourcemap": "npm:^0.1.0"
+    "@parcel/diagnostic": "npm:2.12.0"
+    "@parcel/plugin": "npm:2.12.0"
+    "@parcel/utils": "npm:2.12.0"
+  checksum: 10/52850829fedd5ed42a6d01dde5f51c0fafab474e45500a50bdd945e90dd90a349cb62f526852e63e8811a7f584b5a5a34d44e7a1ec586202440054458d04c983
   languageName: node
   linkType: hard
 
@@ -3502,7 +3524,9 @@ __metadata:
   dependencies:
     "@biomejs/biome": "npm:1.7.3"
     "@material/material-color-utilities": "npm:^0.2.7"
+    "@parcel/packager-raw-url": "npm:2.12.0"
     "@parcel/transformer-glsl": "npm:2.12.0"
+    "@parcel/transformer-webmanifest": "npm:2.12.0"
     "@types/debug": "npm:^4.1.12"
     "@types/node": "npm:^20.12.8"
     "@types/stats.js": "npm:^0.17.3"
