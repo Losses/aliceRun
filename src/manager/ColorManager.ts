@@ -1,6 +1,7 @@
 import { Hct } from '@material/material-color-utilities';
 import { useLerps } from '../utils/lerp';
 import { store } from './DataManager';
+import { forceSelect } from '../utils/forceSelect';
 
 interface ITheme<T> {
    grassBase: T;
@@ -101,6 +102,12 @@ const interpolateTheme = (to: string, progress: number) => {
 }
 
 export const ColorManager = () => {
+   const $theme = forceSelect<HTMLMetaElement>('meta[name="theme-color"]');
+
+   THEME_VALUE.subscribe((x) => {
+      $theme.setAttribute('content', `#${x.sky0.toString(16)}`);
+   });
+
    const initialThemeNumber = Object.values(themeHct[THEME_ID.value]).flatMap(
       (x: Hct) => [x.hue, x.chroma, x.tone],
    );
