@@ -18,10 +18,22 @@ const themeArgb: Record<string, ITheme<number>> = {
       sky1: 0xffcc5333,
    },
    dawn: {
-      grassTip: 0xffc08959,
-      grassBase: 0xff352b27,
-      sky0: 0xffcf6c50,
-      sky1: 0xffffb06d,
+      grassTip: 0xffffa352,
+      grassBase: 0xff4c3736,
+      sky0: 0xff43454b,
+      sky1: 0xffc98774,
+   },
+   dust: {
+      grassTip: 0xfffc6d43,
+      grassBase: 0xff262428,
+      sky0: 0xff524b4d,
+      sky1: 0xffdfb6ad,
+   },
+   fire: {
+      grassTip: 0xffdc4027,
+      grassBase: 0xff402b27,
+      sky0: 0xff2f2e36,
+      sky1: 0xffab5829,
    },
    clear: {
       grassTip: 0xff7f7f19,
