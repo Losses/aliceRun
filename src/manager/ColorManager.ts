@@ -35,11 +35,23 @@ const themeArgb: Record<string, ITheme<number>> = {
       sky0: 0xff2f2e36,
       sky1: 0xffab5829,
    },
+   void: {
+      grassTip: 0xff5d06a3,
+      grassBase: 0xff140e22,
+      sky0: 0xff263238,
+      sky1: 0xff37474F,
+   },
+   ending: {
+      grassTip: 0xff474b4d,
+      grassBase: 0xff27252a,
+      sky0: 0xff1e3139,
+      sky1: 0xff518093,
+   },
    clear: {
-      grassTip: 0xff7f7f19,
-      grassBase: 0xff0c3302,
-      sky0: 0xff4ca1af,
-      sky1: 0xffc4e0e5,
+      grassTip: 0xfff9e6d6,
+      grassBase: 0xff819ea9,
+      sky0: 0xfffbfdfc,
+      sky1: 0xffffffff,
    },
    winter: {
       grassTip: 0xffebdaa1,
