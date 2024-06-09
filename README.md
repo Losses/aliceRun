@@ -1,8 +1,9 @@
-<div style="text-align: center; background: black; color: white">
+
+<p align="center">
 <img src="https://github.com/Losses/aliceRun/blob/master/assets/title.gif?raw=true" alt="Alice Run" />
-<h1>Alice Run</h1>
-<p>さよなら、大切なもの。</p>
-</div>
+</p>
+<h1 align="center">Alice Run</h1>
+<p align="center">さよなら、大切なもの。</p>
 
 ## Project Overview
 
