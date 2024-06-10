@@ -57,8 +57,8 @@ export const HpManager = (effects: Effects) => {
          1 * effectFactor * 2,
       );
       (
-         effects.filmPass.uniforms as { nIntensity: { value: number } }
-      ).nIntensity.value = 0.8 * effectFactor;
+         effects.filmPass.uniforms as { intensity: { value: number } }
+      ).intensity.value = 0.8 * effectFactor;
       effects.vignettePass.uniforms.offset.value = 3 * effectFactor;
       effects.vignettePass.uniforms.darkness.value = 4 * effectFactor;
 
