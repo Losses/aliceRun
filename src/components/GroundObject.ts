@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
-import type { ResourceTracker } from '../utils/ResourceTracker';
-import { timeManager } from '../manager/TimeManager';
+
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6;
@@ -25,19 +25,34 @@ const StarShape = (n: number) => {
 
 
 export const GroundObject = (
-   texture: THREE.Texture | Promise<THREE.Texture>,
+   textures: THREE.Texture[] | Promise<THREE.Texture>[],
    tracker: ResourceTracker,
 ) => {
+   let time = 0;
+   let groundDeltaTheta = 0;
+   let transitionProgress = 0;
+
+   const totalObjectCount = MAX_INSTANCE_COUNT * textures.length;
    const plane = StarShape(STAR_SHAPE_SIDES);
    plane.translate(0, 12, 0);
 
    const geometry = new THREE.InstancedBufferGeometry();
-   geometry.instanceCount = 4;
+   geometry.instanceCount = totalObjectCount;
 
-   const instanceIndex = new Array(MAX_INSTANCE_COUNT)
+   const instanceIndex = new Array(totalObjectCount)
       .fill(0)
       .map((_, index) => index);
-   
+
+   const randomThetaSeed = new Array(totalObjectCount).fill(0).map(() => Math.random());
+   const seedSum = randomThetaSeed.reduce((a, b) => a + b, 0);
+   let lastTheta = 0;
+   const instanceBaseTheta = randomThetaSeed.map((x) => {
+      const currentTheta = x / seedSum;
+      lastTheta += currentTheta;
+
+      return lastTheta;
+   });
+
    const planeIndex = new Array(STAR_SHAPE_SIDES * 4).fill(0).map((_, index) => Math.floor(index / 4));
 
    geometry.setIndex(plane.index);
@@ -55,7 +70,6 @@ export const GroundObject = (
    // material
    const material = new THREE.RawShaderMaterial({
       uniforms: {
-         time: { value: 0.0 },
          seed: { value: Math.random() },
          map: { value: null },
          transitionProgress: { value: 0 },
@@ -76,7 +90,7 @@ export const GroundObject = (
       glslVersion: THREE.GLSL3,
    });
 
-   Promise.resolve(texture).then((x) => {
+   Promise.resolve(textures).then((x) => {
       material.uniforms.map.value = x;
       material.uniformsNeedUpdate = true;
    });
@@ -87,13 +101,34 @@ export const GroundObject = (
 
    groundObject.frustumCulled = false;
 
-   timeManager.addFn((time) => {
-      material.uniforms.time.value = time * 0.001;
-      material.uniformsNeedUpdate = true;
-   });
-
    tracker.track(geometry);
    tracker.track(material);
 
-   return { groundObject };
+   return { 
+      object: groundObject,
+      set groundDeltaTheta(x) {
+         groundDeltaTheta = x;
+         material.uniforms.groundDeltaTheta.value = x;
+         material.uniformsNeedUpdate = true;
+      },
+      get groundDeltaTheta() {
+         return groundDeltaTheta;
+      },
+      set time(x) {
+         time = x;
+         material.uniforms.time.value = x * 0.001;
+         material.uniformsNeedUpdate = true;
+      },
+      get time() {
+         return time;
+      },
+      set transitionProgress(x) {
+         transitionProgress = x;
+         material.uniforms.transitionProgress.value = x;
+         material.uniformsNeedUpdate = true;
+      },
+      get transitionProgress() {
+         return transitionProgress;
+      }
+    };
 };

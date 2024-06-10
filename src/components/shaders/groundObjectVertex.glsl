@@ -1,8 +1,5 @@
 precision highp float;
 
-uniform float sineTime;
-
-uniform float time;
 uniform float seed;
 uniform float roadRatio;
 uniform float gridWidth;
@@ -11,7 +8,6 @@ uniform float groundRadius;
 uniform float groundRatio;
 uniform float groundBeginTheta;
 uniform float groundDeltaTheta;
-uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 

@@ -1,13 +1,14 @@
 import type * as THREE from 'three';
 
-import type { ResourceTracker } from '../utils/ResourceTracker';
-import { GroundObject } from '../components/GroundObject';
-import { STEP_ANGLE } from '../constants/ground';
-import { CompressedTexture } from '../utils/CompressedTexture';
-import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
-import { eventTarget } from './EventManager';
+import { STEP_ANGLE } from '../constants/ground';
+import { STEP_EVENT } from '../utils/StepCounter';
+import { GroundObject } from '../components/GroundObject';
+import { CompressedTexture, CompressedTextureLoader } from '../utils/CompressedTexture';
+import type { ResourceTracker } from '../utils/ResourceTracker';
+
 import { p1 } from './JoyConManager';
+import { timeManager } from './TimeManager';
 
 export const GroundObjectManager = (
    camera: THREE.Camera,
@@ -15,42 +16,34 @@ export const GroundObjectManager = (
    tracker: ResourceTracker,
    renderer: THREE.WebGLRenderer,
 ) => {
-   const groundObjects: ReturnType<typeof GroundObject>['groundObject'][] = [];
-   const textures: THREE.Texture[] = [];
+   const loader = CompressedTextureLoader(renderer);
 
+   const texturesPaths: string[] = [];
    for (let i = 0; i < 7; i += 1) {
-      const texture = CompressedTexture(`/textures/g${i + 1}.ktx2`, renderer);
-      const { groundObject } = GroundObject(texture, tracker);
-      scene.add(groundObject);
-
-      groundObjects.push(groundObject);
-      texture.then((x) => textures.push(x));
+      texturesPaths.push(`/textures/g${i + 1}.ktx2`);
    }
 
    for (let i = 4; i < 7; i += 1) {
-      const texture = CompressedTexture(`/textures/p${i + 1}.ktx2`, renderer);
-      const { groundObject } = GroundObject(texture, tracker);
-      scene.add(groundObject);
-
-      groundObjects.push(groundObject);
-      texture.then((x) => textures.push(x));
+      texturesPaths.push(`/textures/p${i + 1}.ktx2`);
    }
+
+   const textureRequests = CompressedTexture(texturesPaths, loader);
+   const groundObject = GroundObject(textureRequests, tracker);
+   scene.add(groundObject.object);
 
    let rotate = 0;
 
    const [updateValue] = useLerp(
       () => rotate,
       (x) => {
-         for (let i = 0; i < groundObjects.length; i += 1) {
-            const object = groundObjects[i];
-
-            object.material.uniforms.groundDeltaTheta.value = x;
-            object.material.uniformsNeedUpdate = true;
-         }
-
+         groundObject.groundDeltaTheta = x;
          rotate = x;
       },
    );
+
+   timeManager.addFn((time) => {
+      groundObject.time = time * 0.001;
+   });
 
    const step = () => {
       updateValue(rotate + STEP_ANGLE);
@@ -64,11 +57,7 @@ export const GroundObjectManager = (
    const [lerpTransitionProgress] = useLerp(
       () => transitionProgress,
       (x) => {
-         for (let i = 0; i < groundObjects.length; i += 1) {
-            groundObjects[i].material.uniforms.transitionProgress.value = x;
-            groundObjects[i].material.uniformsNeedUpdate = true;
-         }
-
+         groundObject.transitionProgress = x;
          transitionProgress = x;
       },
       0.055,
