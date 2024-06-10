@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import type { ResourceTracker } from '../utils/ResourceTracker';
-import { THEME_VALUE } from '../manager/ColorManager';
 import { timeManager } from '../manager/TimeManager';
 import { VISUAL_LOAD } from '../stores/settings';
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
+import type { ResourceTracker } from '../utils/ResourceTracker';
 
 function createRectanglePositions(
    width: number,
