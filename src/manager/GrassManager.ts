@@ -66,7 +66,7 @@ export const GrassManager = (
       );
 
       material.uniformsNeedUpdate = true;
-   });
+   }, true);
 
    return {};
 };

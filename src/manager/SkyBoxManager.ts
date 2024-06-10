@@ -1,4 +1,4 @@
-import type * as THREE from 'three';
+import * as THREE from 'three';
 
 import type { ResourceTracker } from '../utils/ResourceTracker';
 import { SkyBox } from '../components/SkyBox';
@@ -15,8 +15,8 @@ export const SkyBoxManager = (
    THEME_VALUE.subscribe((theme) => {
       const uniforms = skyBox.material.uniforms;
 
-      (uniforms.color2.value as THREE.Color).setHex(theme.sky0);
-      (uniforms.color1.value as THREE.Color).setHex(theme.sky1);
+      (uniforms.color2.value as THREE.Color).setHex(theme.sky0, THREE.LinearSRGBColorSpace);
+      (uniforms.color1.value as THREE.Color).setHex(theme.sky1, THREE.LinearSRGBColorSpace);
 
       skyBox.material.uniformsNeedUpdate = true;
    }, true);

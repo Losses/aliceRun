@@ -69,9 +69,6 @@ const GRID_SEGMENTS_Y = Math.ceil(SEGMENTS_BASE_Y * VISUAL_LOAD.value);
 export const GRID_WIDTH = 80;
 export const GRID_HEIGHT = Math.PI / 8 + 0.1;
 
-GRASS_BASE_COLOR.setHex(THEME_VALUE.value.grassBase, THREE.LinearSRGBColorSpace);
-GRASS_TIP_COLOR.setHex(THEME_VALUE.value.grassTip, THREE.LinearSRGBColorSpace);
-
 export const Grass = (tracker: ResourceTracker) => {
    const positions = createRectanglePositions(
       GRASS_WIDTH,
