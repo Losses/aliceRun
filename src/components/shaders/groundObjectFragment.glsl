@@ -198,8 +198,5 @@ void main() {
 
    vec4 textureColor = texture(map, uv);
 
-   if(textureColor.a < 0.7)
-      discard;
-
    fragColor = vec4(textureColor.rgb, textureColor.a);
 }
