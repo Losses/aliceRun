@@ -3,6 +3,7 @@ import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUti
 
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
 import type { ResourceTracker } from '../utils/ResourceTracker';
+import type { ICompressedTextureLoadingResult } from '../utils/CompressedTexture';
 
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6;
@@ -23,23 +24,31 @@ const StarShape = (n: number) => {
    return BufferGeometryUtils.mergeBufferGeometries(planes);
 }
 
+const calculateInPlaneTheta = (baseTheta: number, groundDeltaTheta: number) => {
+   return groundDeltaTheta + baseTheta;
+};
+
+const calculateRounds = (inPlaneTheta: number, gridHeight: number) => {
+   return Math.floor(inPlaneTheta / gridHeight);
+};
+
 
 export const GroundObject = (
-   textures: THREE.Texture[] | Promise<THREE.Texture>[],
+   textures: ICompressedTextureLoadingResult,
    tracker: ResourceTracker,
 ) => {
    let time = 0;
    let groundDeltaTheta = 0;
    let transitionProgress = 0;
 
-   const totalObjectCount = MAX_INSTANCE_COUNT * textures.length;
+   const totalObjectCount = MAX_INSTANCE_COUNT * textures.count;
    const plane = StarShape(STAR_SHAPE_SIDES);
    plane.translate(0, 12, 0);
 
    const geometry = new THREE.InstancedBufferGeometry();
    geometry.instanceCount = totalObjectCount;
 
-   const instanceIndex = new Array(totalObjectCount)
+   const instanceIndexes = new Array(totalObjectCount)
       .fill(0)
       .map((_, index) => index);
 
@@ -59,8 +68,12 @@ export const GroundObject = (
    geometry.setAttribute('uv', plane.getAttribute('uv'));
    geometry.setAttribute('position', plane.getAttribute('position'));
    geometry.setAttribute(
+      'instanceBaseTheta',
+      new THREE.InstancedBufferAttribute(new Float32Array(instanceBaseTheta), 1),
+   );
+   geometry.setAttribute(
       'instanceIndex',
-      new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndex), 1),
+      new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndexes), 1),
    );
    geometry.setAttribute(
       'planeIndex',
@@ -70,6 +83,7 @@ export const GroundObject = (
    // material
    const material = new THREE.RawShaderMaterial({
       uniforms: {
+         time: { value: 0 },
          seed: { value: Math.random() },
          map: { value: null },
          transitionProgress: { value: 0 },
@@ -90,7 +104,7 @@ export const GroundObject = (
       glslVersion: THREE.GLSL3,
    });
 
-   Promise.resolve(textures).then((x) => {
+   Promise.resolve(textures.textures[0]).then((x) => {
       material.uniforms.map.value = x;
       material.uniformsNeedUpdate = true;
    });
@@ -104,12 +118,55 @@ export const GroundObject = (
    tracker.track(geometry);
    tracker.track(material);
 
-   return { 
+   const lastRounds: number[] = new Array(totalObjectCount).fill(0);
+
+   const updateInstances = (newGroundDeltaTheta: number) => {
+      groundDeltaTheta = newGroundDeltaTheta;
+
+      let needUpdateAttribute = false;
+
+      for (let i = 0; i < totalObjectCount; i += 1) {
+         const baseTheta = instanceBaseTheta[i];
+         const instanceIndex = instanceIndexes[i];
+
+         const inPlaneTheta = calculateInPlaneTheta(baseTheta, groundDeltaTheta);
+         const newRounds = calculateRounds(inPlaneTheta, GRID_HEIGHT);
+
+         if (newRounds !== lastRounds[i]) {
+            // Move instance to the front of the queue
+            instanceBaseTheta.splice(i, 1);
+            instanceBaseTheta.unshift(baseTheta);
+
+            // Update lastRounds for the moved instance
+            lastRounds.splice(i, 1);
+            lastRounds.unshift(newRounds);
+
+            instanceIndexes.splice(i, 1);
+            instanceIndexes.unshift(instanceIndex + totalObjectCount);
+
+            needUpdateAttribute = true;
+         }
+      }
+
+      if (needUpdateAttribute) {
+         geometry.setAttribute(
+            'instanceIndex',
+            new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndexes), 1)
+         );
+         geometry.setAttribute(
+            'instanceBaseTheta',
+            new THREE.InstancedBufferAttribute(new Float32Array(instanceBaseTheta), 1),
+         );
+      }
+   };
+
+   return {
       object: groundObject,
       set groundDeltaTheta(x) {
          groundDeltaTheta = x;
          material.uniforms.groundDeltaTheta.value = x;
          material.uniformsNeedUpdate = true;
+         updateInstances(x);
       },
       get groundDeltaTheta() {
          return groundDeltaTheta;
@@ -130,5 +187,5 @@ export const GroundObject = (
       get transitionProgress() {
          return transitionProgress;
       }
-    };
+   };
 };
