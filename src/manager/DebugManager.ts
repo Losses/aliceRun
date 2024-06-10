@@ -1,6 +1,10 @@
-import type * as THREE from 'three'; 
+// biome-ignore lint/style/useImportType: We need to use it as non-type while debugging.
+import * as THREE from 'three'; 
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import type { ResourceTracker } from '../utils/ResourceTracker';
+// import { timeManager } from './TimeManager';
+// import { FrameRateLevel } from '../utils/TimeMagic';
 
 export const DebugManager = (
    camera: THREE.Camera,

@@ -1,10 +1,12 @@
 precision mediump float;
+precision mediump sampler2DArray;
 
 uniform int planeCount;
 uniform float time;
 uniform float transitionProgress;
 uniform float curlFactor;
-uniform sampler2D map;
+uniform sampler2DArray map;
+uniform int mapDepth;
 
 in vec2 vUv;
 flat in int vPlaneIndex;
@@ -147,6 +149,12 @@ float random(float x) {
    return fract(sin(dot(vec2(x, 12.9898), vec2(78.233, 157.99))) * 43758.5453);
 }
 
+int getRandomTexture() {
+    float randomValue = random(float(vInstanceIndex));
+    int randomInt = int(randomValue * float(mapDepth));
+    return randomInt;
+}
+
 void main() {
    vec2 uv = vUv;
 
@@ -196,7 +204,7 @@ void main() {
          discard;
    }
 
-   vec4 textureColor = texture(map, uv);
+   vec4 textureColor = texture(map, vec3(uv, getRandomTexture()));
 
    fragColor = vec4(textureColor.rgb, textureColor.a);
 }

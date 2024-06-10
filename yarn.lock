@@ -1310,6 +1310,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tweenjs/tween.js@npm:~23.1.1":
+  version: 23.1.2
+  resolution: "@tweenjs/tween.js@npm:23.1.2"
+  checksum: 10/ca7f62b1059917ebddf1e7e9d7361b87e945bfc21b3c840dd34b1ebfe7d90d87d0dd10ebfa88e2233fe4887cf260b9e1a45134573b599c905af45853b39ae0b8
+  languageName: node
+  linkType: hard
+
 "@types/debug@npm:^4.1.12":
   version: 4.1.12
   resolution: "@types/debug@npm:4.1.12"
@@ -1342,17 +1349,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/stats.js@npm:^0.17.3":
+"@types/stats.js@npm:*, @types/stats.js@npm:^0.17.3":
   version: 0.17.3
   resolution: "@types/stats.js@npm:0.17.3"
   checksum: 10/4f84a012f630532877f62959b6335d3fa081ccaac15ce3f1f916741db265bda22b9c927d7efc9cc3389ffd60919a370673cb0b4e7221d580c571031e94b689fd
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.138.0":
-  version: 0.138.0
-  resolution: "@types/three@npm:0.138.0"
-  checksum: 10/e5e8ae7ce663557de1662b05a347556a5c7394a387a6955e764a3b9fe09297cb2e58e48c88722914e59d4363d2aae8ff0f30b576942b1143d72622aa1d13169e
+"@types/three@npm:0.165.0":
+  version: 0.165.0
+  resolution: "@types/three@npm:0.165.0"
+  dependencies:
+    "@tweenjs/tween.js": "npm:~23.1.1"
+    "@types/stats.js": "npm:*"
+    "@types/webxr": "npm:*"
+    fflate: "npm:~0.8.2"
+    meshoptimizer: "npm:~0.18.1"
+  checksum: 10/c9374ceed25ba6b26953ba935a937fa57f5de564c6afc61d528760246c0aeed939a74b8b973670d3e879f8df2936ff02fa6b81f412d22edfa1ba1085b8b3d2d8
   languageName: node
   linkType: hard
 
@@ -1360,6 +1373,13 @@ __metadata:
   version: 1.0.2
   resolution: "@types/w3c-web-hid@npm:1.0.2"
   checksum: 10/9abaa67ae239fa0ba77d9f8380618698fcfeb82973297ba18b526a629768d45e60a0505d64ccd8ec366f8f511abff7d82b408fd4f85da474dbf4c0018d373214
+  languageName: node
+  linkType: hard
+
+"@types/webxr@npm:*":
+  version: 0.5.16
+  resolution: "@types/webxr@npm:0.5.16"
+  checksum: 10/1ee42e8df1e4ad46cdb31b6703d38980390baf5420ca39b05014b6c11f96138199057e9bb123485557a08de5d87813d34e27e4bfb1370beb9033792fd056da5d
   languageName: node
   linkType: hard
 
@@ -1520,6 +1540,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base64-js@npm:^1.3.1":
+  version: 1.5.1
+  resolution: "base64-js@npm:1.5.1"
+  checksum: 10/669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
+  languageName: node
+  linkType: hard
+
 "boolbase@npm:^1.0.0":
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
@@ -1558,6 +1585,16 @@ __metadata:
   bin:
     browserslist: cli.js
   checksum: 10/11ed2f678d907cb21baa43bc555e95d84c928b4486039753f7ec3ecff47997209cd0fc53ec93e23ae54f2e5be4cb2a64752f7b38cc82ec7faa3b399641cfd721
+  languageName: node
+  linkType: hard
+
+"buffer@npm:^5.5.0||^6.0.0":
+  version: 6.0.3
+  resolution: "buffer@npm:6.0.3"
+  dependencies:
+    base64-js: "npm:^1.3.1"
+    ieee754: "npm:^1.2.1"
+  checksum: 10/b6bc68237ebf29bdacae48ce60e5e28fc53ae886301f2ad9496618efac49427ed79096750033e7eab1897a4f26ae374ace49106a5758f38fb70c78c9fda2c3b1
   languageName: node
   linkType: hard
 
@@ -1965,6 +2002,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fflate@npm:~0.8.2":
+  version: 0.8.2
+  resolution: "fflate@npm:0.8.2"
+  checksum: 10/2bd26ba6d235d428de793c6a0cd1aaa96a06269ebd4e21b46c8fd1bd136abc631acf27e188d47c3936db090bf3e1ede11d15ce9eae9bffdc4bfe1b9dc66ca9cb
+  languageName: node
+  linkType: hard
+
 "fill-range@npm:^7.0.1":
   version: 7.0.1
   resolution: "fill-range@npm:7.0.1"
@@ -2313,6 +2357,13 @@ __metadata:
   dependencies:
     safer-buffer: "npm:>= 2.1.2 < 3.0.0"
   checksum: 10/24e3292dd3dadaa81d065c6f8c41b274a47098150d444b96e5f53b4638a9a71482921ea6a91a1f59bb71d9796de25e04afd05919fa64c360347ba65d3766f10f
+  languageName: node
+  linkType: hard
+
+"ieee754@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "ieee754@npm:1.2.1"
+  checksum: 10/d9f2557a59036f16c282aaeb107832dc957a93d73397d89bbad4eb1130560560eb695060145e8e6b3b498b15ab95510226649a0b8f52ae06583575419fe10fc4
   languageName: node
   linkType: hard
 
@@ -2674,6 +2725,13 @@ __metadata:
   version: 2.0.14
   resolution: "mdn-data@npm:2.0.14"
   checksum: 10/64c629fcf14807e30d6dc79f97cbcafa16db066f53a294299f3932b3beb0eb0d1386d3a7fe408fc67348c449a4e0999360c894ba4c81eb209d7be4e36503de0e
+  languageName: node
+  linkType: hard
+
+"meshoptimizer@npm:~0.18.1":
+  version: 0.18.1
+  resolution: "meshoptimizer@npm:0.18.1"
+  checksum: 10/5cfef6918562b8363a51e92b6eafe81a684fe7b9e31de1c19a6e2068ca8edab745b3e8ef2f0190ecbcc2065134b5dc1de97e4514eb2157914762356c07f93b9f
   languageName: node
   linkType: hard
 
@@ -3530,10 +3588,11 @@ __metadata:
     "@types/debug": "npm:^4.1.12"
     "@types/node": "npm:^20.12.8"
     "@types/stats.js": "npm:^0.17.3"
-    "@types/three": "npm:0.138.0"
+    "@types/three": "npm:0.165.0"
     "@types/w3c-web-hid": "npm:^1.0.2"
     "@web-media/event-target": "npm:^0.0.2"
     "@web-media/phonograph": "npm:2.3.2"
+    buffer: "npm:^5.5.0||^6.0.0"
     debug: "npm:^4.3.4"
     moment: "npm:^2.30.1"
     parcel: "npm:2.12.0"
@@ -3541,7 +3600,7 @@ __metadata:
     process: "npm:^0.11.10"
     standardized-audio-context: "npm:^25.3.72"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.138.3"
+    three: "npm:0.165.0"
     tslib: "npm:^2.3.1"
     typescript: "npm:5.4.5"
     vis-data: "npm:^7.1.9"
@@ -3549,10 +3608,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"three@npm:0.138.3":
-  version: 0.138.3
-  resolution: "three@npm:0.138.3"
-  checksum: 10/95c807680ec3eab0fe6a6e22ab0caf41e7c19ccc4b97524cefacd81532c92721e126e9ba7f7ecf16ec5745b01c61b08710ab065e79868c1e68a54b4d72fbecd7
+"three@npm:0.165.0":
+  version: 0.165.0
+  resolution: "three@npm:0.165.0"
+  checksum: 10/43e39b55fdacdf64f68cf305ca199dc94b2d00c301e0acefe611ead35ba85521f05725a7a71cf790d2dd39816f59cfeb0b00245c62037bc7cb5c383dba280364
   languageName: node
   linkType: hard
 

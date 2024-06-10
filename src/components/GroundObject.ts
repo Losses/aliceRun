@@ -8,7 +8,7 @@ import type { ICompressedTextureLoadingResult } from '../utils/CompressedTexture
 const GRID_WIDTH = 80;
 const GRID_HEIGHT = Math.PI / 6 * 2.2;
 
-const MAX_INSTANCE_COUNT = 4;
+const MAX_INSTANCE_COUNT = 2 * 14;
 const STAR_SHAPE_SIDES = 4;
 
 const StarShape = (n: number) => {
@@ -21,7 +21,7 @@ const StarShape = (n: number) => {
       return plane;
    });
 
-   return BufferGeometryUtils.mergeBufferGeometries(planes);
+   return BufferGeometryUtils.mergeGeometries(planes);
 }
 
 const calculateInPlaneTheta = (baseTheta: number, groundDeltaTheta: number) => {
@@ -86,6 +86,7 @@ export const GroundObject = (
          time: { value: 0 },
          seed: { value: Math.random() },
          map: { value: null },
+         mapDepth: { value: 14 },
          transitionProgress: { value: 0 },
          curlFactor: { value: 0.3 },
          planeCount: { value: STAR_SHAPE_SIDES },
@@ -99,7 +100,6 @@ export const GroundObject = (
       },
       vertexShader: require('./shaders/groundObjectVertex.glsl'),
       fragmentShader: require('./shaders/groundObjectFragment.glsl'),
-      side: THREE.DoubleSide,
       transparent: true,
       glslVersion: THREE.GLSL3,
    });

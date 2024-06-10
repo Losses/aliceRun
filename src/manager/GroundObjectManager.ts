@@ -18,14 +18,9 @@ export const GroundObjectManager = (
 ) => {
    const loader = CompressedTextureLoader(renderer);
 
-   const texturesPaths: string[] = [];
-   for (let i = 0; i < 7; i += 1) {
-      texturesPaths.push(`/textures/g${i + 1}.ktx2`);
-   }
-
-   for (let i = 4; i < 7; i += 1) {
-      texturesPaths.push(`/textures/p${i + 1}.ktx2`);
-   }
+   const texturesPaths: string[] = [
+      '/textures/trees.ktx2'
+   ];
 
    const textureRequests = CompressedTexture(texturesPaths, loader);
    const groundObject = GroundObject(textureRequests, tracker);

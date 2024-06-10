@@ -1,0 +1,1 @@
+basisu -ktx2 -tex_type video -stats -debug -multifile_printf "texture%03u.png" -multifile_num 14 -multifile_first 1 -y_flip -linear
