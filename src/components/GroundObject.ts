@@ -6,7 +6,7 @@ import type { ResourceTracker } from '../utils/ResourceTracker';
 import type { ICompressedTextureLoadingResult } from '../utils/CompressedTexture';
 
 const GRID_WIDTH = 80;
-const GRID_HEIGHT = Math.PI / 6;
+const GRID_HEIGHT = Math.PI / 6 * 2.2;
 
 const MAX_INSTANCE_COUNT = 4;
 const STAR_SHAPE_SIDES = 4;
@@ -57,7 +57,7 @@ export const GroundObject = (
    let lastTheta = 0;
    const instanceBaseTheta = randomThetaSeed.map((x) => {
       const currentTheta = x / seedSum;
-      lastTheta += currentTheta;
+      lastTheta += currentTheta * GRID_HEIGHT;
 
       return lastTheta;
    });
@@ -91,7 +91,7 @@ export const GroundObject = (
          planeCount: { value: STAR_SHAPE_SIDES },
          roadRatio: { value: 0.2 },
          gridWidth: { value: GRID_WIDTH },
-         gridHeight: { value: GRID_HEIGHT * 2.2 },
+         gridHeight: { value: GRID_HEIGHT },
          groundRadius: { value: RADIUS },
          groundRatio: { value: SCALE_Z },
          groundBeginTheta: { value: -Math.PI / 3 },
@@ -123,41 +123,34 @@ export const GroundObject = (
    const updateInstances = (newGroundDeltaTheta: number) => {
       groundDeltaTheta = newGroundDeltaTheta;
 
-      let needUpdateAttribute = false;
+      const i = totalObjectCount - 1;
+      const baseTheta = instanceBaseTheta[i];
+      const instanceIndex = instanceIndexes[i];
 
-      for (let i = 0; i < totalObjectCount; i += 1) {
-         const baseTheta = instanceBaseTheta[i];
-         const instanceIndex = instanceIndexes[i];
+      const inPlaneTheta = calculateInPlaneTheta(baseTheta, groundDeltaTheta);
+      const newRounds = calculateRounds(inPlaneTheta, GRID_HEIGHT);
 
-         const inPlaneTheta = calculateInPlaneTheta(baseTheta, groundDeltaTheta);
-         const newRounds = calculateRounds(inPlaneTheta, GRID_HEIGHT);
+      if (newRounds === lastRounds[i]) return;
 
-         if (newRounds !== lastRounds[i]) {
-            // Move instance to the front of the queue
-            instanceBaseTheta.splice(i, 1);
-            instanceBaseTheta.unshift(baseTheta);
+      // Move instance to the front of the queue
+      instanceBaseTheta.splice(i, 1);
+      instanceBaseTheta.unshift(baseTheta);
 
-            // Update lastRounds for the moved instance
-            lastRounds.splice(i, 1);
-            lastRounds.unshift(newRounds);
+      // Update lastRounds for the moved instance
+      lastRounds.splice(i, 1);
+      lastRounds.unshift(newRounds);
 
-            instanceIndexes.splice(i, 1);
-            instanceIndexes.unshift(instanceIndex + totalObjectCount);
+      instanceIndexes.splice(i, 1);
+      instanceIndexes.unshift(instanceIndex + totalObjectCount);
 
-            needUpdateAttribute = true;
-         }
-      }
-
-      if (needUpdateAttribute) {
-         geometry.setAttribute(
-            'instanceIndex',
-            new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndexes), 1)
-         );
-         geometry.setAttribute(
-            'instanceBaseTheta',
-            new THREE.InstancedBufferAttribute(new Float32Array(instanceBaseTheta), 1),
-         );
-      }
+      geometry.setAttribute(
+         'instanceIndex',
+         new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndexes), 1)
+      );
+      geometry.setAttribute(
+         'instanceBaseTheta',
+         new THREE.InstancedBufferAttribute(new Float32Array(instanceBaseTheta), 1),
+      );
    };
 
    return {
