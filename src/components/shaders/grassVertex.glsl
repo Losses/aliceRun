@@ -22,7 +22,6 @@ uniform mat4 projectionMatrix;
 in vec3 position;
 in uint instanceIndex;
 
-out vec3 vPosition;
 out vec4 vColor;
 
 mat3 rotateX(float theta) {

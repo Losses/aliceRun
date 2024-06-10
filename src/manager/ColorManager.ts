@@ -48,8 +48,8 @@ const themeArgb: Record<string, ITheme<number>> = {
       sky1: 0xff518093,
    },
    clear: {
-      grassTip: 0xff7f7f19,
       grassBase: 0xff0c3302,
+      grassTip: 0xff7f7f19,
       sky0: 0xff4ca1af,
       sky1: 0xffc4e0e5,
    },

@@ -1,20 +1,20 @@
-import type * as THREE from 'three';
+import * as THREE from 'three';
 
-import type { ResourceTracker } from '../utils/ResourceTracker';
 import {
-   GRID_HEIGHT,
-   GRID_WIDTH,
    Grass,
+   GRID_WIDTH,
+   GRID_HEIGHT,
    SEGMENTS_BASE_X,
    SEGMENTS_BASE_Y,
 } from '../components/Grass';
-import { STEP_ANGLE } from '../constants/ground';
-import { VISUAL_LOAD } from '../stores/settings';
-import { STEP_EVENT } from '../utils/StepCounter';
 import { useLerp } from '../utils/lerp';
+import { STEP_ANGLE } from '../constants/ground';
+import { STEP_EVENT } from '../utils/StepCounter';
 import { THEME_VALUE } from './ColorManager';
+import { VISUAL_LOAD } from '../stores/settings';
+import type { ResourceTracker } from '../utils/ResourceTracker';
+
 import { p1 } from './JoyConManager';
-import { forceSelect } from '../utils/forceSelect';
 
 export const GrassManager = (
    camera: THREE.Camera,
@@ -59,10 +59,10 @@ export const GrassManager = (
 
    THEME_VALUE.subscribe((theme) => {
       (material.uniforms.grassBaseColor.value as THREE.Color).setHex(
-         theme.grassBase,
+         theme.grassBase, THREE.LinearSRGBColorSpace
       );
       (material.uniforms.grassTipColor.value as THREE.Color).setHex(
-         theme.grassTip,
+         theme.grassTip, THREE.LinearSRGBColorSpace
       );
 
       material.uniformsNeedUpdate = true;

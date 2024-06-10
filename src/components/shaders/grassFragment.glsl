@@ -1,6 +1,5 @@
 precision highp float;
 
-in vec3 vPosition;
 in vec4 vColor;
 
 out vec4 fragColor;

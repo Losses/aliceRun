@@ -56,8 +56,8 @@ export const SEGMENTS_BASE_Y = 64 * 1.5;
 const MAX_SEGMENTS = SEGMENTS_BASE_X * SEGMENTS_BASE_Y;
 
 const WIND_SPEED_FACTOR = 0.5;
-const GRASS_BASE_COLOR = THEME_VALUE.value.grassBase;
-const GRASS_TIP_COLOR = THEME_VALUE.value.grassTip;
+const GRASS_BASE_COLOR = new THREE.Color();
+const GRASS_TIP_COLOR = new THREE.Color();
 const GRASS_LEAN_FACTOR = 1;
 const GRASS_SEGMENTS = 4;
 const GRASS_WIDTH = 0.6;
@@ -68,6 +68,9 @@ const GRID_SEGMENTS_X = Math.ceil(SEGMENTS_BASE_X * VISUAL_LOAD.value);
 const GRID_SEGMENTS_Y = Math.ceil(SEGMENTS_BASE_Y * VISUAL_LOAD.value);
 export const GRID_WIDTH = 80;
 export const GRID_HEIGHT = Math.PI / 8 + 0.1;
+
+GRASS_BASE_COLOR.setHex(THEME_VALUE.value.grassBase, THREE.LinearSRGBColorSpace);
+GRASS_TIP_COLOR.setHex(THEME_VALUE.value.grassTip, THREE.LinearSRGBColorSpace);
 
 export const Grass = (tracker: ResourceTracker) => {
    const positions = createRectanglePositions(
@@ -107,8 +110,8 @@ export const Grass = (tracker: ResourceTracker) => {
          groundBeginTheta: { value: -Math.PI / 8 },
          groundDeltaTheta: { value: 0 },
          windSpeedFactor: { value: WIND_SPEED_FACTOR },
-         grassBaseColor: { value: new THREE.Color(GRASS_BASE_COLOR) },
-         grassTipColor: { value: new THREE.Color(GRASS_TIP_COLOR) },
+         grassBaseColor: { value: GRASS_BASE_COLOR },
+         grassTipColor: { value: GRASS_TIP_COLOR },
          grassLeanFactor: { value: GRASS_LEAN_FACTOR },
          grassSegments: { value: GRASS_SEGMENTS },
          grassHeight: { value: GRASS_HEIGHT },

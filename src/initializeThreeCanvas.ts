@@ -39,7 +39,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
 
    const renderScene = new RenderPass(scene, camera);
    const sepiaPass = new ShaderPass(SepiaShader);
-   const filmPass = new FilmPass(0, 0, 0, 0);
+   const filmPass = new FilmPass(0, false);
    const glitchPass = new ShaderPass(GlitchShader);
    const vignettePass = new ShaderPass(VignetteShader);
 
