@@ -35,8 +35,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    renderer.localClippingEnabled = true;
    tracker.track(renderer);
 
-   const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
-
    const renderScene = new RenderPass(scene, camera);
    const sepiaPass = new ShaderPass(SepiaShader);
    const filmPass = new FilmPass(0, false);
@@ -51,7 +49,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
 
    const finalComposer = new EffectComposer(renderer);
    finalComposer.addPass(renderScene);
-   finalComposer.addPass(smaaPass);
    finalComposer.addPass(vignettePass);
    finalComposer.addPass(filmPass);
    finalComposer.addPass(sepiaPass);
@@ -67,7 +64,6 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
       camera.updateProjectionMatrix();
 
       renderer.setSize(width, height);
-      smaaPass.setSize(width, height);
       finalComposer.setSize(width, height);
    }, true);
 
