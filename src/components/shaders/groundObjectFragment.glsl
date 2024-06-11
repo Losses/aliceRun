@@ -158,6 +158,8 @@ int getRandomTexture() {
 void main() {
    vec2 uv = vUv;
 
+   fragColor = vec4(0, 0, 0, 0);
+
    float seed = vUv.x * vUv.y;
    float dRnd = random(time + seed + 2.);
    int planeIndex = int(vPlaneIndex);
@@ -165,15 +167,15 @@ void main() {
 
    if(planeIndex == 0) {
       if(dRnd < transitionProgress)
-         discard;
+         return;
    }
 
    if(planeIndex != 0 && transitionProgress == 0.) {
-      discard;
+      return;
    }
 
    if (transitionProgress == 1.) {
-      discard;
+      return;
    }
 
    float uvFactor = .8;
@@ -187,9 +189,9 @@ void main() {
    if(planeIndex != 0) {
    float dRnd2 = random(time + seed + 3.);
       if(dRnd >= transitionProgress)
-         discard;
+         return;
       if (dRnd2 < transitionProgress)
-         discard;
+         return;
 
       float angleUnit = 3.141592653 / float(planeCount);
       float particleAngle = atan(distortion.z - .5, distortion.x - .5);
@@ -201,7 +203,7 @@ void main() {
       int closestPlane = abs(int(round(particleAngle / angleUnit)) - planeCount);
 
       if(planeIndex != closestPlane)
-         discard;
+         return;
    }
 
    vec4 textureColor = texture(map, vec3(uv, getRandomTexture()));
