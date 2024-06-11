@@ -101,6 +101,7 @@ export const GroundObject = (
       vertexShader: require('./shaders/groundObjectVertex.glsl'),
       fragmentShader: require('./shaders/groundObjectFragment.glsl'),
       transparent: true,
+      side: THREE.DoubleSide,
       glslVersion: THREE.GLSL3,
    });
 
