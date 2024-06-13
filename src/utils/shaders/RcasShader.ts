@@ -7,7 +7,7 @@ export const RcasShader = ({
       iResolution: {
          value: new THREE.Vector2(1, 1),
       },
-      sharpness: { value: 0 },
+      sharpness: { value: 2 },
       tDiffuse: {
          value: null,
       },
