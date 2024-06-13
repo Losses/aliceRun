@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import GUI from 'lil-gui';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass';
@@ -35,12 +36,16 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    renderer.localClippingEnabled = true;
    tracker.track(renderer);
 
-   const renderFsrPass = new RenderFSRPass(2, scene, camera, { sharpness: 2 });
+   const renderFsrPass = new RenderFSRPass(2, scene, camera, { sharpness: 0.1 });
    const sepiaPass = new ShaderPass(SepiaShader);
    const filmPass = new FilmPass(0, false);
    const glitchPass = new ShaderPass(GlitchShader);
    const vignettePass = new ShaderPass(VignetteShader);
    const outputPass = new OutputPass();
+
+   const gui = new GUI();
+   gui.add(renderFsrPass, 'downSampleAmount', 1, 4, 0.1);
+   gui.add(renderFsrPass, 'sharpness', 0.1, 4, 0.01);
 
    const effects = { glitchPass, sepiaPass, vignettePass, filmPass } as const;
 

@@ -2630,6 +2630,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lil-gui@npm:^0.19.2":
+  version: 0.19.2
+  resolution: "lil-gui@npm:0.19.2"
+  checksum: 10/da3ef1f8b6688f55078aa1d55d953c4a24e44ff05f90ff760cff1b5673a4a758954e3c08d64882f9d1a831731de477906fdfc00f1c8e46e429a6cb3c1f44df1f
+  languageName: node
+  linkType: hard
+
 "lines-and-columns@npm:^1.1.6":
   version: 1.2.4
   resolution: "lines-and-columns@npm:1.2.4"
@@ -3594,6 +3601,7 @@ __metadata:
     "@web-media/phonograph": "npm:2.3.2"
     buffer: "npm:^5.5.0||^6.0.0"
     debug: "npm:^4.3.4"
+    lil-gui: "npm:^0.19.2"
     moment: "npm:^2.30.1"
     parcel: "npm:2.12.0"
     parcel-reporter-static-files-copy: "npm:^1.5.3"

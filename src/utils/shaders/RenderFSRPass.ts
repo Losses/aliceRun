@@ -18,42 +18,27 @@ interface FSRPassOptions {
 }
 
 class RenderFSRPass extends Pass {
-   private downSampleAmount: number;
-   private resolution: Vector2;
-   private renderResolution: Vector2;
-   private easuMaterial: ShaderMaterial;
-   private rcasMaterial: ShaderMaterial;
-   private fsQuad: FullScreenQuad;
-   private scene: Scene;
-   private camera: Camera;
+   private _downSampleAmount = 0;
+   private resolution = new Vector2();
+   private renderResolution = new Vector2();
+   private easuMaterial = new ShaderMaterial(EasuShader);;
+   private rcasMaterial = new ShaderMaterial(RcasShader);
+   private fsQuad = new FullScreenQuad(this.easuMaterial);
    private _sharpness = 0;
-   private renderTargetA: WebGLRenderTarget;
-   private renderTargetB: WebGLRenderTarget;
+   private lowResolutionTarget = new WebGLRenderTarget(1, 1, {
+      type: HalfFloatType,
+      colorSpace: LinearSRGBColorSpace // Ensure linear color space
+   });;
+   private highResolutionTarget = new WebGLRenderTarget(1, 1, {
+      type: HalfFloatType,
+      colorSpace: LinearSRGBColorSpace // Ensure linear color space
+   });;
 
-   constructor(downSampleAmount: number, scene: Scene, camera: Camera, options: FSRPassOptions = {}) {
+   constructor(downSampleAmount: number, private scene: Scene, private camera: Camera, options: FSRPassOptions = {}) {
       super();
 
-      this.downSampleAmount = downSampleAmount;
-      this.resolution = new Vector2();
-      this.renderResolution = new Vector2();
-
-      this.easuMaterial = new ShaderMaterial(EasuShader);
-      this.rcasMaterial = new ShaderMaterial(RcasShader);
-
-      this.fsQuad = new FullScreenQuad(this.easuMaterial);
-      this.scene = scene;
-      this.camera = camera;
-
       this.sharpness = options.sharpness || 0.2;
-
-      this.renderTargetA = new WebGLRenderTarget(1, 1, {
-         type: HalfFloatType,
-         colorSpace: LinearSRGBColorSpace // Ensure linear color space
-      });
-      this.renderTargetB = new WebGLRenderTarget(1, 1, {
-         type: HalfFloatType,
-         colorSpace: LinearSRGBColorSpace // Ensure linear color space
-      });
+      this.downSampleAmount = downSampleAmount;
    }
 
    get sharpness() {
@@ -66,8 +51,8 @@ class RenderFSRPass extends Pass {
    }
 
    dispose(): void {
-      this.renderTargetA.dispose();
-      this.renderTargetB.dispose();
+      this.lowResolutionTarget.dispose();
+      this.highResolutionTarget.dispose();
       this.easuMaterial.dispose();
       this.rcasMaterial.dispose();
       this.fsQuad.dispose();
@@ -76,15 +61,22 @@ class RenderFSRPass extends Pass {
    setSize(width: number, height: number): void {
       this.resolution.set(width, height);
       this.renderResolution.set((width / this.downSampleAmount) | 0, (height / this.downSampleAmount) | 0);
-      const { x, y } = this.renderResolution;
-      this.renderTargetA.setSize(x, y);
-      this.renderTargetB.setSize(x, y);
-      this.easuMaterial.uniforms.iResolution.value.set(x, y, 1 / x, 1 / y);
-      this.rcasMaterial.uniforms.iResolution.value.set(width, height, 1 / width, 1 / height);
+      const { x: renderX, y: renderY } = this.renderResolution;
+      this.lowResolutionTarget.setSize(renderX, renderY);
+      this.highResolutionTarget.setSize(width, height);
+
+      const easuUniforms = this.easuMaterial.uniforms;
+      const rcasUniforms = this.rcasMaterial.uniforms;
+      (easuUniforms.iResolution.value as Vector2).set(this.resolution.x, this.resolution.y);
+      (rcasUniforms.iResolution.value as Vector2).set(this.resolution.x, this.resolution.y);
    }
 
-   setDownSampleAmount(downSampleAmount: number): void {
-      this.downSampleAmount = downSampleAmount;
+   get downSampleAmount() {
+      return this._downSampleAmount;
+   }
+
+   set downSampleAmount(downSampleAmount: number) {
+      this._downSampleAmount = downSampleAmount;
       this.setSize(this.resolution.x, this.resolution.y);
    }
 
@@ -92,24 +84,20 @@ class RenderFSRPass extends Pass {
       const easuUniforms = this.easuMaterial.uniforms;
       const rcasUniforms = this.rcasMaterial.uniforms;
 
-      easuUniforms.iResolution.value.set(this.renderResolution.x, this.renderResolution.y, 1 / this.renderResolution.x, 1 / this.renderResolution.y);
-      rcasUniforms.iResolution.value.set(this.resolution.x, this.resolution.y, 1 / this.resolution.x, 1 / this.resolution.y);
-      rcasUniforms.sharpness.value = this.sharpness;
-
-      // Render scene to renderTargetA
-      renderer.setRenderTarget(this.renderTargetA);
+      // Render scene to lowResolutionTarget
+      renderer.setRenderTarget(this.lowResolutionTarget);
       renderer.render(this.scene, this.camera);
 
-      // Use renderTargetA as input for EASU pass
-      easuUniforms.tDiffuse.value = this.renderTargetA.texture;
+      // Use lowResolutionTarget as input for EASU pass
+      easuUniforms.tDiffuse.value = this.lowResolutionTarget.texture;
 
-      // Render EASU pass to renderTargetB
+      // Render EASU pass to highResolutionTarget
       this.fsQuad.material = this.easuMaterial;
-      renderer.setRenderTarget(this.renderTargetB);
+      renderer.setRenderTarget(this.highResolutionTarget);
       this.fsQuad.render(renderer);
 
-      // Use renderTargetB as input for RCAS pass
-      rcasUniforms.tDiffuse.value = this.renderTargetB.texture;
+      // Use highResolutionTarget as input for RCAS pass
+      rcasUniforms.tDiffuse.value = this.highResolutionTarget.texture;
 
       // Render RCAS pass to either screen or writeBuffer
       this.fsQuad.material = this.rcasMaterial;
