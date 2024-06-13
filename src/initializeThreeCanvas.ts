@@ -44,7 +44,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    const outputPass = new OutputPass();
 
    const gui = new GUI();
-   gui.add(renderFsrPass, 'downSampleAmount', 1, 4, 0.1);
+   gui.add(renderFsrPass, 'downSampleAmount', 1, 2, 0.01);
    gui.add(renderFsrPass, 'sharpness', 0.0, 2.0, 0.001);
 
    const effects = { glitchPass, sepiaPass, vignettePass, filmPass } as const;
