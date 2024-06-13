@@ -2,17 +2,17 @@ import * as THREE from 'three';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { SepiaShader } from 'three/examples/jsm/shaders/SepiaShader';
 import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass';
 import { CANVAS_SIZE, updateCanvasSize } from './stores/settings';
 
 import { ResourceTracker } from './utils/ResourceTracker';
 import { timeManager } from './manager/TimeManager';
 import { FrameRateLevel } from './utils/TimeMagic';
 import { GlitchShader } from './utils/shaders/GlitchPass';
+import { RenderFSRPass } from './utils/shaders/RenderFSRPass';
 
 export type Effects = ReturnType<typeof initializeThreeCanvas>['effects'];
 
@@ -35,24 +35,22 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    renderer.localClippingEnabled = true;
    tracker.track(renderer);
 
-   const renderScene = new RenderPass(scene, camera);
+   const renderFsrPass = new RenderFSRPass(2, scene, camera);
    const sepiaPass = new ShaderPass(SepiaShader);
    const filmPass = new FilmPass(0, false);
    const glitchPass = new ShaderPass(GlitchShader);
    const vignettePass = new ShaderPass(VignetteShader);
+   const outputPass = new OutputPass();
 
    const effects = { glitchPass, sepiaPass, vignettePass, filmPass } as const;
 
-   timeManager.addFn((time) => {
-      glitchPass.uniforms.time.value = time;
-   }, FrameRateLevel.D3);
-
-   const finalComposer = new EffectComposer(renderer);
-   finalComposer.addPass(renderScene);
-   finalComposer.addPass(vignettePass);
-   finalComposer.addPass(filmPass);
-   finalComposer.addPass(sepiaPass);
-   finalComposer.addPass(glitchPass);
+   const composer = new EffectComposer(renderer);
+   composer.addPass(renderFsrPass);
+   composer.addPass(vignettePass);
+   composer.addPass(filmPass);
+   composer.addPass(sepiaPass);
+   composer.addPass(glitchPass);
+   composer.addPass(outputPass);
 
    glitchPass.enabled = false;
    filmPass.enabled = false;
@@ -64,8 +62,14 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
       camera.updateProjectionMatrix();
 
       renderer.setSize(width, height);
-      finalComposer.setSize(width, height);
+      composer.setSize(width, height);
    }, true);
+
+   timeManager.addFn((time) => {
+      glitchPass.uniforms.time.value = time;
+   }, FrameRateLevel.D3);
+
+   timeManager.addFn(() => composer.render(), FrameRateLevel.D0);
 
    window.addEventListener('resize', updateCanvasSize, false);
 
@@ -77,7 +81,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
       scene,
       camera,
       renderer,
-      composer: finalComposer,
+      composer,
       effects,
       tracker,
    };

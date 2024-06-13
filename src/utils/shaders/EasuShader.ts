@@ -1,9 +1,11 @@
-export const EasuShader = () => ({
+import * as THREE from 'three';
+
+export const EasuShader = ({
    name: 'EasuShader',
 
    uniforms: {
       iResolution: {
-         value: null,
+         value: new THREE.Vector2(1, 1),
       },
       tDiffuse: {
          value: null,

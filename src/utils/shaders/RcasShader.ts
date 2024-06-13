@@ -1,11 +1,13 @@
-export const RcasShader = (sharpness = 0.2) => ({
+import * as THREE from 'three';
+
+export const RcasShader = ({
    name: 'RcasShader',
 
    uniforms: {
       iResolution: {
-         value: null,
+         value: new THREE.Vector2(1, 1),
       },
-      sharpness: { value: sharpness },
+      sharpness: { value: 0 },
       tDiffuse: {
          value: null,
       },

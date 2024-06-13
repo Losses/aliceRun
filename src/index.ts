@@ -16,7 +16,6 @@ import { SkyBoxManager } from './manager/SkyBoxManager';
 import { StoryListManager } from './manager/StoryListManager';
 import { StoryManager } from './manager/StoryManager';
 import { timeManager } from './manager/TimeManager';
-import { FrameRateLevel } from './utils/TimeMagic';
 
 import './utils/setRandomInterval';
 
@@ -44,10 +43,8 @@ GroundObjectManager(
    config.tracker,
    config.renderer,
 );
+JoyConManager();
 
 window.requestAnimationFrame(() => {
-   timeManager.addFn(() => config.composer.render(), FrameRateLevel.D0);
    timeManager.play();
 });
-
-JoyConManager();
