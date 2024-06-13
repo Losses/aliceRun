@@ -35,7 +35,7 @@ export const initializeThreeCanvas = ($container: HTMLDivElement) => {
    renderer.localClippingEnabled = true;
    tracker.track(renderer);
 
-   const renderFsrPass = new RenderFSRPass(2, scene, camera);
+   const renderFsrPass = new RenderFSRPass(2, scene, camera, { sharpness: 2 });
    const sepiaPass = new ShaderPass(SepiaShader);
    const filmPass = new FilmPass(0, false);
    const glitchPass = new ShaderPass(GlitchShader);

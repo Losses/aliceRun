@@ -26,7 +26,7 @@ class RenderFSRPass extends Pass {
    private fsQuad: FullScreenQuad;
    private scene: Scene;
    private camera: Camera;
-   private sharpness: number;
+   private _sharpness = 0;
    private renderTargetA: WebGLRenderTarget;
    private renderTargetB: WebGLRenderTarget;
 
@@ -54,6 +54,15 @@ class RenderFSRPass extends Pass {
          type: HalfFloatType,
          colorSpace: LinearSRGBColorSpace // Ensure linear color space
       });
+   }
+
+   get sharpness() {
+      return this._sharpness;
+   }
+
+   set sharpness(x) {
+      this._sharpness = x;
+      this.rcasMaterial.uniforms.sharpness.value = x;
    }
 
    dispose(): void {
