@@ -5,7 +5,9 @@ import {
    HalfFloatType,
    type WebGLRenderer,
    type Scene,
-   type Camera
+   type Camera,
+   LinearSRGBColorSpace,
+   SRGBColorSpace
 } from 'three';
 import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass';
 import { EasuShader } from './EasuShader';
@@ -45,10 +47,12 @@ class RenderFSRPass extends Pass {
       this.sharpness = options.sharpness || 0.2;
 
       this.renderTargetA = new WebGLRenderTarget(1, 1, {
-         type: HalfFloatType
+         type: HalfFloatType,
+         colorSpace: LinearSRGBColorSpace // Ensure linear color space
       });
       this.renderTargetB = new WebGLRenderTarget(1, 1, {
-         type: HalfFloatType
+         type: HalfFloatType,
+         colorSpace: LinearSRGBColorSpace // Ensure linear color space
       });
    }
 
@@ -103,8 +107,10 @@ class RenderFSRPass extends Pass {
 
       if (this.renderToScreen) {
          renderer.setRenderTarget(null);
+         renderer.outputColorSpace = SRGBColorSpace; // Ensure gamma correction when rendering to screen
       } else {
          renderer.setRenderTarget(writeBuffer);
+         renderer.outputColorSpace = LinearSRGBColorSpace; // Ensure linear color space for intermediate render targets
          if (this.clear) renderer.clear();
       }
 
