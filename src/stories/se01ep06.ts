@@ -37,7 +37,7 @@ export const SE1EP06 = [
    ThemeEvent(Time(0, 14, 32), 'desert'),
    ThemeEvent(Time(0, 14, 33), 'god'),
    LowRpmLimitEvent(Time(0, 14, 33), 170),
-   EndEvent(Time(0, 31, 43)),
-   ThemeEvent(Time(0, 30, 43), 'clear'),
+   EndEvent(Time(0, 30, 44)),
+   ThemeEvent(Time(0, 30, 44), 'clear'),
    DebugAlertEvent(Time(0, 31, 45), 'Hmmmm'),
 ];
