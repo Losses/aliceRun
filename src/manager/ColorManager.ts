@@ -83,6 +83,12 @@ const themeArgb: Record<string, ITheme<number>> = {
       sky0: 0xff1f3130,
       sky1: 0xff1c3d4b,
    },
+   god: {
+      grassTip: 0xffd4eff0,
+      grassBase: 0xff819ea9,
+      sky0: 0xffd4eff0,
+      sky1: 0xfffbfdfc,
+   },
 };
 
 
