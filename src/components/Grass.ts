@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer';
 import { timeManager } from '../manager/TimeManager';
 import { VISUAL_LOAD } from '../stores/settings';
 import { GROUND_Y_OFFSET, RADIUS, SCALE_Z } from './Ground2';
@@ -68,7 +69,42 @@ const GRID_SEGMENTS_Y = Math.ceil(SEGMENTS_BASE_Y * VISUAL_LOAD.value);
 export const GRID_WIDTH = 80;
 export const GRID_HEIGHT = Math.PI / 8 + 0.1;
 
-export const Grass = (tracker: ResourceTracker) => {
+function fillDataTexture(texture: THREE.DataTexture) {
+   const data = texture.image.data;
+
+   for (let k = 0, l = data.length; k < l; k += 4) {
+      data[k + 0] = k;
+      data[k + 1] = k;
+      data[k + 2] = k;
+      data[k + 3] = k;
+   }
+}
+
+
+export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) => {
+   // const gpuCompute = new GPUComputationRenderer(GRID_SEGMENTS_X, GRID_SEGMENTS_Y, renderer);
+
+   // const noiseData = gpuCompute.createTexture();
+   // const positionData = gpuCompute.createTexture();
+   // const windData = gpuCompute.createTexture();
+
+   // fillDataTexture(noiseData);
+   // fillDataTexture(positionData);
+   // fillDataTexture(windData);
+
+   // const noiseVariable = gpuCompute.addVariable("textureNoise", require('./shaders/grassComputationNoise.glsl'), noiseData);
+   // const positionVariable = gpuCompute.addVariable("texturePosition", require('./shaders/grassComputationPosition.glsl'), positionData);
+   // const windVariable = gpuCompute.addVariable("textureWind", require('./shaders/grassComputationWind.glsl'), windData);
+
+   // gpuCompute.setVariableDependencies(noiseVariable, [noiseVariable]);
+   // gpuCompute.setVariableDependencies(positionVariable, [noiseVariable, positionVariable]);
+   // gpuCompute.setVariableDependencies(windVariable, [noiseVariable, positionVariable, windVariable]);
+
+   // const error = gpuCompute.init();
+   // if (error !== null) {
+   //     throw error;
+   // }
+
    const positions = createRectanglePositions(
       GRASS_WIDTH,
       1,
@@ -133,6 +169,7 @@ export const Grass = (tracker: ResourceTracker) => {
 
    grass.frustumCulled = false;
    timeManager.addFn((time) => {
+      // gpuCompute.compute();
       material.uniforms.time.value = time * 0.001;
    });
 

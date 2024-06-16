@@ -20,8 +20,9 @@ export const GrassManager = (
    camera: THREE.Camera,
    scene: THREE.Scene,
    tracker: ResourceTracker,
+   renderer: THREE.WebGLRenderer
 ) => {
-   const { grass } = Grass(tracker);
+   const { grass } = Grass(renderer, tracker);
    scene.add(grass);
 
    let rotation = 0;

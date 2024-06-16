@@ -36,7 +36,7 @@ StoryListManager();
 HpManager(config.effects);
 DebugManager(config.camera, config.scene, config.tracker);
 GroundManager(config.camera, config.scene, config.tracker);
-GrassManager(config.camera, config.scene, config.tracker);
+GrassManager(config.camera, config.scene, config.tracker, config.renderer);
 SkyBoxManager(config.camera, config.scene, config.tracker);
 GroundObjectManager(
    config.camera,

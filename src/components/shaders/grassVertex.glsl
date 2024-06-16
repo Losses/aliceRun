@@ -120,8 +120,6 @@ void main() {
     // Shape and position
     vec3 vPosition = position;
 
-    float heightPercent = vPosition.y;
-
     uint xID = instanceIndex % gridSegmentsX;
     uint yID = instanceIndex / gridSegmentsX;
 
@@ -148,13 +146,15 @@ void main() {
 
     // Wind here
     float windNoiseSample = noise12(stableOffset.xz * 0.25 + time);
-    float curveAmount = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
-    curveAmount = easeIn(curveAmount, 1.5) * grassLeanFactor;
-    curveAmount *= heightPercent;
     float windDir = noise12(offset.xz * 0.05 + windSpeedFactor * time);
     windDir = remap(windDir, -1.0, 1.0, 0.0, 3.14159 * 2.);
-    vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
     float randomAngle = hashVal1.x * 2.0 * 3.14159;
+    float curveAmount = remap(windNoiseSample, -1.0, 1.0, 0.25, 1.0);
+    curveAmount = easeIn(curveAmount, 1.5) * grassLeanFactor;
+  
+    float heightPercent = vPosition.y;
+    curveAmount *= heightPercent;
+    vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
     mat3 grassMat = rotateAxis(windAxis, curveAmount) * rotateY(randomAngle);
 
     // Apply what we want
