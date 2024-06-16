@@ -75,6 +75,8 @@ export const timeLine = new TimelineManager(stories, {
 });
 
 // @ts-ignore
+window.timeLine = timeLine;
+// @ts-ignore
 window.nextEvent = timeLine.nextEvent;
 
 export const StoryManager = () => {
