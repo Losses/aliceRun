@@ -1,5 +1,3 @@
-precision highp float;
-
 uniform float groundRadius;
 uniform float groundRatio;
 uniform float groundBeginTheta;
@@ -19,7 +17,7 @@ void main() {
     vec2 uv = gl_FragCoord.xy / resolution.xy;
     vec4 noise = texture2D(textureNoise, uv);
     vec4 position = texture2D(texturePosition, uv);
-    float instanceIndex = position.x;
+    uint instanceIndex = uint(position.x);
 
     uint xID = instanceIndex % gridSegmentsX;
     uint yID = instanceIndex / gridSegmentsX;

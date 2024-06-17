@@ -1,5 +1,3 @@
-uniform sampler2D textureNoise;
-
 uvec4 murmurHash41(uint src) {
     const uint M = 0x5bd1e995u;
     uvec4 h = uvec4(1190494759u, 2147483647u, 3559788179u, 179424673u);

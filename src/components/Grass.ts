@@ -82,28 +82,57 @@ function fillDataTexture(texture: THREE.DataTexture) {
 
 
 export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) => {
-   // const gpuCompute = new GPUComputationRenderer(GRID_SEGMENTS_X, GRID_SEGMENTS_Y, renderer);
+   const indices = createRectangleIndices(1, GRASS_SEGMENTS);
 
-   // const noiseData = gpuCompute.createTexture();
-   // const positionData = gpuCompute.createTexture();
-   // const windData = gpuCompute.createTexture();
+   const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
+   const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
 
-   // fillDataTexture(noiseData);
-   // fillDataTexture(positionData);
-   // fillDataTexture(windData);
+   const sharedUniforms = {
+      time: { value: 0.0 },
+      groundRadius: { value: RADIUS },
+      groundRatio: { value: SCALE_Z },
+      groundBeginTheta: { value: -Math.PI / 8 },
+      groundDeltaTheta: { value: 0 },
+      windSpeedFactor: { value: WIND_SPEED_FACTOR },
+      grassBaseColor: { value: GRASS_BASE_COLOR },
+      grassTipColor: { value: GRASS_TIP_COLOR },
+      grassLeanFactor: { value: GRASS_LEAN_FACTOR },
+      grassSegments: { value: GRASS_SEGMENTS },
+      grassHeight: { value: GRASS_HEIGHT },
+      grassHeightFactor: { value: GRASS_HEIGHT_FACT0R },
+      grassDistanceFactor: { value: DISTANCE_FACTOR },
+      grassVectors: { value: indices.length },
+      gridSegmentsX: { value: GRID_SEGMENTS_X },
+      gridSegmentsY: { value: GRID_SEGMENTS_Y },
+      gridSegmentWidth: { value: gridSegmentWidth },
+      gridSegmentHeight: { value: gridSegmentHeight },
+   };
+   const gpuCompute = new GPUComputationRenderer(GRID_SEGMENTS_X, GRID_SEGMENTS_Y, renderer);
 
-   // const noiseVariable = gpuCompute.addVariable("textureNoise", require('./shaders/grassComputationNoise.glsl'), noiseData);
-   // const positionVariable = gpuCompute.addVariable("texturePosition", require('./shaders/grassComputationPosition.glsl'), positionData);
-   // const windVariable = gpuCompute.addVariable("textureWind", require('./shaders/grassComputationWind.glsl'), windData);
+   const noiseData = gpuCompute.createTexture();
+   const positionData = gpuCompute.createTexture();
+   const windData = gpuCompute.createTexture();
 
-   // gpuCompute.setVariableDependencies(noiseVariable, [noiseVariable]);
-   // gpuCompute.setVariableDependencies(positionVariable, [noiseVariable, positionVariable]);
-   // gpuCompute.setVariableDependencies(windVariable, [noiseVariable, positionVariable, windVariable]);
+   fillDataTexture(noiseData);
+   fillDataTexture(positionData);
+   fillDataTexture(windData);
 
-   // const error = gpuCompute.init();
-   // if (error !== null) {
-   //     throw error;
-   // }
+   const noiseVariable = gpuCompute.addVariable("textureNoise", require('./shaders/grassComputationNoise.glsl'), noiseData);
+   const positionVariable = gpuCompute.addVariable("texturePosition", require('./shaders/grassComputationPosition.glsl'), positionData);
+   const windVariable = gpuCompute.addVariable("textureWind", require('./shaders/grassComputationWind.glsl'), windData);
+
+   gpuCompute.setVariableDependencies(noiseVariable, [noiseVariable]);
+   gpuCompute.setVariableDependencies(positionVariable, [noiseVariable, positionVariable]);
+   gpuCompute.setVariableDependencies(windVariable, [noiseVariable, positionVariable, windVariable]);
+
+   noiseVariable.material.uniforms = sharedUniforms;
+   positionVariable.material.uniforms = sharedUniforms;
+   windVariable.material.uniforms = sharedUniforms;
+
+   const error = gpuCompute.init();
+   if (error !== null) {
+      throw error;
+   }
 
    const positions = createRectanglePositions(
       GRASS_WIDTH,
@@ -111,10 +140,6 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
       1,
       GRASS_SEGMENTS,
    );
-   const indices = createRectangleIndices(1, GRASS_SEGMENTS);
-
-   const gridSegmentWidth = GRID_WIDTH / GRID_SEGMENTS_X;
-   const gridSegmentHeight = GRID_HEIGHT / GRID_SEGMENTS_Y;
 
    const instanceIndex = new Array(MAX_SEGMENTS)
       .fill(0)
@@ -136,24 +161,9 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
    // material
    const material = new THREE.RawShaderMaterial({
       uniforms: {
-         time: { value: 0.0 },
-         groundRadius: { value: RADIUS },
-         groundRatio: { value: SCALE_Z },
-         groundBeginTheta: { value: -Math.PI / 8 },
-         groundDeltaTheta: { value: 0 },
-         windSpeedFactor: { value: WIND_SPEED_FACTOR },
-         grassBaseColor: { value: GRASS_BASE_COLOR },
-         grassTipColor: { value: GRASS_TIP_COLOR },
-         grassLeanFactor: { value: GRASS_LEAN_FACTOR },
-         grassSegments: { value: GRASS_SEGMENTS },
-         grassHeight: { value: GRASS_HEIGHT },
-         grassHeightFactor: { value: GRASS_HEIGHT_FACT0R },
-         grassDistanceFactor: { value: DISTANCE_FACTOR },
-         grassVectors: { value: indices.length },
-         gridSegmentsX: { value: GRID_SEGMENTS_X },
-         gridSegmentsY: { value: GRID_SEGMENTS_Y },
-         gridSegmentWidth: { value: gridSegmentWidth },
-         gridSegmentHeight: { value: gridSegmentHeight },
+         ...sharedUniforms,
+         texturePosition: { value: gpuCompute.getCurrentRenderTarget(positionVariable).texture },
+         textureWind: { value: gpuCompute.getCurrentRenderTarget(windVariable).texture },
       },
       vertexShader: require('./shaders/grassVertex.glsl'),
       fragmentShader: require('./shaders/grassFragment.glsl'),
@@ -169,7 +179,7 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
 
    grass.frustumCulled = false;
    timeManager.addFn((time) => {
-      // gpuCompute.compute();
+      gpuCompute.compute();
       material.uniforms.time.value = time * 0.001;
    });
 
