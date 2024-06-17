@@ -73,10 +73,10 @@ function fillDataTexture(texture: THREE.DataTexture) {
    const data = texture.image.data;
 
    for (let k = 0, l = data.length; k < l; k += 4) {
-      data[k + 0] = k;
-      data[k + 1] = k;
-      data[k + 2] = k;
-      data[k + 3] = k;
+      data[k + 0] = k / 4;
+      data[k + 1] = k / 4;
+      data[k + 2] = k / 4;
+      data[k + 3] = k / 4;
    }
 }
 
@@ -162,8 +162,9 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
    const material = new THREE.RawShaderMaterial({
       uniforms: {
          ...sharedUniforms,
-         texturePosition: { value: gpuCompute.getCurrentRenderTarget(positionVariable).texture },
-         textureWind: { value: gpuCompute.getCurrentRenderTarget(windVariable).texture },
+         textureNoise: { value: null },
+         texturePosition: { value: null },
+         textureWind: { value: null },
       },
       vertexShader: require('./shaders/grassVertex.glsl'),
       fragmentShader: require('./shaders/grassFragment.glsl'),
@@ -179,8 +180,12 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
 
    grass.frustumCulled = false;
    timeManager.addFn((time) => {
+      sharedUniforms.time.value = time * 0.001;
+
       gpuCompute.compute();
-      material.uniforms.time.value = time * 0.001;
+      material.uniforms.textureNoise.value = gpuCompute.getCurrentRenderTarget(noiseVariable).texture;
+      material.uniforms.texturePosition.value = gpuCompute.getCurrentRenderTarget(positionVariable).texture;
+      material.uniforms.textureWind.value = gpuCompute.getCurrentRenderTarget(windVariable).texture;
    });
 
    tracker.track(geometry);
