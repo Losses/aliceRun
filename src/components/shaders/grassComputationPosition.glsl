@@ -15,11 +15,8 @@ void main() {
     vec2 uv = gl_FragCoord.xy / resolution.xy;
     vec4 noise = texture2D(textureNoise, uv);
 
-    float xID = gl_FragCoord.x;
-    float yID = gl_FragCoord.y;
-
-    float x = float(xID - float(resolution.x) / 2.0) * gridSegmentWidth;
-    float theta = float(yID - float(resolution.y) / 2.0) * gridSegmentHeight;
+    float x = (gl_FragCoord.x - float(resolution.x) / 2.0) * gridSegmentWidth;
+    float theta = (gl_FragCoord.y - float(resolution.y) / 2.0) * gridSegmentHeight;
     theta += (noise.w - 0.5) * 2. * gridSegmentHeight * grassDistanceFactor;
     vec3 basicOffset = groundCoord(
       groundBeginTheta + mod(groundDeltaTheta + theta, (gridSegmentHeight * float(resolution.y))), 
