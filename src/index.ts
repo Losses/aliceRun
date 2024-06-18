@@ -1,5 +1,3 @@
-// @ts-ignore
-import { Spector } from 'spectorjs';
 import { initializeThreeCanvas } from './initializeThreeCanvas';
 import { AudioManager } from './manager/AudioManager';
 import { ColorManager } from './manager/ColorManager';
@@ -50,8 +48,6 @@ GroundObjectManager(
 window.requestAnimationFrame(() => {
    timeManager.addFn(() => config.composer.render(), FrameRateLevel.D0);
    timeManager.play();
-   const spector = new Spector();
-   spector.displayUI();
 });
 
 JoyConManager();
