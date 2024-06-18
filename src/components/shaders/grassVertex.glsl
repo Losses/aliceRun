@@ -4,8 +4,6 @@ uniform vec3 grassBaseColor;
 uniform vec3 grassTipColor;
 uniform float grassHeight;
 uniform float grassHeightFactor;
-uniform uint gridSegmentsX;
-uniform uint gridSegmentsY;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
@@ -14,7 +12,7 @@ uniform sampler2D textureWind;
 uniform sampler2D textureNoise;
 
 in vec3 position;
-in uint instanceIndex;
+in vec2 reference;
 
 out vec4 vColor;
 
@@ -46,11 +44,6 @@ float easeIn(float x, float t) {
 }
 
 void main() {
-    uint xID = instanceIndex % gridSegmentsX;
-    uint yID = instanceIndex / gridSegmentsX;
-
-    vec2 reference = vec2(xID, yID) / vec2(float(gridSegmentsX), float(gridSegmentsY));
-
     vec4 computedNoise = texture(textureNoise, reference);
     vec4 computedPosition = texture(texturePosition, reference);
     vec4 computedWind = texture(textureWind, reference);

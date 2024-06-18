@@ -660,3 +660,9 @@ button {
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.5), inset 0 0 4px rgba(255, 255, 255, 0.5);
   border-image: linear-gradient(60deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 1)) 10%;
 }
+
+/** Debugger **/
+
+.commandDetailComponent img {
+  image-rendering: pixelated;
+}

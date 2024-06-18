@@ -1155,6 +1155,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@shaderfrog/glsl-parser@npm:^2.0.1":
+  version: 2.1.5
+  resolution: "@shaderfrog/glsl-parser@npm:2.1.5"
+  checksum: 10/84ad1fc3a56fa55dc6519ec5d3d4f61b95db50a6872178622d73d5a088c6ceead35e879b1cf888841ad6aebe27cc99abfa953ed9753722c467aade1fbefbfa4e
+  languageName: node
+  linkType: hard
+
 "@swc/core-darwin-arm64@npm:1.4.16":
   version: 1.4.16
   resolution: "@swc/core-darwin-arm64@npm:1.4.16"
@@ -3425,6 +3432,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"spectorjs@npm:^0.9.30":
+  version: 0.9.30
+  resolution: "spectorjs@npm:0.9.30"
+  dependencies:
+    "@shaderfrog/glsl-parser": "npm:^2.0.1"
+  checksum: 10/bade54a314720f29a83c2110c8f8e0be9ebb207cd32839572f6d4e113c9e34c2937f84702ec6bf3e4e5dd0fa16ed6ba181345f458229d81896daef6c92ea0329
+  languageName: node
+  linkType: hard
+
 "srcset@npm:4":
   version: 4.0.0
   resolution: "srcset@npm:4.0.0"
@@ -3598,6 +3614,7 @@ __metadata:
     parcel: "npm:2.12.0"
     parcel-reporter-static-files-copy: "npm:^1.5.3"
     process: "npm:^0.11.10"
+    spectorjs: "npm:^0.9.30"
     standardized-audio-context: "npm:^25.3.72"
     stats.js: "npm:^0.17.0"
     three: "npm:0.165.0"

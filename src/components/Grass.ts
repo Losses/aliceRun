@@ -69,18 +69,6 @@ const GRID_SEGMENTS_Y = Math.ceil(SEGMENTS_BASE_Y * VISUAL_LOAD.value);
 export const GRID_WIDTH = 80;
 export const GRID_HEIGHT = Math.PI / 8 + 0.1;
 
-function fillDataTexture(texture: THREE.DataTexture) {
-   const data = texture.image.data;
-
-   for (let k = 0, l = data.length; k < l; k += 4) {
-      data[k + 0] = k / 4;
-      data[k + 1] = k / 4;
-      data[k + 2] = k / 4;
-      data[k + 3] = k / 4;
-   }
-}
-
-
 export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) => {
    const indices = createRectangleIndices(1, GRASS_SEGMENTS);
 
@@ -113,10 +101,6 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
    const positionData = gpuCompute.createTexture();
    const windData = gpuCompute.createTexture();
 
-   fillDataTexture(noiseData);
-   fillDataTexture(positionData);
-   fillDataTexture(windData);
-
    const noiseVariable = gpuCompute.addVariable("textureNoise", require('./shaders/grassComputationNoise.glsl'), noiseData);
    const positionVariable = gpuCompute.addVariable("texturePosition", require('./shaders/grassComputationPosition.glsl'), positionData);
    const windVariable = gpuCompute.addVariable("textureWind", require('./shaders/grassComputationWind.glsl'), windData);
@@ -148,6 +132,17 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
    const geometry = new THREE.InstancedBufferGeometry();
    geometry.instanceCount = GRID_SEGMENTS_X * GRID_SEGMENTS_Y;
 
+   const references = new Array(geometry.instanceCount * 2);
+
+   for (let v = 0, l = references.length; v < l; v += 1) {
+      const instanceIndex = ~ ~(v / 2);
+      const x = (instanceIndex % GRID_SEGMENTS_X) / GRID_SEGMENTS_X;
+      const y = ~ ~(instanceIndex / GRID_SEGMENTS_X) / GRID_SEGMENTS_Y;
+
+      references[v * 2] = x;
+      references[v * 2 + 1] = y;
+   }
+
    geometry.setIndex(indices);
    geometry.setAttribute(
       'position',
@@ -156,6 +151,10 @@ export const Grass = (renderer: THREE.WebGLRenderer, tracker: ResourceTracker) =
    geometry.setAttribute(
       'instanceIndex',
       new THREE.InstancedBufferAttribute(new Uint32Array(instanceIndex), 1),
+   );
+   geometry.setAttribute(
+      'reference',
+      new THREE.InstancedBufferAttribute(new Float32Array(references), 2),
    );
 
    // material

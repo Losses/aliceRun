@@ -78,7 +78,7 @@ void main() {
 
     // Adjust position
     vPosition = vPosition + offset;
-    
+
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 
     vUv = uv;
