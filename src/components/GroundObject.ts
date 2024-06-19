@@ -6,7 +6,7 @@ import type { ResourceTracker } from '../utils/ResourceTracker';
 import type { ICompressedTextureLoadingResult } from '../utils/CompressedTexture';
 
 const GRID_WIDTH = 80;
-const GRID_HEIGHT = Math.PI / 6 * 2.2;
+const GRID_HEIGHT = Math.PI / 8 + 0.1;
 
 const MAX_INSTANCE_COUNT = 2 * 14;
 const STAR_SHAPE_SIDES = 4;
@@ -95,7 +95,7 @@ export const GroundObject = (
          gridHeight: { value: GRID_HEIGHT },
          groundRadius: { value: RADIUS },
          groundRatio: { value: SCALE_Z },
-         groundBeginTheta: { value: -Math.PI / 3 },
+         groundBeginTheta: { value: -Math.PI / 4 },
          groundDeltaTheta: { value: 0 },
       },
       vertexShader: require('./shaders/groundObjectVertex.glsl'),
