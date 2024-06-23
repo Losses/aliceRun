@@ -21,7 +21,7 @@ export const SE1EP05 = [
        .fill(0)
        .map((_, index) =>
           AudioEvent(
-             Time(0, 10, index + 37),
+             Time(0, 10, index + 38),
              `S001-EP001-${(index + 36).toString().padStart(3, '0')}.mp3`,
           ),
        ),
